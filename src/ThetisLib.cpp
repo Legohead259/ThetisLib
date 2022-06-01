@@ -1,6 +1,53 @@
 #include <ThetisLib.h>
 
 
+// ========================
+// === BNO055 FUNCTIONS ===
+// ========================
+
+
+bool initBNO055(Adafruit_BNO055 &imu, Stream &out) {
+    out.print("Initializing BNO055...");
+    digitalWrite(BNO055_RESET, HIGH); // Ensure BNO Reset is HIGH
+    Wire.begin(SDA, SCL); // Initialize I2C bus with correct wires
+    if (!imu.begin()) {
+        out.println("Failed to initialize BNO055");
+        return false;
+    }
+    else {
+        imu.setExtCrystalUse(true);
+        out.println("done!");
+        return true;
+    }
+}
+
+
+// ===========================
+// === LSM6DSO32 FUNCTIONS ===
+// ===========================
+
+
+bool initLSM6DSO32(Adafruit_LSM6DSO32 imu, Stream &out, 
+                    lsm6dso32_accel_range_t accelRange, 
+                    lsm6ds_gyro_range_t gyroRange,
+                    lsm6ds_data_rate_t dataRate) {
+    out.print("Initializing DSO32 IMU...");
+    Wire.begin(SDA, SCL);
+    if (!imu.begin_I2C(0x6B)) {
+        out.println("Failed to find LSM6DSO32 chip");
+        return false;
+    }
+    else {
+        imu.setAccelRange(accelRange);    // Set acceleration range to ±8g
+        imu.setGyroRange(gyroRange);      // Set gyroscope range to ±2000 deg/sec 
+        imu.setAccelDataRate(dataRate);   // Set accelerometer update rate to 52 Hz
+        imu.setGyroDataRate(dataRate);    // Set gyroscope update rate to 52 Hz
+        out.println("done!");
+        return true;
+    }
+}
+
+
 // ==============================
 // === FILE SYSTEMS FUNCTIONS ===
 // ==============================
@@ -159,26 +206,4 @@ void testFileIO(fs::FS &fs, const char * path, Stream &out) {
     end = millis() - start;
     out.printf("%u bytes written for %u ms\n\r", 2048 * 512, end);
     file.close();
-}
-
-void testFS(fs::FS &fs, Stream &out) {
-    out.println("Testing filesystem...");
-
-    listDir(SD, "/", 0);
-    createDir(SD, "/mydir");
-    listDir(SD, "/", 0);
-    removeDir(SD, "/mydir");
-    listDir(SD, "/", 2);
-    writeFile(SD, "/hello.txt", "Hello ");
-    appendFile(SD, "/hello.txt", "World!\n\r");
-    readFile(SD, "/hello.txt");
-    deleteFile(SD, "/foo.txt");
-    renameFile(SD, "/hello.txt", "/foo.txt");
-    readFile(SD, "/foo.txt");
-    testFileIO(SD, "/test.txt");
-    Serial.printf("Total space: %lluMB\n\r", SD.totalBytes() / (1024 * 1024));
-    Serial.printf("Used space: %lluMB\n\r", SD.usedBytes() / (1024 * 1024));
-    Serial.println("done!");
-    Serial.println("---------------------------------------");
-    Serial.println();
 }
