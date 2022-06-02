@@ -32,7 +32,7 @@ bool initLSM6DSO32(Adafruit_LSM6DSO32 imu, Stream &out,
                     lsm6ds_gyro_range_t gyroRange,
                     lsm6ds_data_rate_t dataRate) {
     out.print("Initializing DSO32 IMU...");
-    Wire.begin(SDA, SCL);
+    Wire.begin(33, 34);
     if (!imu.begin_I2C(0x6B)) {
         out.println("Failed to find LSM6DSO32 chip");
         return false;
@@ -206,4 +206,27 @@ void testFileIO(fs::FS &fs, const char * path, Stream &out) {
     end = millis() - start;
     out.printf("%u bytes written for %u ms\n\r", 2048 * 512, end);
     file.close();
+}
+
+
+// ============================
+// === GPS MODULE FUNCTIONS ===
+// ============================
+
+bool initGPS(HardwareSerial &GPS, Stream &out) {
+    out.print("Initializing GPS..."); // DEBUG
+    GPS.begin(9600); // Begin talking with GPS at default 9600 baud.
+    // TODO: Automatically determine GPS initial baudrate
+    if (!GPS) {
+        out.println("Failed to initialize GPS"); // DEBUG
+        return false;
+    }
+    MicroNMEA::sendSentence(GPS, "$PMTK251,38400");         // Set GPS baudrate to 38400
+    GPS.begin(38400);
+    MicroNMEA::sendSentence(GPS, "$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0"); // Enable only NMEA GGA sentences
+    MicroNMEA::sendSentence(GPS, "$PMTK220,100");           // Set GPS update rate to 100 ms (10 Hz)
+
+    // TODO: implement a check for good GPS data
+    out.println("done!"); // DEBUG
+    return true;
 }

@@ -51,6 +51,14 @@ bool renameFile(fs::FS &fs, const char * path1, const char * path2, Stream &out)
 bool deleteFile(fs::FS &fs, const char * path, Stream &out);
 void testFileIO(fs::FS &fs, const char * path, Stream &out);
 
-// === 
+
+// =====================
+// === GPS FUNCTIONS ===
+// =====================
+
+
+#include <MicroNMEA.h>
+
+bool initGPS(HardwareSerial &GPS, Stream &out);
 
 #endif
