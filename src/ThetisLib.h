@@ -59,6 +59,12 @@ void testFileIO(fs::FS &fs, const char * path, Stream &out);
 
 #include <MicroNMEA.h>
 
+extern HardwareSerial& GPS;
+extern char nmeaBuffer[100];
+extern MicroNMEA nmea;
+extern bool ledState;
+extern volatile bool ppsTriggered;
+
 bool initGPS(HardwareSerial &GPS, Stream &out);
 
 

@@ -214,6 +214,12 @@ void testFileIO(fs::FS &fs, const char * path, Stream &out) {
 // ============================
 
 
+HardwareSerial& GPS = GPS_SERIAL_PORT;
+char nmeaBuffer[100];
+MicroNMEA nmea(nmeaBuffer, sizeof(nmeaBuffer));
+bool ledState = LOW;
+volatile bool ppsTriggered = false;
+
 bool initGPS(HardwareSerial &GPS, Stream &out) {
     out.print("Initializing GPS..."); // DEBUG
     GPS.begin(9600); // Begin talking with GPS at default 9600 baud.
@@ -230,6 +236,16 @@ bool initGPS(HardwareSerial &GPS, Stream &out) {
     // TODO: implement a check for good GPS data
     out.println("done!"); // DEBUG
     return true;
+}
+
+void ppsHandler(void) {
+    ppsTriggered = true;
+}
+
+void printUnknownSentence(MicroNMEA &nmea, Stream &out) {
+    out.println();
+	out.print("Unknown sentence: ");
+	out.println(nmea.getSentence());
 }
 
 
