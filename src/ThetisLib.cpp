@@ -9,7 +9,6 @@
 bool initBNO055(Adafruit_BNO055 &imu, Stream &out) {
     out.print("Initializing BNO055...");
     digitalWrite(BNO055_RESET, HIGH); // Ensure BNO Reset is HIGH
-    Wire.begin(SDA, SCL); // Initialize I2C bus with correct wires
     if (!imu.begin()) {
         out.println("Failed to initialize BNO055");
         return false;
@@ -27,21 +26,23 @@ bool initBNO055(Adafruit_BNO055 &imu, Stream &out) {
 // ===========================
 
 
-bool initLSM6DSO32(Adafruit_LSM6DSO32 imu, Stream &out, 
+Adafruit_LSM6DSO32 DSO32_IMU;
+
+bool initLSM6DSO32( Adafruit_LSM6DSO32 &imu, 
+                    Stream &out, 
                     lsm6dso32_accel_range_t accelRange, 
                     lsm6ds_gyro_range_t gyroRange,
                     lsm6ds_data_rate_t dataRate) {
     out.print("Initializing DSO32 IMU...");
-    Wire.begin(33, 34);
     if (!imu.begin_I2C(0x6B)) {
         out.println("Failed to find LSM6DSO32 chip");
         return false;
     }
     else {
-        imu.setAccelRange(accelRange);    // Set acceleration range to ±8g
-        imu.setGyroRange(gyroRange);      // Set gyroscope range to ±2000 deg/sec 
-        imu.setAccelDataRate(dataRate);   // Set accelerometer update rate to 52 Hz
-        imu.setGyroDataRate(dataRate);    // Set gyroscope update rate to 52 Hz
+        imu.setAccelRange(accelRange);
+        imu.setGyroRange(gyroRange);
+        imu.setAccelDataRate(dataRate);
+        imu.setGyroDataRate(dataRate);
         out.println("done!");
         return true;
     }
@@ -220,18 +221,18 @@ MicroNMEA nmea(nmeaBuffer, sizeof(nmeaBuffer));
 bool ledState = LOW;
 volatile bool ppsTriggered = false;
 
-bool initGPS(HardwareSerial &GPS, Stream &out) {
+bool initGPS(HardwareSerial &gps, Stream &out) {
     out.print("Initializing GPS..."); // DEBUG
-    GPS.begin(9600); // Begin talking with GPS at default 9600 baud.
+    gps.begin(9600); // Begin talking with GPS at default 9600 baud.
     // TODO: Automatically determine GPS initial baudrate
-    if (!GPS) {
+    if (!gps) {
         out.println("Failed to initialize GPS"); // DEBUG
         return false;
     }
-    MicroNMEA::sendSentence(GPS, "$PMTK251,38400");         // Set GPS baudrate to 38400
-    GPS.begin(38400);
-    MicroNMEA::sendSentence(GPS, "$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0"); // Enable only NMEA GGA sentences
-    MicroNMEA::sendSentence(GPS, "$PMTK220,100");           // Set GPS update rate to 100 ms (10 Hz)
+    MicroNMEA::sendSentence(gps, "$PMTK251,38400");         // Set GPS baudrate to 38400
+    gps.begin(38400);
+    MicroNMEA::sendSentence(gps, "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0"); // Enable NMEA RMC and GGA sentences
+    MicroNMEA::sendSentence(gps, "$PMTK220,100");           // Set GPS update rate to 100 ms (10 Hz)
 
     // TODO: implement a check for good GPS data
     out.println("done!"); // DEBUG
@@ -297,7 +298,7 @@ uint32_t Wheel(byte wheelPos) {
     return Adafruit_NeoPixel::Color(wheelPos * 3 * brightness, (255 - wheelPos * 3)*brightness, 0);
 }
 
-void blinkCode(Adafruit_NeoPixel &strip, byte code, uint32_t color) {
+void blinkCode(ErrorCode_t code, uint32_t color, Adafruit_NeoPixel &strip) {
     bool dash = true;
     for (int n=0; n<4; n++) {
         if (bitRead(code, n)) {
@@ -321,4 +322,29 @@ void blinkCode(Adafruit_NeoPixel &strip, byte code, uint32_t color) {
         dash = !dash;
     }
     delay(MESSAGE_INTERVAL);
+}
+
+
+// =========================
+// === LOGGING FUNCTIONS ===
+// =========================
+
+
+long logButtonStartTime = 0;
+bool logButtonPressed = false;
+bool isLogging = false;
+
+void IRAM_ATTR  logButtonISR() {
+    if (digitalRead(LOG_EN)) {             // Button is Pressed
+        logButtonPressed = true;            // Set the log button pressed flag
+        logButtonStartTime = millis();      // Start the log button hold timer
+        Serial.println("Button pressed!");    // DEBUG
+        Serial.printf("logButtonPressed: %s\n", logButtonPressed ? "true" : "false"); // DEBUG
+        Serial.printf("logButtonStartTime: %d\n\n", logButtonStartTime); // DEBUG
+    }
+    else {
+        logButtonPressed = false;           // reset the log button pressed flag
+        Serial.println("Button released!");   // DEBUG
+        Serial.printf("logButtonPressed: %s\n\n", logButtonPressed ? "true" : "false"); // DEBUG
+    }
 }

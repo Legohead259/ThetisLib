@@ -25,9 +25,12 @@ bool initBNO055(Adafruit_BNO055 &imu, Stream &out);
 
 #include <Adafruit_LSM6DSO32.h>
 
-bool initLSM6DSO32(Adafruit_LSM6DSO32 imu, Stream &out, 
+extern Adafruit_LSM6DSO32 DSO32_IMU;
+
+bool initLSM6DSO32( Adafruit_LSM6DSO32 &imu=DSO32_IMU, 
+                    Stream &out=DEBUG_SERIAL_PORT, 
                     lsm6dso32_accel_range_t accelRange=LSM6DSO32_ACCEL_RANGE_8_G, 
-                    lsm6ds_gyro_range_t gyroRange=LSM6DS_GYRO_RANGE_2000_DPS,
+                    lsm6ds_gyro_range_t gyroRange=LSM6DS_GYRO_RANGE_250_DPS,
                     lsm6ds_data_rate_t dataRate=LSM6DS_RATE_52_HZ);
 
 
@@ -65,7 +68,7 @@ extern MicroNMEA nmea;
 extern bool ledState;
 extern volatile bool ppsTriggered;
 
-bool initGPS(HardwareSerial &GPS, Stream &out);
+bool initGPS(HardwareSerial &GPS=GPS_SERIAL_PORT, Stream &out=DEBUG_SERIAL_PORT);
 
 
 // ==========================
@@ -148,6 +151,21 @@ void initNeoPixel(Adafruit_NeoPixel &strip=pixel, Stream &out=Serial);
 void pulseLED(uint32_t color, Adafruit_NeoPixel &strip=pixel);
 void rainbow(Adafruit_NeoPixel &strip=pixel);
 uint32_t Wheel(byte wheelPos);
-void blinkCode(ErrorCode_t code, uint32_t color, Adafruit_NeoPixel &strip=pixel);
+void blinkCode(ErrorCode_t code, uint32_t color=RED, Adafruit_NeoPixel &strip=pixel);
+
+
+// =========================
+// === LOGGING FUNCTIONS ===
+// =========================
+
+
+#define LOG_PRESS_TIME 1000 // ms
+
+extern long logButtonStartTime;
+// extern long logButtonPresses;
+extern bool logButtonPressed;
+extern bool isLogging;
+
+void IRAM_ATTR logButtonISR();
 
 #endif
