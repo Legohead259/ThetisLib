@@ -54,9 +54,9 @@ bool initLSM6DSO32( Adafruit_LSM6DSO32 &imu,
 // ==============================
 
 
-bool initFS(fs::FS &fs, Stream &out) {
+bool initSDCard(Stream &out) {
     out.print("Initializing filesystem...");
-    bool _success = fs.begin();
+    bool _success = SD.begin();
     _success ? out.println("done!") : out.println("Failed to initialized filesystem");
     return _success;
 }
@@ -229,7 +229,9 @@ bool initGPS(HardwareSerial &gps, Stream &out) {
         out.println("Failed to initialize GPS"); // DEBUG
         return false;
     }
+    delay(10);
     MicroNMEA::sendSentence(gps, "$PMTK251,38400");         // Set GPS baudrate to 38400
+    delay(10);
     gps.begin(38400);
     MicroNMEA::sendSentence(gps, "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0"); // Enable NMEA RMC and GGA sentences
     MicroNMEA::sendSentence(gps, "$PMTK220,100");           // Set GPS update rate to 100 ms (10 Hz)
@@ -338,13 +340,13 @@ void IRAM_ATTR  logButtonISR() {
     if (digitalRead(LOG_EN)) {             // Button is Pressed
         logButtonPressed = true;            // Set the log button pressed flag
         logButtonStartTime = millis();      // Start the log button hold timer
-        Serial.println("Button pressed!");    // DEBUG
-        Serial.printf("logButtonPressed: %s\n", logButtonPressed ? "true" : "false"); // DEBUG
-        Serial.printf("logButtonStartTime: %d\n\n", logButtonStartTime); // DEBUG
+        // Serial.println("Button pressed!");    // DEBUG
+        // Serial.printf("logButtonPressed: %s\n", logButtonPressed ? "true" : "false"); // DEBUG
+        // Serial.printf("logButtonStartTime: %d\n\n", logButtonStartTime); // DEBUG
     }
     else {
         logButtonPressed = false;           // reset the log button pressed flag
-        Serial.println("Button released!");   // DEBUG
-        Serial.printf("logButtonPressed: %s\n\n", logButtonPressed ? "true" : "false"); // DEBUG
+        // Serial.println("Button released!");   // DEBUG
+        // Serial.printf("logButtonPressed: %s\n\n", logButtonPressed ? "true" : "false"); // DEBUG
     }
 }
