@@ -47,7 +47,6 @@ struct Telemetry {
     uint8_t state;              // State reported by the package.
     uint8_t packetSize;         // The size of the telemetry packet. Used as a debug tool for ground station/thetis comms.
 };
-Telemetry data;
 
 
 // ========================
@@ -78,6 +77,10 @@ bool initLSM6DSO32( Adafruit_LSM6DSO32 &imu=DSO32_IMU,
                     lsm6ds_gyro_range_t gyroRange=LSM6DS_GYRO_RANGE_250_DPS,
                     lsm6ds_data_rate_t dataRate=LSM6DS_RATE_52_HZ);
 
+void pollLSM6DSO32( Telemetry &data,
+                    Adafruit_LSM6DSO32 &imu=DSO32_IMU,
+                    Stream &out=DEBUG_SERIAL_PORT);
+
 
 // ==============================
 // === FILE SYSTEMS FUNCTIONS ===
@@ -88,16 +91,18 @@ bool initLSM6DSO32( Adafruit_LSM6DSO32 &imu=DSO32_IMU,
 #include <SD.h>
 #include <SPI.h>
 
-bool initSDCard(Stream &out=Serial);
-void listDir(fs::FS &fs, const char * dirname, uint8_t levels, Stream &out=Serial);
-bool createDir(fs::FS &fs, const char * path, Stream &out=Serial);
-bool removeDir(fs::FS &fs, const char * path, Stream &out=Serial);
-bool readFile(fs::FS &fs, const char * path, Stream &out=Serial);
-bool writeFile(fs::FS &fs, const char * path, const char * message, Stream &out=Serial);
-bool appendFile(fs::FS &fs, const char * path, const char * message, Stream &out=Serial);
-bool renameFile(fs::FS &fs, const char * path1, const char * path2, Stream &out=Serial);
-bool deleteFile(fs::FS &fs, const char * path, Stream &out=Serial);
-void testFileIO(fs::FS &fs, const char * path, Stream &out=Serial);
+bool initSDCard(Stream &out=DEBUG_SERIAL_PORT);
+void listDir(fs::FS &fs, const char * dirname, uint8_t levels, Stream &out=DEBUG_SERIAL_PORT);
+bool createDir(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
+bool removeDir(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
+bool readFile(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
+bool writeFile(fs::FS &fs, const char * path, const char * message, Stream &out=DEBUG_SERIAL_PORT);
+bool appendFile(fs::FS &fs, const char * path, const char * message, Stream &out=DEBUG_SERIAL_PORT);
+bool renameFile(fs::FS &fs, const char * path1, const char * path2, Stream &out=DEBUG_SERIAL_PORT);
+bool deleteFile(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
+void testFileIO(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
+bool initLogFile(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
+void writeTelemetryData(fs:FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
 
 
 // =====================

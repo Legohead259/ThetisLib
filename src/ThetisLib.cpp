@@ -209,6 +209,67 @@ void testFileIO(fs::FS &fs, const char * path, Stream &out) {
     file.close();
 }
 
+bool initLogFile(fs::FS &fs, const char * path, Stream &out) {
+    for (uint8_t x=0; x<255; x++) { // Initialize log file
+        sprintf(path, "/log_%03d.csv", x);
+        if (!fs.exists(path)) break; // If a new unique log file has been named, exit loop
+        if (x==254) return false; // If no unique log could be created, return an error
+    }
+    if (!fs.open(path)) return false; // If unable to open the new log file, return an error
+    Serial.printf("Logging to: %s", path);
+    return true;
+}
+
+bool writeTelemetryData(fs:FS &fs, const char * path, Stream &out) {
+    out.printf("Writing telemetry packet to: %s", path);
+    File _dataFile = fs.open(path, FILE_APPEND);
+    if (!_dataFile) {
+        out.printf("Could not write to %s", filename);
+        return false;
+    }
+
+    _dataFile.print(data.timestamp);
+    _dataFile.printf("%0.3f,", data.voltage);
+    _dataFile.printf("%d,", data.GPSFix);
+    _dataFile.printf("%d,", data.numSats);
+    _dataFile.printf("%d,", data.HDOP);
+    _dataFile.printf("%0.3f,", data.latitude / 1E6);
+    _dataFile.printf("%0.3f,", data.longitude / 1E6);
+    _dataFile.printf("%0.3f,", data.GPSSpeed / 1E3);
+    _dataFile.printf("%0.3f,", data.GPSCourse / 1E3);
+    _dataFile.printf("%d,", data.sysCal);
+    _dataFile.printf("%d,", data.gyroCal);
+    _dataFile.printf("%d,", data.accelCal);
+    _dataFile.printf("%d,", data.magCal);
+    _dataFile.printf("%0.3f,", data.accelX);
+    _dataFile.printf("%0.3f,", data.accelY);
+    _dataFile.printf("%0.3f,", data.accelZ);
+    _dataFile.printf("%0.3f,", data.magX);
+    _dataFile.printf("%0.3f,", data.magY);
+    _dataFile.printf("%0.3f,", data.magZ);
+    _dataFile.printf("%0.3f,", data.gyroX);
+    _dataFile.printf("%0.3f,", data.gyroY);
+    _dataFile.printf("%0.3f,", data.gyroZ);
+    _dataFile.printf("%0.3f,", data.roll);
+    _dataFile.printf("%0.3f,", data.pitch);
+    _dataFile.printf("%0.3f,", data.yaw);
+    _dataFile.printf("%0.3f,", data.linAccelX);
+    _dataFile.printf("%0.3f,", data.linAccelY);
+    _dataFile.printf("%0.3f,", data.linAccelZ);
+    _dataFile.printf("%0.3f,", data.quatW);
+    _dataFile.printf("%0.3f,", data.quatX);
+    _dataFile.printf("%0.3f,", data.quatY);
+    _dataFile.printf("%0.3f,", data.quatZ);
+    _dataFile.printf("%0.3f,", data.imuTemp);
+    _dataFile.printf("%d,", data.state);
+    _dataFile.print(data.packetSize);
+    _dataFile.println();
+    _dataFile.close();
+
+    out.printf("Wrote to: %s\n\r", filename);
+    return true;
+}
+
 
 // ============================
 // === GPS MODULE FUNCTIONS ===
