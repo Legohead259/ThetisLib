@@ -1,6 +1,11 @@
 #include <ThetisLib.h>
 
 
+// =========================
+// === GENERAL FUNCTIONS ===
+// =========================
+
+
 // ========================
 // === BNO055 FUNCTIONS ===
 // ========================
@@ -27,6 +32,8 @@ bool initBNO055(Adafruit_BNO055 &imu, Stream &out) {
 
 
 Adafruit_LSM6DSO32 DSO32_IMU;
+double accelSampleFreq; // Accelerometer sampling frequency
+double gyroSampleFreq; // Gyroscope sampling frequency
 
 bool initLSM6DSO32( Adafruit_LSM6DSO32 &imu, 
                     Stream &out, 
@@ -43,11 +50,86 @@ bool initLSM6DSO32( Adafruit_LSM6DSO32 &imu,
         imu.setGyroRange(gyroRange);
         imu.setAccelDataRate(dataRate);
         imu.setGyroDataRate(dataRate);
+        // setSampleFrequency(dataRate, accelSampleFreq);
+        // setSampleFrequency(dataRate, gyroSampleFreq);
         out.println("done!");
         return true;
     }
 }
 
+// private void setSampleFrequency(lsm6ds_data_rate_t dataRate, double *f) {
+//     switch (accelDataRate) {
+//         case LSM6DS_RATE_SHUTDOWN:
+//             f = 0;
+//             break;
+//         case LSM6DS_RATE_12_5_HZ:
+//             f = 12.5;
+//             break;
+//         case LSM6DS_RATE_26_HZ:
+//             f = 26;
+//             break;
+//         case LSM6DS_RATE_52_HZ:
+//             f = 52;
+//             break;
+//         case LSM6DS_RATE_104_HZ:
+//             f = 104;
+//             break;
+//         case LSM6DS_RATE_208_HZ:
+//             f = 208;
+//             break;
+//         case LSM6DS_RATE_416_HZ:
+//             f = 416;
+//             break;
+//         case LSM6DS_RATE_833_HZ:
+//             f = 833;
+//             break;
+//         case LSM6DS_RATE_1_66K_HZ:
+//             f = 1660;
+//             break;
+//         case LSM6DS_RATE_3_33K_HZ:
+//             f = 3330;
+//             break;
+//         case LSM6DS_RATE_6_66K_HZ:
+//             f = 6660;
+//             break;
+//     }
+// }
+
+// void pollLSM6DSO32( telemetry_t &data,
+//                     Adafruit_LSM6DSO32 &imu,
+//                     Stream &out) {
+//     sensors_event_t accel;
+//     sensors_event_t temp;
+//     imu.fillAccelEvent(accel, millis());
+//     imu.fillTempEvent(temp, millis());
+
+//     sensors_vec_t linAccel;
+//     calcLinAccel(linAccel, accel.acceleration);
+
+//     // Update data packet
+//     data.accelX = accel.acceleration.x;
+//     data.accelX = accel.acceleration.y;
+//     data.accelX = accel.acceleration.z;
+//     data.linAccelX = linAccel.x;
+//     data.linAccelY = linAccel.y;
+//     data.linAccelZ = linAccel.z;    
+// }
+
+// void calcLinAccel(sensors_vec_t &linAccel, sensors_vec_t &accel, uint8_t n, double fc, double fs) {
+//     double fn = 2 * fc / fs; // Normalized cut-off frequency
+//     auto filter = butterworth<n>(fn); // Create a Butterworth filter of nth-order with a normalized cutoff frequency
+    
+//     // Calculate the gravity vector from the low-pass Butterworth filter
+//     sensors_vec_t gravity;
+//     gravity.x = filter(accel.x);
+//     gravity.y = filter(accel.y);
+//     gravity.z = filter(accel.z);
+
+//     // Calculate the linear acceleration by removing the gravity signal
+//     linAccel.x = accel.x - gravity.x;
+//     linAccel.y = accel.y - gravity.y;
+//     linAccel.z = accel.z - gravity.z;
+// }
 
 // ==============================
 // === FILE SYSTEMS FUNCTIONS ===
@@ -209,7 +291,7 @@ void testFileIO(fs::FS &fs, const char * path, Stream &out) {
     file.close();
 }
 
-bool initLogFile(fs::FS &fs, const char * path, Stream &out) {
+bool initLogFile(fs::FS &fs, char * path, Stream &out) {
     for (uint8_t x=0; x<255; x++) { // Initialize log file
         sprintf(path, "/log_%03d.csv", x);
         if (!fs.exists(path)) break; // If a new unique log file has been named, exit loop
@@ -220,11 +302,11 @@ bool initLogFile(fs::FS &fs, const char * path, Stream &out) {
     return true;
 }
 
-bool writeTelemetryData(fs:FS &fs, const char * path, Stream &out) {
+bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream &out) {
     out.printf("Writing telemetry packet to: %s", path);
     File _dataFile = fs.open(path, FILE_APPEND);
     if (!_dataFile) {
-        out.printf("Could not write to %s", filename);
+        out.printf("Could not write to %s", path);
         return false;
     }
 
@@ -266,7 +348,7 @@ bool writeTelemetryData(fs:FS &fs, const char * path, Stream &out) {
     _dataFile.println();
     _dataFile.close();
 
-    out.printf("Wrote to: %s\n\r", filename);
+    out.printf("Wrote to: %s\n\r", path);
     return true;
 }
 
