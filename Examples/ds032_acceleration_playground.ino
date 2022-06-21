@@ -118,7 +118,6 @@ void calcLinAccel(sensors_vec_t &linAccel, sensors_vec_t &accel, double fc, doub
     // Graviational acceleration in NED coordinate system
     imu::Vector<3> gravGlobal = {0, 0, 9.81};
 
-    float qComponents[4];
     Qb = filter.getQuaternion();
     // imu::Vector<3> gravBody = Qb.rotateVector(gravGlobal);
     imu::Quaternion gravBody = Qb.invert() * imu::Quaternion(0, gravGlobal) * Qb;

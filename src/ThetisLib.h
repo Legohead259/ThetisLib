@@ -4,11 +4,6 @@
 
 #include <Arduino.h>
 
-#include <filters/ButterworthBP2.h>
-#include <filters/Kalman.h>
-#include <AHRS/MahonyAHRS.h>
-#include <utility/imumaths.h>
-
 typedef struct {
     char timestamp[32];         // Timestamp in UTC obtained from GPS satellites
     float voltage;              // Battery voltage in V
@@ -51,37 +46,9 @@ typedef struct {
 
 bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream &out=DEBUG_SERIAL_PORT);
 
+#include <sensors/Thetis_BNO055.h>
 
-// ========================
-// === BNO055 FUNCTIONS ===
-// ========================
-
-
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
-#include <Wire.h>
-
-bool initBNO055(Adafruit_BNO055 &imu, Stream &out);
-
-
-// ===========================
-// === LSM6DSO32 FUNCTIONS ===
-// ===========================
-
-
-#include <Adafruit_LSM6DSO32.h>
-
-extern Adafruit_LSM6DSO32 DSO32_IMU;
-
-bool initLSM6DSO32( Adafruit_LSM6DSO32 &imu=DSO32_IMU, 
-                    Stream &out=DEBUG_SERIAL_PORT, 
-                    lsm6dso32_accel_range_t accelRange=LSM6DSO32_ACCEL_RANGE_8_G, 
-                    lsm6ds_gyro_range_t gyroRange=LSM6DS_GYRO_RANGE_250_DPS,
-                    lsm6ds_data_rate_t dataRate=LSM6DS_RATE_52_HZ);
-double setSampleFrequency(lsm6ds_data_rate_t dataRate);
-void pollLSM6DSO32(telemetry_t &data, Adafruit_LSM6DSO32 &imu=DSO32_IMU, Stream &out=DEBUG_SERIAL_PORT);
-// void calcLinAccel(sensors_vec_t &linAccel, sensors_vec_t &accel, uint8_t n=6, double fc=1, double fs=accelSampleFreq);
+#include <sensors/Thetis_LSM6DSO32.h> 
 
 // =====================
 // === GPS FUNCTIONS ===
