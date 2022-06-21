@@ -24,13 +24,6 @@
 #include "MahonyAHRS.h"
 #include <math.h>
 
-//-------------------------------------------------------------------------------------------
-// Definitions
-
-#define DEFAULT_SAMPLE_FREQ	512.0f	// sample frequency in Hz
-#define twoKpDef	(2.0f * 1.0f)	// 2 * proportional gain
-#define twoKiDef	(2.0f * 0.3f)	// 2 * integral gain
-
 
 //============================================================================================
 // Functions
@@ -38,23 +31,22 @@
 //-------------------------------------------------------------------------------------------
 // AHRS algorithm update
 
-Mahony::Mahony()
-{
-	twoKp = twoKpDef;	// 2 * proportional gain (Kp)
-	twoKi = twoKiDef;	// 2 * integral gain (Ki)
+Mahony::Mahony(float sampleFreq, float Kp, float Ki) {
+	twoKp = 2.0 * Kp;	// 2 * proportional gain (Kp)
+	twoKi = 2.0 * Ki;	// 2 * integral gain (Ki)
 	q0 = 1.0f;
 	q1 = 0.0f;
 	q2 = 0.0f;
 	q3 = 0.0f;
+	Q = imu::Quaternion(q0, q1, q2, q3);
 	integralFBx = 0.0f;
 	integralFBy = 0.0f;
 	integralFBz = 0.0f;
 	anglesComputed = 0;
-	invSampleFreq = 1.0f / DEFAULT_SAMPLE_FREQ;
+	invSampleFreq = 1.0f / sampleFreq;
 }
 
-void Mahony::update(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz)
-{
+void Mahony::update(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz) {
 	float recipNorm;
 	float q0q0, q0q1, q0q2, q0q3, q1q1, q1q2, q1q3, q2q2, q2q3, q3q3;
 	float hx, hy, bx, bz;

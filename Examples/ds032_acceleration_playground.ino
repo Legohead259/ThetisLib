@@ -1,18 +1,11 @@
 #include <ThetisLib.h>
-#include <utility/imumaths.h>
-#include <filters/ButterworthBP2.h>
 
-#include <Kalman.h>
-
-#define RESTRICT_PITCH // Comment out to restrict roll to ±90deg instead
 Kalman kalmanX;
 Kalman kalmanY;
 Kalman kalmanZ;
 uint32_t timer;
 
-#include <MahonyAHRS.h>
-
-Mahony filter;
+Mahony filter(52); // Instantiate a Mahony filter with a sample frequency of 52 Hz
 
 imu::Quaternion Qb;
 
@@ -43,8 +36,6 @@ void setup() {
     Serial.println("        Project Thetis Accelerometer Tests       ");
     Serial.println("-------------------------------------------------");
     Serial.println();
-
-    filter.begin(52); // Initialize the Mahony filter at a sampling rate of 52 Hz
 
     // IMU Initialization
     isDSO32Available = initLSM6DSO32();
@@ -81,26 +72,6 @@ void loop() {
                      accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
     Serial.printf("Roll: %0.3f \t\t Pitch: %0.3f \t\t Yaw: %0.3f deg\n\r", filter.getRoll(), filter.getPitch(), filter.getYaw());
     // Serial.println();
-
-    // Graviational acceleration in NED coordinate system
-    imu::Vector<3> gravGlobal = {0, 0, 9.81};
-
-    float qComponents[4];
-    filter.getQuaternion(qComponents);
-    // Body orientation as a quaternion
-    Qb = imu::Quaternion(qComponents[0],  // w
-                    qComponents[1],  // x
-                    qComponents[2],  // y
-                    qComponents[3]); // z
-    // imu::Vector<3> gravBody = Qb.rotateVector(gravGlobal);
-    imu::Quaternion gravBody = Qb.invert() * imu::Quaternion(0, gravGlobal) * Qb;
-    // Serial.printf("X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", gravBody.x(), gravBody.y(), gravBody.z());
-
-    float linAccelX = accel.acceleration.x - gravBody.x();
-    float linAccelY = accel.acceleration.y - gravBody.y();
-    float linAccelZ = accel.acceleration.z - gravBody.z();
-
-    Serial.printf("X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", linAccelX, linAccelY, linAccelZ);
 
     Serial.println();
 
@@ -144,27 +115,20 @@ void pollDSO32() {
 }
 
 void calcLinAccel(sensors_vec_t &linAccel, sensors_vec_t &accel, double fc, double fs) {
-    const double fn = 2 * fc / fs; // Normalized cut-off frequency
-    ButterworthBP2 filter;
-    
-    // Calculate the gravity vector from the low-pass Butterworth filter
-    sensors_vec_t gravity;
-    gravity.x = filter.step(accel.x);
-    gravity.y = filter.step(accel.y);
-    gravity.z = filter.step(accel.z);
+    // Graviational acceleration in NED coordinate system
+    imu::Vector<3> gravGlobal = {0, 0, 9.81};
 
-    // Calculate the linear acceleration by removing the gravity signal
-    linAccel.x = accel.x - gravity.x;
-    linAccel.y = accel.y - gravity.y;
-    linAccel.z = accel.z - gravity.z;
+    float qComponents[4];
+    Qb = filter.getQuaternion();
+    // imu::Vector<3> gravBody = Qb.rotateVector(gravGlobal);
+    imu::Quaternion gravBody = Qb.invert() * imu::Quaternion(0, gravGlobal) * Qb;
+    // Serial.printf("X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", gravBody.x(), gravBody.y(), gravBody.z());
 
-    // Add calculations to data packet
-    // data.linAccelX = linAccel.x;
-    // data.linAccelY = linAccel.y;
-    // data.linAccelZ = linAccel.z;
+    float linAccelX = accel.x - gravBody.x();
+    float linAccelY = accel.y - gravBody.y();
+    float linAccelZ = accel.z - gravBody.z();
 
-    // DEBUG statements
-    Serial.printf("X: %0.3f \tY: %0.3f \tZ: %0.3f m/s/s\n\r", linAccel.x, linAccel.y, linAccel.z);
+    Serial.printf("X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", linAccelX, linAccelY, linAccelZ);
 }
 
 

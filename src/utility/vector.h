@@ -169,6 +169,14 @@ public:
   double y() const { return p_vec[1]; }
   double z() const { return p_vec[2]; }
 
+  double &roll()  { return p_vec[0]; }
+  double &pitch() { return p_vec[1]; }
+  double &yaw()   { return p_vec[2]; }
+  double roll() const { return p_vec[0]; }
+  double pitch() const { return p_vec[1]; }
+  double yaw() const{ return p_vec[2]; }
+
+
 private:
   double p_vec[N];
 };
