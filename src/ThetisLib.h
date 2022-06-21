@@ -4,6 +4,11 @@
 
 #include <Arduino.h>
 
+#include <filters/ButterworthBP2.h>
+#include <filters/Kalman.h>
+#include <AHRS/MahonyAHRS.h>
+#include <utility/imumaths.h>
+
 
 // =========================
 // === GENERAL FUNCTIONS ===
