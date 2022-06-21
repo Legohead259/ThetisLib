@@ -9,12 +9,6 @@
 #include <AHRS/MahonyAHRS.h>
 #include <utility/imumaths.h>
 
-
-// =========================
-// === GENERAL FUNCTIONS ===
-// =========================
-
-
 typedef struct {
     char timestamp[32];         // Timestamp in UTC obtained from GPS satellites
     float voltage;              // Battery voltage in V
@@ -50,8 +44,12 @@ typedef struct {
     float quatZ;                //
     float imuTemp;              // °Celsius from the IMU
     uint8_t state;              // State reported by the package.
-    uint8_t packetSize;         // The size of the telemetry packet. Used as a debug tool for ground station/thetis comms.
+    uint8_t packetSize;         // The size of the telemetry packet
 } telemetry_t;
+
+#include <filesystem/ThetisFS.h>
+
+bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream &out=DEBUG_SERIAL_PORT);
 
 
 // ========================
@@ -75,44 +73,15 @@ bool initBNO055(Adafruit_BNO055 &imu, Stream &out);
 #include <Adafruit_LSM6DSO32.h>
 
 extern Adafruit_LSM6DSO32 DSO32_IMU;
-extern double accelSampleFreq;
-extern double gyroSampleFreq;
 
 bool initLSM6DSO32( Adafruit_LSM6DSO32 &imu=DSO32_IMU, 
                     Stream &out=DEBUG_SERIAL_PORT, 
                     lsm6dso32_accel_range_t accelRange=LSM6DSO32_ACCEL_RANGE_8_G, 
                     lsm6ds_gyro_range_t gyroRange=LSM6DS_GYRO_RANGE_250_DPS,
                     lsm6ds_data_rate_t dataRate=LSM6DS_RATE_52_HZ);
-// private void setSampleFrequency(lsm6ds_data_rate_t dataRate, double *f);
-// void pollLSM6DSO32( telemetry_t &data=data,
-//                     Adafruit_LSM6DSO32 &imu=DSO32_IMU,
-//                     Stream &out=DEBUG_SERIAL_PORT);
+double setSampleFrequency(lsm6ds_data_rate_t dataRate);
+void pollLSM6DSO32(telemetry_t &data, Adafruit_LSM6DSO32 &imu=DSO32_IMU, Stream &out=DEBUG_SERIAL_PORT);
 // void calcLinAccel(sensors_vec_t &linAccel, sensors_vec_t &accel, uint8_t n=6, double fc=1, double fs=accelSampleFreq);
-
-
-
-// ==============================
-// === FILE SYSTEMS FUNCTIONS ===
-// ==============================
-
-
-#include "FS.h"
-#include <SD.h>
-#include <SPI.h>
-
-bool initSDCard(Stream &out=DEBUG_SERIAL_PORT);
-void listDir(fs::FS &fs, const char * dirname, uint8_t levels, Stream &out=DEBUG_SERIAL_PORT);
-bool createDir(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
-bool removeDir(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
-bool readFile(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
-bool writeFile(fs::FS &fs, const char * path, const char * message, Stream &out=DEBUG_SERIAL_PORT);
-bool appendFile(fs::FS &fs, const char * path, const char * message, Stream &out=DEBUG_SERIAL_PORT);
-bool renameFile(fs::FS &fs, const char * path1, const char * path2, Stream &out=DEBUG_SERIAL_PORT);
-bool deleteFile(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
-void testFileIO(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
-bool initLogFile(fs::FS &fs, char * path, Stream &out=DEBUG_SERIAL_PORT);
-bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream &out=DEBUG_SERIAL_PORT);
-
 
 // =====================
 // === GPS FUNCTIONS ===

@@ -10,13 +10,13 @@ Mahony filter(52); // Instantiate a Mahony filter with a sample frequency of 52 
 imu::Quaternion Qb;
 
 telemetry_t data;
-sensors_event_t accel;
-sensors_event_t gyro;
-sensors_event_t temp;
-sensors_vec_t accelAngle;
-sensors_vec_t ufAngle;
-sensors_vec_t cfAngle;
-sensors_vec_t kfAngle;
+// sensors_event_t accel;
+// sensors_event_t gyro;
+// sensors_event_t temp;
+// sensors_vec_t accelAngle;
+// sensors_vec_t ufAngle;
+// sensors_vec_t cfAngle;
+// sensors_vec_t kfAngle;
 
 bool isDSO32Available = false;
 // const double f_c = 1; // Hz - cutoff frequency
