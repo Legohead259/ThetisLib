@@ -57,48 +57,6 @@ bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream
 }
 
 
-// ============================
-// === GPS MODULE FUNCTIONS ===
-// ============================
-
-
-HardwareSerial& GPS = GPS_SERIAL_PORT;
-char nmeaBuffer[100];
-MicroNMEA nmea(nmeaBuffer, sizeof(nmeaBuffer));
-bool ledState = LOW;
-volatile bool ppsTriggered = false;
-
-bool initGPS(HardwareSerial &gps, Stream &out) {
-    out.print("Initializing GPS..."); // DEBUG
-    gps.begin(9600); // Begin talking with GPS at default 9600 baud.
-    // TODO: Automatically determine GPS initial baudrate
-    if (!gps) {
-        out.println("Failed to initialize GPS"); // DEBUG
-        return false;
-    }
-    delay(10);
-    MicroNMEA::sendSentence(gps, "$PMTK251,38400");         // Set GPS baudrate to 38400
-    delay(10);
-    gps.begin(38400);
-    MicroNMEA::sendSentence(gps, "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0"); // Enable NMEA RMC and GGA sentences
-    MicroNMEA::sendSentence(gps, "$PMTK220,100");           // Set GPS update rate to 100 ms (10 Hz)
-
-    // TODO: implement a check for good GPS data
-    out.println("done!"); // DEBUG
-    return true;
-}
-
-void ppsHandler(void) {
-    ppsTriggered = true;
-}
-
-void printUnknownSentence(MicroNMEA &nmea, Stream &out) {
-    out.println();
-	out.print("Unknown sentence: ");
-	out.println(nmea.getSentence());
-}
-
-
 // ==========================
 // === NEOPIXEL FUNCTIONS ===
 // ==========================

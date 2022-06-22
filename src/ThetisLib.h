@@ -50,20 +50,7 @@ bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream
 
 #include <sensors/Thetis_LSM6DSO32.h> 
 
-// =====================
-// === GPS FUNCTIONS ===
-// =====================
-
-
-#include <MicroNMEA.h>
-
-extern HardwareSerial& GPS;
-extern char nmeaBuffer[100];
-extern MicroNMEA nmea;
-extern bool ledState;
-extern volatile bool ppsTriggered;
-
-bool initGPS(HardwareSerial &GPS=GPS_SERIAL_PORT, Stream &out=DEBUG_SERIAL_PORT);
+#include <sensors/Thetis_GPS.h>
 
 
 // ==========================
