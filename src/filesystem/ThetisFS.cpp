@@ -161,7 +161,7 @@ bool initLogFile(fs::FS &fs, char * path, Stream &out) {
         if (!fs.exists(path)) break; // If a new unique log file has been named, exit loop
         if (x==254) return false; // If no unique log could be created, return an error
     }
-    if (!fs.open(path)) return false; // If unable to open the new log file, return an error
+    if (!fs.open(path, FILE_WRITE)) return false; // If unable to open the new log file, return an error
     Serial.printf("Logging to: %s", path);
     return true;
 }
