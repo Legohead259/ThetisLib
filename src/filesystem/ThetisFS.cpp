@@ -155,13 +155,16 @@ void testFileIO(fs::FS &fs, const char * path, Stream &out) {
     file.close();
 }
 
-bool initLogFile(fs::FS &fs, char * path, Stream &out) {
+bool initLogFile(fs::FS &fs, char * path, char * header, Stream &out) {
     for (uint8_t x=0; x<255; x++) { // Initialize log file
         sprintf(path, "/log_%03d.csv", x);
         if (!fs.exists(path)) break; // If a new unique log file has been named, exit loop
         if (x==254) return false; // If no unique log could be created, return an error
     }
     if (!fs.open(path, FILE_WRITE)) return false; // If unable to open the new log file, return an error
-    Serial.printf("Logging to: %s", path);
+    out.printf("Logging to: %s", path);
+
+    // Write header for the log file
+    writeFile(fs, path, header);
     return true;
 }
