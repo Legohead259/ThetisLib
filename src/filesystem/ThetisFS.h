@@ -14,4 +14,4 @@ bool appendFile(fs::FS &fs, const char * path, const char * message, Stream &out
 bool renameFile(fs::FS &fs, const char * path1, const char * path2, Stream &out=DEBUG_SERIAL_PORT);
 bool deleteFile(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
 void testFileIO(fs::FS &fs, const char * path, Stream &out=DEBUG_SERIAL_PORT);
-bool initLogFile(fs::FS &fs, char * path, Stream &out=DEBUG_SERIAL_PORT);
+bool initLogFile(fs::FS &fs, char * path, char * header, Stream &out=DEBUG_SERIAL_PORT);
