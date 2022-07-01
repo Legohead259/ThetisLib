@@ -15,8 +15,8 @@ bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream
     }
 
     char _timestamp[32];
-    getISO8601Time_RTC(now(), tm, _timestamp);
-    _dataFile.print();
+    getISO8601Time_RTC(_timestamp);
+    _dataFile.print(_timestamp);
     _dataFile.printf("%0.3f,", data.voltage);
     _dataFile.printf("%d,", data.GPSFix);
     _dataFile.printf("%d,", data.numSats);
@@ -58,8 +58,10 @@ bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream
     return true;
 }
 
-void getISO8601Time_RTC(time_t now, tmElements_t &tm, char *buf) {
-    breakTime(now, tm);
+tmElements_t tm;
+
+void getISO8601Time_RTC(char *buf) {
+    breakTime(now(), tm);
     static long _lastSecond = 0;
     static long _lastMSecond = 0;
     long curMSecond = millis();
@@ -84,7 +86,6 @@ void getISO8601Time_RTC(time_t now, tmElements_t &tm, char *buf) {
 
 long logButtonStartTime = 0;
 bool logButtonPressed = false;
-bool isLogging = false;
 
 void IRAM_ATTR logButtonISR() {
     if (digitalRead(LOG_EN)) {             // Button is Pressed
