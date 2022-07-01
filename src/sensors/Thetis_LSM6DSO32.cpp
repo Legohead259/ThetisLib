@@ -63,9 +63,9 @@ void pollDSO32(Stream &out) {
     gyro.gyro.z *= RAD_TO_DEG;
 
     // Debug print statements
-    out.printf("Accel X: %0.3f \tY: %0.3f \tZ: %0.3f m/s/s\n\r", accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
-    out.printf(" Gyro X: %0.3f \tY: %0.3f \tZ: %0.3f rad/s\n\r", gyro.gyro.x, gyro.gyro.y, gyro.gyro.z);
-    out.printf("Temperature: %0.3f °C\n\n\r", temp.temperature);
+    // out.printf("Accel X: %0.3f \tY: %0.3f \tZ: %0.3f m/s/s\n\r", accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
+    // out.printf(" Gyro X: %0.3f \tY: %0.3f \tZ: %0.3f rad/s\n\r", gyro.gyro.x, gyro.gyro.y, gyro.gyro.z);
+    // out.printf("Temperature: %0.3f °C\n\n\r", temp.temperature);
 
     // Serial plotter print statements
     // Serial.printf("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n\r",data.accelX, data.accelY, data.accelZ, 
@@ -86,7 +86,7 @@ sensors_vec_t calcLinAccel(Stream &out) {
     linAccel.z = accel.acceleration.z - gravBody.z();
 
     // DEBUG statement
-    out.printf("X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", linAccel.x, linAccel.y, linAccel.z);
+    // out.printf("X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", linAccel.x, linAccel.y, linAccel.z);
 
     return linAccel;
 }
