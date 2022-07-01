@@ -85,19 +85,22 @@ void getISO8601Time_RTC(char *buf) {
 
 
 long logButtonStartTime = 0;
-bool logButtonPressed = false;
+// bool logButtonPressed = false;
+long logButtonPresses = 0;
 
 void IRAM_ATTR logButtonISR() {
-    if (digitalRead(LOG_EN)) {             // Button is Pressed
-        logButtonPressed = true;            // Set the log button pressed flag
-        logButtonStartTime = millis();      // Start the log button hold timer
-        // Serial.println("Button pressed!");    // DEBUG
-        // Serial.printf("logButtonPressed: %s\n", logButtonPressed ? "true" : "false"); // DEBUG
-        // Serial.printf("logButtonStartTime: %d\n\n", logButtonStartTime); // DEBUG
-    }
-    else {
-        logButtonPressed = false;           // reset the log button pressed flag
-        // Serial.println("Button released!");   // DEBUG
-        // Serial.printf("logButtonPressed: %s\n\n", logButtonPressed ? "true" : "false"); // DEBUG
-    }
+    // if (digitalRead(LOG_EN)) {             // Button is Pressed
+    //     logButtonPressed = true;            // Set the log button pressed flag
+    //     logButtonStartTime = millis();      // Start the log button hold timer
+    //     // Serial.println("Button pressed!");    // DEBUG
+    //     // Serial.printf("logButtonPressed: %s\n", logButtonPressed ? "true" : "false"); // DEBUG
+    //     // Serial.printf("logButtonStartTime: %d\n\n", logButtonStartTime); // DEBUG
+    // }
+    // else {
+    //     logButtonPressed = false;           // reset the log button pressed flag
+    //     // Serial.println("Button released!");   // DEBUG
+    //     // Serial.printf("logButtonPressed: %s\n\n", logButtonPressed ? "true" : "false"); // DEBUG
+    // }
+    logButtonPresses++;
+    logButtonStartTime = millis();
 }

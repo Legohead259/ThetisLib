@@ -63,9 +63,8 @@ void getISO8601Time_RTC(char *buf);
 
 #define LOG_BTN_HOLD_TIME 500 // ms
 
-extern long logButtonStartTime;
-// extern long logButtonPresses;
-extern bool logButtonPressed;
+extern long logButtonPresses;
+// extern bool logButtonPressed;
 extern bool isLogging;
 
 void IRAM_ATTR logButtonISR();
