@@ -15,7 +15,7 @@
 
 #include <Arduino.h>
 #include <FS.h>
-#include <Ethernet.h>
+// #include <Ethernet.h>
 
 class Config {
   private:
@@ -37,7 +37,7 @@ class Config {
     const char *getName();
     const char *getValue();
     int getIntValue();
-    IPAddress getIPAddress();
+    // IPAddress getIPAddress();
     bool getBooleanValue();
     char *copyValue();
 };
