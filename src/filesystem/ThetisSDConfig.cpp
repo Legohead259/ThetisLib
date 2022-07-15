@@ -16,7 +16,6 @@
  * NOTE: SD.begin() must be called before calling our begin().
  */
 bool SDConfig::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength) {
-  _filesystem = fs;
   _lineLength = 0;
   _lineSize = 0;
   _valueIndex = -1;
