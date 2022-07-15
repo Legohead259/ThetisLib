@@ -5,7 +5,7 @@
  * a version of which should have been supplied with this file.
  */
  
-#include <SDConfig.h>
+#include "ThetisSDConfig.h"
 
 /*
  * Opens the given file on the SD card.
