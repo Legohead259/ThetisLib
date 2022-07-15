@@ -8,8 +8,8 @@
  *   #define SDCONFIG_DEBUG 1 // to print file error messages.
  */
 
-#ifndef ThetisSDConfig_h
-#define ThetisSDConfig_h
+#ifndef ThetisConfig_h
+#define ThetisConfig_h
 
 // #define SDCONFIG_DEBUG // Enable debugging
 
@@ -17,7 +17,7 @@
 #include <FS.h>
 #include <Ethernet.h>
 
-class SDConfig {
+class Config {
   private:
     File _file;            // the open configuration file
     bool _atEnd;        // If true, there is no more of the file to read.

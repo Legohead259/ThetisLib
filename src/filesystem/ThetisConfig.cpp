@@ -5,7 +5,7 @@
  * a version of which should have been supplied with this file.
  */
  
-#include "ThetisSDConfig.h"
+#include "ThetisConfig.h"
 
 /*
  * Opens the given file on the SD card.
@@ -15,7 +15,7 @@
  *
  * NOTE: SD.begin() must be called before calling our begin().
  */
-bool SDConfig::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength) {
+bool Config::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength) {
   _lineLength = 0;
   _lineSize = 0;
   _valueIndex = -1;
@@ -27,7 +27,7 @@ bool SDConfig::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLeng
   _lineSize = maxLineLength + 1;
   _line = (char *) malloc(_lineSize);
   if (_line == 0) {
-#ifdef SDCONFIG_DEBUG
+#ifdef CONFIG_DEBUG
     Serial.println("out of memory");
 #endif
     _atEnd = true;
@@ -41,7 +41,7 @@ bool SDConfig::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLeng
    
   _file = fs.open(configFileName, FILE_READ);
   if (!_file) {
-#ifdef SDCONFIG_DEBUG
+#ifdef CONFIG_DEBUG
     Serial.print("Could not open SD file: ");
     Serial.println(configFileName);
 #endif
@@ -58,7 +58,7 @@ bool SDConfig::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLeng
 /*
  * Cleans up our SDCOnfigFile object.
  */
-void SDConfig::end() {
+void Config::end() {
   if (_file) {
     _file.close();
   }
@@ -75,7 +75,7 @@ void SDConfig::end() {
  * Returns true if the setting was successfully read,
  * false if an error occurred or end-of-file occurred.
  */
-bool SDConfig::readNextSetting() {
+bool Config::readNextSetting() {
   int bint;
   
   if (_atEnd) {
@@ -127,7 +127,7 @@ bool SDConfig::readNextSetting() {
   while (bint >= 0 && (char) bint != '\r' && (char) bint != '\n') {
     if (_lineLength >= _lineSize - 1) { // -1 for a terminating null.
       _line[_lineLength] = '\0';
-#ifdef SDCONFIG_DEBUG
+#ifdef CONFIG_DEBUG
       Serial.print("Line too long: ");
       Serial.println(_line);
 #endif
@@ -161,7 +161,7 @@ bool SDConfig::readNextSetting() {
    * It's OK to have a null value (nothing after the '=')
    */
   if (_valueIndex < 0) {
-#ifdef SDCONFIG_DEBUG
+#ifdef CONFIG_DEBUG
     Serial.print("Missing '=' in line: ");
     Serial.println(_line);
 #endif
@@ -169,7 +169,7 @@ bool SDConfig::readNextSetting() {
     return false;
   }
   if (_valueIndex == 1) {
-#ifdef SDCONFIG_DEBUG
+#ifdef CONFIG_DEBUG
     Serial.print("Missing Name in line: =");
     Serial.println(_line[_valueIndex]);
 #endif
@@ -186,7 +186,7 @@ bool SDConfig::readNextSetting() {
  * Returns true if the most-recently-read setting name
  * matches the given name, false otherwise.
  */
-bool SDConfig::nameIs(const char *name) {
+bool Config::nameIs(const char *name) {
   if (strcmp(name, _line) == 0) {
     return true;
   }
@@ -198,7 +198,7 @@ bool SDConfig::nameIs(const char *name) {
  * or null if an error occurred.
  * WARNING: calling this when an error has occurred can crash your sketch.
  */
-const char *SDConfig::getName() {
+const char *Config::getName() {
   if (_lineLength <= 0 || _valueIndex <= 1) {
     return 0;
   }
@@ -210,7 +210,7 @@ const char *SDConfig::getName() {
  * or null if there was an error.
  * WARNING: calling this when an error has occurred can crash your sketch.
  */
-const char *SDConfig::getValue() {
+const char *Config::getValue() {
   if (_lineLength <= 0 || _valueIndex <= 1) {
     return 0;
   }
@@ -224,7 +224,7 @@ const char *SDConfig::getValue() {
  * Unlike getValue(), the return value of this function
  * persists after readNextSetting() is called or end() is called.
  */
-char *SDConfig::copyValue() {
+char *Config::copyValue() {
   char *result = 0;
   int length;
 
@@ -247,7 +247,7 @@ char *SDConfig::copyValue() {
  * Returns the value part of the most-recently-read setting
  * as an integer, or 0 if an error occurred.
  */
-int SDConfig::getIntValue() {
+int Config::getIntValue() {
   const char *str = getValue();
   if (!str) {
     return 0;
@@ -255,7 +255,7 @@ int SDConfig::getIntValue() {
   return atoi(str);
 }
 
-IPAddress SDConfig::getIPAddress(){
+IPAddress Config::getIPAddress(){
   IPAddress ip(0,0,0,0);
   const char *str = getValue();
   int len = strlen(str);
@@ -281,7 +281,7 @@ IPAddress SDConfig::getIPAddress(){
  * The value "true" corresponds to true;
  * all other values correspond to false.
  */
-bool SDConfig::getBooleanValue() {
+bool Config::getBooleanValue() {
   if (strcmp("true", getValue()) == 0) {
     return true;
   }
