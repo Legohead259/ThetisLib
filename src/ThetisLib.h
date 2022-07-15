@@ -44,7 +44,7 @@ typedef struct {
 } telemetry_t;
 
 #include <filesystem/ThetisFS.h>
-#include <filesystem/ThetisSDConfig.h>
+#include <filesystem/ThetisConfig.h>
 
 #include<TimeLib.h>
 extern tmElements_t tm;
