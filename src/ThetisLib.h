@@ -47,7 +47,7 @@ typedef struct {
 #include <filesystem/ThetisConfig.h>
 
 #include<TimeLib.h>
-extern tmElements_t tm;
+extern tmElements_t timeElements;
 bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream &out=DEBUG_SERIAL_PORT);
 void getISO8601Time_RTC(char *buf);
 

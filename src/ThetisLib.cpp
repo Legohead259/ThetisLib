@@ -61,16 +61,16 @@ bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream
 tmElements_t tm;
 
 void getISO8601Time_RTC(char *buf) {
-    breakTime(now(), tm);
+    breakTime(now(), timeElements);
     static long _lastSecond = 0;
     static long _lastMSecond = 0;
     long curMSecond = millis();
-    if (tm.Second == _lastSecond) {
+    if (timeElements.Second == _lastSecond) {
         curMSecond = millis() - _lastMSecond;
         // Serial.println((int) curMSecond); //DEBUG
     }
     else {
-        _lastSecond = tm.Second;
+        _lastSecond = timeElements.Second;
         _lastMSecond = millis();
         curMSecond = 0;
     }
