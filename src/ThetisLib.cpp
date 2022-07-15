@@ -76,7 +76,7 @@ void getISO8601Time_RTC(char *buf) {
     }
 
     // Format timestamp into ISO8601 format
-    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", tm.Year+1970, tm.Month, tm.Day, tm.Hour, tm.Minute, tm.Second, curMSecond);
+    // sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", tm.Year+1970, tm.Month, tm.Day, tm.Hour, tm.Minute, tm.Second, curMSecond);
 }
 
 // =========================
