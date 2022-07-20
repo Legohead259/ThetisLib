@@ -16,58 +16,58 @@
  * NOTE: SD.begin() must be called before calling our begin().
  */
 bool Config::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength) {
-  _lineLength = 0;
-  _lineSize = 0;
-  _valueIndex = -1;
-  _atEnd = true;
+	_lineLength = 0;
+	_lineSize = 0;
+	_valueIndex = -1;
+	_atEnd = true;
 
-  /*
-   * Allocate a buffer for the current line.
-   */
-  _lineSize = maxLineLength + 1;
-  _line = (char *) malloc(_lineSize);
-  if (_line == 0) {
-#ifdef CONFIG_DEBUG
-    Serial.println("out of memory");
-#endif
-    _atEnd = true;
-    return false;
-  }
+	/*
+	* Allocate a buffer for the current line.
+	*/
+	_lineSize = maxLineLength + 1;
+	_line = (char *) malloc(_lineSize);
+  	if (_line == 0) {
+		#ifdef CONFIG_DEBUG
+		DEBUG_SERIAL.println("out of memory");
+		#endif
+		_atEnd = true;
+		return false;
+  	}
 
   /*
    * To avoid stale references to configFileName
    * we don't save it. To minimize memory use, we don't copy it.
    */
    
-  _file = fs.open(configFileName, FILE_READ);
-  if (!_file) {
-#ifdef CONFIG_DEBUG
-    Serial.print("Could not open SD file: ");
-    Serial.println(configFileName);
-#endif
-    _atEnd = true;
-    return false;
-  }
+  	_file = fs.open(configFileName, FILE_READ);
+  	if (!_file) {
+		#ifdef CONFIG_DEBUG
+		DEBUG_SERIAL.print("Could not open SD file: ");
+		DEBUG_SERIAL.println(configFileName);
+		#endif
+		_atEnd = true;
+		return false;
+  	}
   
-  // Initialize our reader
-  _atEnd = false;
-  
-  return true;
+	// Initialize our reader
+	_atEnd = false;
+	
+	return true;
 }
 
 /*
  * Cleans up our SDCOnfigFile object.
  */
 void Config::end() {
-  if (_file) {
-    _file.close();
-  }
+	if (_file) {
+		_file.close();
+	}
 
-  if (_line != 0) {
-    free(_line);
-    _line = 0;
-  }
-  _atEnd = true;
+	if (_line != 0) {
+		free(_line);
+		_line = 0;
+	}
+	_atEnd = true;
 }
 
 /*
@@ -76,110 +76,106 @@ void Config::end() {
  * false if an error occurred or end-of-file occurred.
  */
 bool Config::readNextSetting() {
-  int bint;
-  
-  if (_atEnd) {
-    return false;  // already at end of file (or error).
-  }
-  
-  _lineLength = 0;
-  _valueIndex = -1;
-  
-  /*
-   * Assume beginning of line.
-   * Skip blank and comment lines
-   * until we read the first character of the key
-   * or get to the end of file.
-   */
-  while (true) {
-    bint = _file.read();
-    if (bint < 0) {
-      _atEnd = true;
-      return false;
-    }
-    
-    if ((char) bint == '#') {
-      // Comment line.  Read until end of line or end of file.
-      while (true) {
-        bint = _file.read();
-        if (bint < 0) {
-          _atEnd = true;
-          return false;
-        }
-        if ((char) bint == '\r' || (char) bint == '\n') {
-          break;
-        }
-      }
-      continue; // look for the next line.
-    }
-    
-    // Ignore line ends and blank text
-    if ((char) bint == '\r' || (char) bint == '\n'
-        || (char) bint == ' ' || (char) bint == '\t') {
-      continue;
-    }
-        
-    break; // bint contains the first character of the name
-  }
-  
-  // Copy from this first character to the end of the line.
+	int bint;
+	
+	if (_atEnd) {
+		return false;  // already at end of file (or error).
+	}
+	
+	_lineLength = 0;
+	_valueIndex = -1;
+	
+	/*
+	* Assume beginning of line.
+	* Skip blank and comment lines
+	* until we read the first character of the key
+	* or get to the end of file.
+	*/
+	while (true) {
+		bint = _file.read();
+		if (bint < 0) {
+			_atEnd = true;
+			return false;
+		}
+		
+		if ((char) bint == '#') { // Check if comment line.  Read until end of line or end of file.
+			while (true) {
+				bint = _file.read();
+				if (bint < 0) {
+					_atEnd = true;
+					return false;
+				}
+				if ((char) bint == '\r' || (char) bint == '\n') {
+					break;
+				}
+			}
+			continue; // look for the next line.
+		}
+		
+		// Ignore line ends and blank text
+		if ((char) bint == '\r' || (char) bint == '\n' || (char) bint == ' ' || (char) bint == '\t') {
+			continue;
+		}
+			
+		break; // bint contains the first character of the name
+	}
+	
+	// Copy from this first character to the end of the line.
 
-  while (bint >= 0 && (char) bint != '\r' && (char) bint != '\n') {
-    if (_lineLength >= _lineSize - 1) { // -1 for a terminating null.
-      _line[_lineLength] = '\0';
-#ifdef CONFIG_DEBUG
-      Serial.print("Line too long: ");
-      Serial.println(_line);
-#endif
-      _atEnd = true;
-      return false;
-    }
-    
-    if ((char) bint == '=') {
-      // End of Name; the next character starts the value.
-      _line[_lineLength++] = '\0';
-      _valueIndex = _lineLength;
-      
-    } else {
-      _line[_lineLength++] = (char) bint;
-    }
-    
-    bint = _file.read();
-  }
-  
-  if (bint < 0) {
-    _atEnd = true;
-    // Don't exit. This is a normal situation:
-    // the last line doesn't end in newline.
-  }
-  _line[_lineLength] = '\0';
-  
-  /*
-   * Sanity checks of the line:
-   *   No =
-   *   No name
-   * It's OK to have a null value (nothing after the '=')
-   */
-  if (_valueIndex < 0) {
-#ifdef CONFIG_DEBUG
-    Serial.print("Missing '=' in line: ");
-    Serial.println(_line);
-#endif
-    _atEnd = true;
-    return false;
-  }
-  if (_valueIndex == 1) {
-#ifdef CONFIG_DEBUG
-    Serial.print("Missing Name in line: =");
-    Serial.println(_line[_valueIndex]);
-#endif
-    _atEnd = true;
-    return false;
-  }
-  
-  // Name starts at _line[0]; Value starts at _line[_valueIndex].
-  return true;
-
+	while (bint >= 0 && (char) bint != '\r' && (char) bint != '\n') {
+		if (_lineLength >= _lineSize - 1) { // -1 for a terminating null.
+			_line[_lineLength] = '\0';
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL.print("Line too long: ");
+			DEBUG_SERIAL.println(_line);
+			#endif
+			_atEnd = true;
+			return false;
+		}
+		
+		if ((char) bint == '=') { // Check end of Name; the next character starts the value.
+			_line[_lineLength++] = '\0';
+			_valueIndex = _lineLength;
+		} 
+		else {
+			_line[_lineLength++] = (char) bint;
+		}
+		
+		bint = _file.read();
+	}
+	
+	if (bint < 0) {
+		_atEnd = true;
+		// Don't exit. This is a normal situation:
+		// the last line doesn't end in newline.
+	}
+	_line[_lineLength] = '\0';
+	
+	/*
+	* Sanity checks of the line:
+	*   No =
+	*   No name
+	* It's OK to have a null value (nothing after the '=')
+	*/
+	if (_valueIndex < 0) {
+		#ifdef CONFIG_DEBUG
+		DEBUG_SERIAL.print("Missing '=' in line: ");
+		DEBUG_SERIAL.println(_line);
+		#endif
+		_atEnd = true;
+		return false;
+	}
+	if (_valueIndex == 1) {
+		#ifdef CONFIG_DEBUG
+		DEBUG_SERIAL.print("Missing Name in line: =");
+		DEBUG_SERIAL.println(_line[_valueIndex]);
+		#endif
+		_atEnd = true;
+		return false;
+	}
+	
+	// Name starts at _line[0]; Value starts at _line[_valueIndex].
+	return true;
 }
 
 /*
@@ -187,10 +183,10 @@ bool Config::readNextSetting() {
  * matches the given name, false otherwise.
  */
 bool Config::nameIs(const char *name) {
-  if (strcmp(name, _line) == 0) {
-    return true;
-  }
-  return false;
+  	if (strcmp(name, _line) == 0) {
+    	return true;
+  	}	
+  	return false;
 }
 
 /*
@@ -199,10 +195,10 @@ bool Config::nameIs(const char *name) {
  * WARNING: calling this when an error has occurred can crash your sketch.
  */
 const char *Config::getName() {
-  if (_lineLength <= 0 || _valueIndex <= 1) {
-    return 0;
-  }
-  return &_line[0];
+  	if (_lineLength <= 0 || _valueIndex <= 1) {
+		return 0;
+	}
+	return &_line[0];
 }
 
 /*
@@ -211,10 +207,10 @@ const char *Config::getName() {
  * WARNING: calling this when an error has occurred can crash your sketch.
  */
 const char *Config::getValue() {
-  if (_lineLength <= 0 || _valueIndex <= 1) {
-    return 0;
-  }
-  return &_line[_valueIndex];
+	if (_lineLength <= 0 || _valueIndex <= 1) {
+		return 0;
+	}
+	return &_line[_valueIndex];
 }
 
 /*
@@ -225,22 +221,22 @@ const char *Config::getValue() {
  * persists after readNextSetting() is called or end() is called.
  */
 char *Config::copyValue() {
-  char *result = 0;
-  int length;
+	char *result = 0;
+	int length;
 
-  if (_lineLength <= 0 || _valueIndex <= 1) {
-    return 0; // begin() wasn't called, or failed.
-  }
+	if (_lineLength <= 0 || _valueIndex <= 1) {
+		return 0; // begin() wasn't called, or failed.
+	}
 
-  length = strlen(&_line[_valueIndex]);
-  result = (char *) malloc(length + 1);
-  if (result == 0) {
-    return 0; // out of memory
-  }
-  
-  strcpy(result, &_line[_valueIndex]);
+	length = strlen(&_line[_valueIndex]);
+	result = (char *) malloc(length + 1);
+	if (result == 0) {
+		return 0; // out of memory
+	}
+	
+	strcpy(result, &_line[_valueIndex]);
 
-  return result;
+	return result;
 }
 
 /*
@@ -248,11 +244,11 @@ char *Config::copyValue() {
  * as an integer, or 0 if an error occurred.
  */
 int Config::getIntValue() {
-  const char *str = getValue();
-  if (!str) {
-    return 0;
-  }
-  return atoi(str);
+	const char *str = getValue();
+	if (!str) {
+		return 0;
+	}
+	return atoi(str);
 }
 
 // IPAddress Config::getIPAddress(){
@@ -282,8 +278,8 @@ int Config::getIntValue() {
  * all other values correspond to false.
  */
 bool Config::getBooleanValue() {
-  if (strcmp("true", getValue()) == 0) {
-    return true;
-  }
-  return false;
+	if (strcmp("true", getValue()) == 0) {
+		return true;
+	}
+	return false;
 }

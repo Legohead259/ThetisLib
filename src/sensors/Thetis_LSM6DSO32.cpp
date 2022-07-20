@@ -63,13 +63,17 @@ void pollDSO32(Stream &out) {
     gyro.gyro.z *= RAD_TO_DEG;
 
     // Debug print statements
-    // out.printf("Accel X: %0.3f \tY: %0.3f \tZ: %0.3f m/s/s\n\r", accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
-    // out.printf(" Gyro X: %0.3f \tY: %0.3f \tZ: %0.3f rad/s\n\r", gyro.gyro.x, gyro.gyro.y, gyro.gyro.z);
-    // out.printf("Temperature: %0.3f °C\n\n\r", temp.temperature);
+    #ifdef LSM6DSO_DEBUG
+    out.printf("Accel X: %0.3f \tY: %0.3f \tZ: %0.3f m/s/s\n\r", accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
+    out.printf(" Gyro X: %0.3f \tY: %0.3f \tZ: %0.3f rad/s\n\r", gyro.gyro.x, gyro.gyro.y, gyro.gyro.z);
+    out.printf("Temperature: %0.3f °C\n\n\r", temp.temperature);
+    #endif // LSM6DSO_DEBUG
 
+    #ifdef LSM6DSO_DEBUG_PLOTTER
     // Serial plotter print statements
-    // Serial.printf("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n\r",data.accelX, data.accelY, data.accelZ, 
-    //                                                         data.linAccelX, data.linAccelY, data.linAccelZ);   
+    DEBUG_SERIAL.printf("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n\r",data.accelX, data.accelY, data.accelZ, 
+                                                            data.linAccelX, data.linAccelY, data.linAccelZ);
+    #endif // LSM6DSO_DEBUG_PLOTTER
 }
 
 sensors_vec_t calcLinAccel(Stream &out) {
