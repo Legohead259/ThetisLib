@@ -4,7 +4,7 @@
 #include <SD.h>
 #include <SPI.h>
 
-bool initSDCar);
+bool initSDCard();
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels);
 bool createDir(fs::FS &fs, const char * path);
 bool removeDir(fs::FS &fs, const char * path);
