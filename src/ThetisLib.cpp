@@ -79,6 +79,15 @@ void getISO8601Time_RTC(char *buf) {
     sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", tm.Year+1970, tm.Month, tm.Day, tm.Hour, tm.Minute, tm.Second, curMSecond);
 }
 
+
+// ================================
+// === STATUS HANDLER FUNCTIONS ===
+// ================================
+
+
+Status_t currentState = STANDBY;
+
+
 // =========================
 // === LOGGING FUNCTIONS ===
 // =========================

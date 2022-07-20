@@ -5,7 +5,6 @@
 // ==========================
 
 
-Status_t currentState = STANDBY;
 Adafruit_NeoPixel pixel(1, NEOPIXEL_DATA, NEO_RGB + NEO_KHZ800);
 
 void initNeoPixel(Adafruit_NeoPixel &strip, Stream &out) {

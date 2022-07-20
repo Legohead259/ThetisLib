@@ -44,25 +44,6 @@ typedef enum ErrorCode {
     LOW_BATT_ERROR_CODE     = B1000
 } ErrorCode_t;
  
-/*
-Status Table:
-State           |  Color  |  Indication  |  Description
-----------------|---------|--------------|---------------
-Logging, No GPS |  BLUE   |    Solid     | Thetis is logging, but does not have a GPS fix
-Logging, GPS    |  GREEN  |    Solid     | Thetis is logging with a GPS fix
-Ready, No GPS   |  BLUE   |   Pulsing    | Accelerometer is calibrated but no GPS fix
-Ready, GPS      |  GREEN  |   Pulsing    | Accelerometer is calibrated and there is a GPS fix
-Standby         |  AMBER  |    Solid     | Accelerometer is not calibrated yet
-*/
-
-typedef enum Status {
-    LOGGING_NO_GPS,
-    LOGGING_GPS,
-    READY_NO_GPS,
-    READY_GPS,
-    STANDBY
-} Status_t;
-extern Status_t currentState;
 extern Adafruit_NeoPixel pixel;
 
 const uint32_t OFF      = Adafruit_NeoPixel::Color(0, 0, 0);       // GRB
