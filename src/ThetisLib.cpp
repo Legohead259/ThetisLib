@@ -58,7 +58,7 @@ bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream
     return true;
 }
 
-tmElements_t tm;
+tmElements_t timeElements;
 
 void getISO8601Time_RTC(char *buf) {
     breakTime(now(), timeElements);
@@ -76,31 +76,17 @@ void getISO8601Time_RTC(char *buf) {
     }
 
     // Format timestamp into ISO8601 format
-    // sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", tm.Year+1970, tm.Month, tm.Day, tm.Hour, tm.Minute, tm.Second, curMSecond);
+    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", tm.Year+1970, tm.Month, tm.Day, tm.Hour, tm.Minute, tm.Second, curMSecond);
 }
 
 // =========================
 // === LOGGING FUNCTIONS ===
 // =========================
 
-
 long logButtonStartTime = 0;
-// bool logButtonPressed = false;
 long logButtonPresses = 0;
 
 void IRAM_ATTR logButtonISR() {
-    // if (digitalRead(LOG_EN)) {             // Button is Pressed
-    //     logButtonPressed = true;            // Set the log button pressed flag
-    //     logButtonStartTime = millis();      // Start the log button hold timer
-    //     // Serial.println("Button pressed!");    // DEBUG
-    //     // Serial.printf("logButtonPressed: %s\n", logButtonPressed ? "true" : "false"); // DEBUG
-    //     // Serial.printf("logButtonStartTime: %d\n\n", logButtonStartTime); // DEBUG
-    // }
-    // else {
-    //     logButtonPressed = false;           // reset the log button pressed flag
-    //     // Serial.println("Button released!");   // DEBUG
-    //     // Serial.printf("logButtonPressed: %s\n\n", logButtonPressed ? "true" : "false"); // DEBUG
-    // }
     logButtonPresses++;
     logButtonStartTime = millis();
 }
