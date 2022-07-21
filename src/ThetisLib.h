@@ -119,7 +119,7 @@ void getISO8601Time_RTC(char *buf);
 // === NEOPIXEL FUNCTIONS ===
 // ==========================
 
-S
+
 #include <misc/Thetis_NeoPixel.h>
 
 

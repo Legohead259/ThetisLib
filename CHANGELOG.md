@@ -21,10 +21,22 @@ Release sections
 
 ---
 
+## 1.1.2 - 2022-07-20
+### Fixed
+- Fixed debug serial compile error by declaring it at the top of `ThetisFS.h`. NOTE: This needs to be done in the Thetis variants file
+- Fixed compile error due to old `tm` variable calls in `ThetisLib.h`; replaced with `timeElements`.
+---
+
+## 1.1.1 - 2022-07-20
+### Fixed
+- Compile error due to a random 'S' in `ThetisLib.h`
+---
+
 ## 1.1.0 - 2022-07-20
 ### Changed
 - Moved status enumerator to main library file from NeoPixel library
 - Changed `telemetry_t.state` data type to `Status_t` from `uint8_t`
+---
 
 ## 1.0.0 - 2022-07-17
 ### Added

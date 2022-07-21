@@ -1,4 +1,6 @@
 #include "ThetisFS.h"
+
+#define DEBUG_SERIAL Serial // TODO: Declare this in a variants file
  
 bool initSDCard() {
     #ifdef SDCARD_DEBUG
