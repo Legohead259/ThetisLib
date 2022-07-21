@@ -39,7 +39,7 @@ typedef struct {
     float quatY;                //
     float quatZ;                //
     float imuTemp;              // °Celsius from the IMU
-    uint8_t state;              // State reported by the package.
+    Status_t state;              // State reported by the package.
     uint8_t packetSize;         // The size of the telemetry packet
 } telemetry_t;
 
@@ -60,6 +60,7 @@ void getISO8601Time_RTC(char *buf);
 Status Table:
 State           |  Color  |  Indication  |  Description
 ----------------|---------|--------------|---------------
+Booting         |  PURPLE |   Pulsing    | Thetis is booting, most likely waiting for a WiFi connection
 Logging, No GPS |  BLUE   |    Solid     | Thetis is logging, but does not have a GPS fix
 Logging, GPS    |  GREEN  |    Solid     | Thetis is logging with a GPS fix
 Ready, No GPS   |  BLUE   |   Pulsing    | Accelerometer is calibrated but no GPS fix
@@ -68,6 +69,7 @@ Standby         |  AMBER  |    Solid     | Accelerometer is not calibrated yet
 */
 
 typedef enum Status {
+    BOOTING,
     LOGGING_NO_GPS,
     LOGGING_GPS,
     READY_NO_GPS,

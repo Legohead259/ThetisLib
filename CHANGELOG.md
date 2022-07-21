@@ -21,6 +21,11 @@ Release sections
 
 ---
 
+## 1.1.0 - 2022-07-20
+### Changed
+- Moved status enumerator to main library file from NeoPixel library
+- Changed `telemetry_t.state` data type to `Status_t` from `uint8_t`
+
 ## 1.0.0 - 2022-07-17
 ### Added
 - Issue templates
