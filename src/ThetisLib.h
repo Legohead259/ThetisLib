@@ -1,6 +1,6 @@
 #ifndef THETISLIB_H
 #define THETISLIB_H
-#define THETISLIB_VERSION "0.1.0"
+#define THETISLIB_VERSION "0.1.3"
 
 #include <Arduino.h>
 
