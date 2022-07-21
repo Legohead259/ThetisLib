@@ -4,6 +4,40 @@
 
 #include <Arduino.h>
 
+
+// ========================
+// === STATUS FUNCTIONS ===
+// ========================
+
+
+/*
+Status Table:
+State           |  Color  |  Indication  |  Description
+----------------|---------|--------------|---------------
+Booting         |  PURPLE |   Pulsing    | Thetis is booting, most likely waiting for a WiFi connection
+Logging, No GPS |  BLUE   |    Solid     | Thetis is logging, but does not have a GPS fix
+Logging, GPS    |  GREEN  |    Solid     | Thetis is logging with a GPS fix
+Ready, No GPS   |  BLUE   |   Pulsing    | Accelerometer is calibrated but no GPS fix
+Ready, GPS      |  GREEN  |   Pulsing    | Accelerometer is calibrated and there is a GPS fix
+Standby         |  AMBER  |    Solid     | Accelerometer is not calibrated yet
+*/
+
+typedef enum Status {
+    BOOTING,
+    LOGGING_NO_GPS,
+    LOGGING_GPS,
+    READY_NO_GPS,
+    READY_GPS,
+    STANDBY
+} Status_t;
+extern Status_t currentState;
+
+
+// =============================
+// === TELEMETETRY FUNCTIONS ===
+// =============================
+
+
 typedef struct {
     time_t epoch;               // Timestamp in seconds since UNIX epoch (January 1, 1970)
     long curmSecond;            // Current fraction of second of reading
@@ -43,40 +77,50 @@ typedef struct {
     uint8_t packetSize;         // The size of the telemetry packet
 } telemetry_t;
 
+
+// ============================
+// === FILESYSTEM FUNCTIONS ===
+// ============================
+
+
 #include <filesystem/ThetisFS.h>
 #include <filesystem/ThetisConfig.h>
+
+
+// ===========================
+// === TIMESTAMP FUNCTIONS ===
+// ===========================
+
 
 #include <TimeLib.h>
 extern tmElements_t timeElements;
 bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream &out=DEBUG_SERIAL_PORT);
 void getISO8601Time_RTC(char *buf);
 
+
+// ========================
+// === SENSOR FUNCTIONS ===
+// ========================
+
+
 #include <sensors/Thetis_BNO055.h>
 #include <sensors/Thetis_LSM6DSO32.h> 
+
+
+// =======================
+// === RADIO FUNCTIONS ===
+// =======================
+
+
 #include <radios/Thetis_GPS.h>
+
+
+// ==========================
+// === NEOPIXEL FUNCTIONS ===
+// ==========================
+
+S
 #include <misc/Thetis_NeoPixel.h>
-
-/*
-Status Table:
-State           |  Color  |  Indication  |  Description
-----------------|---------|--------------|---------------
-Booting         |  PURPLE |   Pulsing    | Thetis is booting, most likely waiting for a WiFi connection
-Logging, No GPS |  BLUE   |    Solid     | Thetis is logging, but does not have a GPS fix
-Logging, GPS    |  GREEN  |    Solid     | Thetis is logging with a GPS fix
-Ready, No GPS   |  BLUE   |   Pulsing    | Accelerometer is calibrated but no GPS fix
-Ready, GPS      |  GREEN  |   Pulsing    | Accelerometer is calibrated and there is a GPS fix
-Standby         |  AMBER  |    Solid     | Accelerometer is not calibrated yet
-*/
-
-typedef enum Status {
-    BOOTING,
-    LOGGING_NO_GPS,
-    LOGGING_GPS,
-    READY_NO_GPS,
-    READY_GPS,
-    STANDBY
-} Status_t;
-extern Status_t currentState;
 
 
 // =========================
