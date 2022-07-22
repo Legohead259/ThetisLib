@@ -12,8 +12,9 @@
 #define BLINK_INTERVAL 125 // ms
 #define MESSAGE_INTERVAL 1000 // ms
 #define MAXIMUM_BRIGHTNESS 32
-#define NUM_STEPS 16
+#define NUM_STEPS 50
 #define BRIGHTNESS_STEP MAXIMUM_BRIGHTNESS/NUM_STEPS
+#define NEOPIXEL_CYCLE_TIME 3000 // ms - Bright to bright time
 
 /*
 Code Table:
@@ -58,10 +59,10 @@ const uint32_t LIME     = Adafruit_NeoPixel::Color(125, 0, 255);
 
 const float brightness = 0.1;
 
-void initNeoPixel(Adafruit_NeoPixel &strip=pixel, Stream &out=Serial);
-void pulseLED(uint32_t color, Adafruit_NeoPixel &strip=pixel);
-void rainbow(Adafruit_NeoPixel &strip=pixel);
+void initNeoPixel();
+void pulseLED(uint32_t color);
+void rainbow();
 uint32_t Wheel(byte wheelPos);
-void blinkCode(ErrorCode_t code, uint32_t color=RED, Adafruit_NeoPixel &strip=pixel);
+void blinkCode(ErrorCode_t code, uint32_t color=RED);
 
 #endif // ndef THETIS_NEOPIXEL_H
