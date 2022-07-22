@@ -15,5 +15,3 @@ bool renameFile(fs::FS &fs, const char * path1, const char * path2);
 bool deleteFile(fs::FS &fs, const char * path);
 void testFileIO(fs::FS &fs, const char * path);
 bool initLogFile(fs::FS &fs, char * path, char * header);
-bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data);
-

@@ -21,7 +21,12 @@ Release sections
 
 ---
 
-## 1.1.4 - 2022-07-22
+## 1.1.5 - 2022-07-22
+### Fixed
+- Compile error with `currentState`; moved declaration to main application
+- Compile error with `writeTelemetryData()`; moved function to main application
+
+## 1.1.4 - 2022-07-22 [REVOKED]
 ### Added
 - Added `GPS_DEBUG` flag support for debug print statements with the GPS radio ([#6](https://github.com/Legohead259/ThetisLib/issues/6))
 - Added 'BNO055_DEBUG` flag support for debug print statements with the BNO055 sensor ([#6](https://github.com/Legohead259/ThetisLib/issues/6))

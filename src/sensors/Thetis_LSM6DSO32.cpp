@@ -60,7 +60,7 @@ void pollDSO32() {
                       accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
 
     // Calculate the linear accelerations
-    linAccel = calcLinAccel(out);
+    linAccel = calcLinAccel();
 
     // Convert gyro to deg/s from rad/s
     gyro.gyro.x *= RAD_TO_DEG;

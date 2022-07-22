@@ -30,7 +30,6 @@ typedef enum Status {
     READY_GPS,
     STANDBY
 } Status_t;
-Status_t currentState;
 
 
 // =============================
