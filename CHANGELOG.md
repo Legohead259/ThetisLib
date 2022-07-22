@@ -21,6 +21,14 @@ Release sections
 
 ---
 
+## 1.1.3 - 2022-07-22
+### Changed
+- Changed LED pulse behavior from a linear cylce to sinusoidal
+
+### Fixed
+- Fixed LED pulse behavior to be more noticable ([#7](https://github.com/Legohead259/ThetisLib/issues/7))
+---
+
 ## 1.1.2 - 2022-07-20
 ### Fixed
 - Fixed debug serial compile error by declaring it at the top of `ThetisFS.h`. NOTE: This needs to be done in the Thetis variants file
