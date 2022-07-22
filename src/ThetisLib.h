@@ -1,6 +1,6 @@
 #ifndef THETISLIB_H
 #define THETISLIB_H
-#define THETISLIB_VERSION "0.1.3"
+#define THETISLIB_VERSION "0.2.0"
 
 #include <Arduino.h>
 
@@ -111,7 +111,7 @@ void getISO8601Time_RTC(char *buf);
 
 
 #include <radios/Thetis_GPS.h>
-
+#include <radios/Thetis_WiFi.h>
 
 // ==========================
 // === NEOPIXEL FUNCTIONS ===
