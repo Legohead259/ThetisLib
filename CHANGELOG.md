@@ -21,7 +21,18 @@ Release sections
 
 ---
 
+## 1.1.4 - 2022-07-22
+### Added
+- Added `GPS_DEBUG` flag support for debug print statements with the GPS radio ([#6](https://github.com/Legohead259/ThetisLib/issues/6))
+- Added 'BNO055_DEBUG` flag support for debug print statements with the BNO055 sensor ([#6](https://github.com/Legohead259/ThetisLib/issues/6))
+- Added 'LSM6DSO_DEBUG` flag support for debug print statements with the LSM6DSO32 sensor ([#6](https://github.com/Legohead259/ThetisLib/issues/6))
+
+### Changed
+- Moved `writeTelemetryData()` to `ThetisFS` instead of main library file
+
 ## 1.1.3 - 2022-07-22
+### Added
+- Added `NEOPIXEL_DEBUG` flag support for debug print statements with the NeoPixel features ([#6](https://github.com/Legohead259/ThetisLib/issues/6)) 
 ### Changed
 - Changed LED pulse behavior from a linear cylce to sinusoidal
 

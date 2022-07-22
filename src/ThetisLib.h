@@ -30,7 +30,7 @@ typedef enum Status {
     READY_GPS,
     STANDBY
 } Status_t;
-extern Status_t currentState;
+Status_t currentState;
 
 
 // =============================
@@ -94,7 +94,6 @@ typedef struct {
 
 #include <TimeLib.h>
 extern tmElements_t timeElements;
-bool writeTelemetryData(fs::FS &fs, const char * path, telemetry_t &data, Stream &out=DEBUG_SERIAL_PORT);
 void getISO8601Time_RTC(char *buf);
 
 

@@ -12,6 +12,8 @@
 #include <utility/imumaths.h>
 #include <Wire.h>
 
-bool initBNO055(Adafruit_BNO055 &imu, Stream &out);
+extern Adafruit_BNO055 bno;
+
+bool initBNO055();
 
 #endif // THETIS_BNO055_H

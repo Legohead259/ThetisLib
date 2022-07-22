@@ -28,8 +28,8 @@ extern MicroNMEA nmea;
 extern bool ledState;
 extern volatile bool ppsTriggered;
 
-bool initGPS(HardwareSerial &GPS=GPS_SERIAL_PORT, Stream &out=DEBUG_SERIAL_PORT);
+bool initGPS();
 
-void getISO8601Time(char *buf, long curMillis);
+void getISO8601Time(char *buf);
 
 #endif // ndef THETIS_GPS_H

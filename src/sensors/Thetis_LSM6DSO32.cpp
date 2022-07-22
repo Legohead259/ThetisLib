@@ -28,11 +28,14 @@ sensors_vec_t eulerAngles;
 
 bool initDSO32( lsm6dso32_accel_range_t accelRange, 
                 lsm6ds_gyro_range_t gyroRange,
-                lsm6ds_data_rate_t dataRate,
-                Stream &out) {
-    out.print("Initializing DSO32 IMU...");
+                lsm6ds_data_rate_t dataRate) {
+    #ifdef LSM6DSO_DEBUG
+    DEBUG_SERIAL_PORT.print("Initializing DSO32 IMU...");
+    #endif
     if (!dso32.begin_I2C(0x6B)) {
-        out.println("Failed to find LSM6DSO32 chip");
+        #ifdef LSM6DSO_DEBUG
+        DEBUG_SERIAL_PORT.println("Failed to find LSM6DSO32 chip");
+        #endif
         return false;
     }
     else {
@@ -42,12 +45,14 @@ bool initDSO32( lsm6dso32_accel_range_t accelRange,
         dso32.setGyroDataRate(dataRate);
         accelSampleFreq = setSampleFrequency(dataRate);
         gyroSampleFreq = setSampleFrequency(dataRate);
-        out.println("done!");
+        #ifdef LSM6DSO_DEBUG
+        DEBUG_SERIAL_PORT.println("done!");
+        #endif
         return true;
     }
 }
 
-void pollDSO32(Stream &out) {
+void pollDSO32() {
     dso32.getEvent(&accel, &gyro, &temp);
 
     // Update AHRS filter
@@ -64,19 +69,19 @@ void pollDSO32(Stream &out) {
 
     // Debug print statements
     #ifdef LSM6DSO_DEBUG
-    out.printf("Accel X: %0.3f \tY: %0.3f \tZ: %0.3f m/s/s\n\r", accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
-    out.printf(" Gyro X: %0.3f \tY: %0.3f \tZ: %0.3f rad/s\n\r", gyro.gyro.x, gyro.gyro.y, gyro.gyro.z);
-    out.printf("Temperature: %0.3f °C\n\n\r", temp.temperature);
+    DEBUG_SERIAL_PORT.printf("Accel X: %0.3f \tY: %0.3f \tZ: %0.3f m/s/s\n\r", accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
+    DEBUG_SERIAL_PORT.printf(" Gyro X: %0.3f \tY: %0.3f \tZ: %0.3f rad/s\n\r", gyro.gyro.x, gyro.gyro.y, gyro.gyro.z);
+    DEBUG_SERIAL_PORT.printf("Temperature: %0.3f °C\n\n\r", temp.temperature);
     #endif // LSM6DSO_DEBUG
 
     #ifdef LSM6DSO_DEBUG_PLOTTER
     // Serial plotter print statements
-    DEBUG_SERIAL.printf("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n\r",data.accelX, data.accelY, data.accelZ, 
+    DEBUG_SERIAL_PORT.printf("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n\r",data.accelX, data.accelY, data.accelZ, 
                                                             data.linAccelX, data.linAccelY, data.linAccelZ);
     #endif // LSM6DSO_DEBUG_PLOTTER
 }
 
-sensors_vec_t calcLinAccel(Stream &out) {
+sensors_vec_t calcLinAccel() {
     sensors_vec_t linAccel;
 
     // Graviational acceleration in NED coordinate system
@@ -90,7 +95,9 @@ sensors_vec_t calcLinAccel(Stream &out) {
     linAccel.z = accel.acceleration.z - gravBody.z();
 
     // DEBUG statement
-    // out.printf("X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", linAccel.x, linAccel.y, linAccel.z);
+    #ifdef LSM6DSO_DEBUG
+    DEBUG_SERIAL_PORT.printf("LinAccel X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", linAccel.x, linAccel.y, linAccel.z);
+    #endif
 
     return linAccel;
 }

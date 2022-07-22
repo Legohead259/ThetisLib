@@ -27,10 +27,9 @@ extern Adafruit_LSM6DSO32 DSO32_IMU;
 
 bool initDSO32( lsm6dso32_accel_range_t accelRange=LSM6DSO32_ACCEL_RANGE_8_G, 
                 lsm6ds_gyro_range_t gyroRange=LSM6DS_GYRO_RANGE_250_DPS,
-                lsm6ds_data_rate_t dataRate=LSM6DS_RATE_52_HZ,
-          Stream &out=DEBUG_SERIAL_PORT);
-void pollDSO32(Stream &out=DEBUG_SERIAL_PORT);
-sensors_vec_t calcLinAccel(Stream &out=DEBUG_SERIAL_PORT);
+                lsm6ds_data_rate_t dataRate=LSM6DS_RATE_52_HZ);
+void pollDSO32();
+sensors_vec_t calcLinAccel();
 double setSampleFrequency(lsm6ds_data_rate_t dataRate);
 
 #endif // ndef THETIS_LSM6DSO32_H
