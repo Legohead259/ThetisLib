@@ -6,11 +6,15 @@
 #include <SPIFFS.h>
 
 // Configuration Data
-uint8_t deviceID;
+extern uint8_t deviceID;
 const char FW_VERSION[] = "0.4.0";
 const char HW_REVISION[] = "Rev F4";
 char ssid[32];
-char password[32];
+extern char password[32];
 
-AsyncWebServer server(80); // Create AsyncWebServer object on port 80
+extern AsyncWebServer server(80); // Create AsyncWebServer object on port 80
+
+// Prototypes
+String processor(const String &var);
+bool initializeThetisAPI();
 #endif // THETIS_WIFIH

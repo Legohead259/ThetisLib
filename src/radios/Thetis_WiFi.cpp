@@ -1,6 +1,8 @@
 #include "Thetis_WiFi.h"
 
 bool initializeThetisAPI() {
+    // TODO: Actually implement
+    
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         request->send(SPIFFS, "/index.html", String(), false, processor);
@@ -10,6 +12,8 @@ bool initializeThetisAPI() {
     server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
         request->send(SPIFFS, "/style.css", "text/css");
     });
+
+    return true;
 }
 
 String processor(const String &var) {
