@@ -24,7 +24,7 @@ struct ConfigData {
 	char ssid[32];
 	char password[32];
 };
-ConfigData cfgData;
+extern ConfigData cfgData;
 
 class Config {
   private:
