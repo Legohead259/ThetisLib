@@ -7,6 +7,8 @@
  
 #include "ThetisConfig.h"
 
+ConfigData cfgData;
+
 /*
  * Opens the given file on the SD card.
  * Returns true if successful, false if not.
@@ -15,7 +17,7 @@
  *
  * NOTE: SD.begin() must be called before calling our begin().
  */
-bool Config::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength) {
+bool Config::begin(const char *configFileName, uint8_t maxLineLength) {
 	_lineLength = 0;
 	_lineSize = 0;
 	_valueIndex = -1;
@@ -39,7 +41,7 @@ bool Config::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength
    * we don't save it. To minimize memory use, we don't copy it.
    */
    
-  	_file = fs.open(configFileName, FILE_READ);
+  	_file = SPIFFS.open(configFileName, FILE_READ);
   	if (!_file) {
 		#ifdef CONFIG_DEBUG
 		DEBUG_SERIAL.print("Could not open SD file: ");
@@ -187,6 +189,38 @@ bool Config::nameIs(const char *name) {
     	return true;
   	}	
   	return false;
+}
+
+bool Config::readConfigurations() {
+	if (cfg.begin("/config.cfg", 127)) {
+        Serial.println();
+        while (cfg.readNextSetting()) {
+            if (cfg.nameIs("id")) {
+                cfgData.deviceID = cfg.getIntValue();
+                Serial.print("The ID of this device is configured to: ");
+                Serial.println(cfgData.deviceID);
+            }
+            else if (cfg.nameIs("client_ssid")) {
+                strcpy(cfgData.ssid, cfg.getValue());
+                Serial.print("Client SSID configured to: ");
+                Serial.println(cfgData.ssid);
+            }
+            else if (cfg.nameIs("client_password")) {
+                strcpy(cfgData.password, cfg.getValue());
+                Serial.print("Client password configured to: ");
+                Serial.println(cfgData.password);
+            }
+            else {
+                Serial.print("Unknown setting name: ");
+                Serial.println(cfg.getName());
+            }
+        }
+        cfg.end();
+    }
+    else {
+        Serial.print("Failed to open configuration file!");
+        while (true) blinkCode(FILE_ERROR_CODE); // Block code execution
+    }
 }
 
 /*

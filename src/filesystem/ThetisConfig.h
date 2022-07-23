@@ -14,8 +14,17 @@
 // #define SDCONFIG_DEBUG // Enable debugging
 
 #include <Arduino.h>
-#include <FS.h>
+#include <SPIFFS.h>
 // #include <Ethernet.h>
+
+struct ConfigData {
+	uint8_t deviceID;
+	char FW_VERSION[8];
+	char HW_REVISION[8];
+	char ssid[32];
+	char password[32];
+}
+extern ConfigData cfgData;
 
 class Config {
   private:
@@ -30,13 +39,14 @@ class Config {
                            // (the name part is at &_line[0])
   
   public:
-    bool begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength);
+    bool begin(const char *configFileName, uint8_t maxLineLength);
     void end();
     bool readNextSetting();
     bool nameIs(const char *name);
     const char *getName();
     const char *getValue();
     int getIntValue();
+    bool readConfigurations();
     // IPAddress getIPAddress();
     bool getBooleanValue();
     char *copyValue();
