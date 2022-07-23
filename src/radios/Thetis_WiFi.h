@@ -4,6 +4,7 @@
 #include "WiFi.h"
 #include "ESPAsyncWebServer.h"
 #include <SPIFFS.h>
+#include "../filesystem/ThetisConfig.h"
 
 // Configuration Data
 // extern uint8_t deviceID;

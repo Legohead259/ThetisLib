@@ -12,11 +12,11 @@ String processor(const String &var, ConfigData *cfgData) {
     }
     else if (var == "FW_VERSION") {
         Serial.println(cfgData->FW_VERSION);
-        return FW_VERSION;
+        return cfgData->FW_VERSION;
     }
     else if (var == "HW_REVISION") {
         Serial.println(cfgData->HW_REVISION);
-        return HW_REVISION;
+        return cfgData->HW_REVISION;
     }
     Serial.println("Unknown handle");
     return var;
