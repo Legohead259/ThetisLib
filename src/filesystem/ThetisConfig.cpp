@@ -191,36 +191,37 @@ bool Config::nameIs(const char *name) {
   	return false;
 }
 
-bool Config::readConfigurations() {
-	if (cfg.begin("/config.cfg", 127)) {
-        Serial.println();
-        while (cfg.readNextSetting()) {
-            if (cfg.nameIs("id")) {
-                cfgData.deviceID = cfg.getIntValue();
-                Serial.print("The ID of this device is configured to: ");
-                Serial.println(cfgData.deviceID);
-            }
-            else if (cfg.nameIs("client_ssid")) {
-                strcpy(cfgData.ssid, cfg.getValue());
-                Serial.print("Client SSID configured to: ");
-                Serial.println(cfgData.ssid);
-            }
-            else if (cfg.nameIs("client_password")) {
-                strcpy(cfgData.password, cfg.getValue());
-                Serial.print("Client password configured to: ");
-                Serial.println(cfgData.password);
-            }
-            else {
-                Serial.print("Unknown setting name: ");
-                Serial.println(cfg.getName());
-            }
-        }
-        cfg.end();
-    }
-    else {
-        Serial.print("Failed to open configuration file!");
-        while (true) blinkCode(FILE_ERROR_CODE); // Block code execution
-    }
+void Config::loadConfigurations() {
+	while (readNextSetting()) {
+		if (nameIs("id")) {
+			cfgData.deviceID = getIntValue();
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("The ID of this device is configured to: ");
+			DEBUG_SERIAL_PORT.println(cfgData.deviceID);
+			#endif
+		}
+		else if (nameIs("client_ssid")) {
+			strcpy(cfgData.ssid, getValue());
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("Client SSID configured to: ");
+			DEBUG_SERIAL_PORT.println(cfgData.ssid);
+			#endif
+		}
+		else if (nameIs("client_password")) {
+			strcpy(cfgData.password, getValue());
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("Client password configured to: ");
+			DEBUG_SERIAL_PORT.println(cfgData.password);
+			#endif
+		}
+		else {
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("Unknown setting name: ");
+			DEBUG_SERIAL_PORT.println(getName());
+			#endif
+		}
+	}
+	end();
 }
 
 /*

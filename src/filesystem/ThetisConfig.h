@@ -23,7 +23,7 @@ struct ConfigData {
 	char HW_REVISION[8];
 	char ssid[32];
 	char password[32];
-}
+};
 ConfigData cfgData;
 
 class Config {
@@ -46,7 +46,7 @@ class Config {
     const char *getName();
     const char *getValue();
     int getIntValue();
-    bool readConfigurations();
+    void loadConfigurations();
     // IPAddress getIPAddress();
     bool getBooleanValue();
     char *copyValue();
