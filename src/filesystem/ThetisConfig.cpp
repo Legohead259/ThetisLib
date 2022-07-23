@@ -7,7 +7,7 @@
  
 #include "ThetisConfig.h"
 
-ConfigData cfgData;
+// ConfigData cfgData;
 
 /*
  * Opens the given file on the SD card.

@@ -18,6 +18,12 @@ Release sections
 ## Unreleased
 
 ### **TODO**
+- Implemented ThetisAPI
+
+### Added
+
+### Changed
+- Imported the `loadConfigurations()` function from the main application into `ThetisConfig`
 
 ---
 
