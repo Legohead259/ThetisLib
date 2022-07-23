@@ -7,9 +7,9 @@
 
 // Configuration Data
 extern uint8_t deviceID;
-const char FW_VERSION[] = "0.4.0";
-const char HW_REVISION[] = "Rev F4";
-char ssid[32];
+extern const char FW_VERSION[] = "0.4.0";
+extern const char HW_REVISION[] = "Rev F4";
+extern char ssid[32];
 extern char password[32];
 
 extern AsyncWebServer server(80); // Create AsyncWebServer object on port 80
