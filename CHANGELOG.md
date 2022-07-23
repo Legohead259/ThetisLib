@@ -22,8 +22,10 @@ Release sections
 
 ### Added
 - Added configuration data struct to `ThetisConfig`
+
 ### Changed
 - Imported the `loadConfigurations()` function from the main application into `ThetisConfig`
+- Changed `DEBUG_SERIAL` to `DEBUG_SERIAL_PORT` in  `ThetisConfig`
 
 ---
 
