@@ -7,8 +7,8 @@
 
 // Configuration Data
 extern uint8_t deviceID;
-extern const char FW_VERSION;
-extern const char HW_REVISION;
+extern const char FW_VERSION[];
+extern const char HW_REVISION[];
 extern char ssid[32];
 extern char password[32];
 
