@@ -109,9 +109,9 @@ void getISO8601Time_RTC(char *buf);
 // === RADIO FUNCTIONS ===
 // =======================
 
-
-#ifdef WIFIAP_ENABLE || WIFICLIENT_ENABLE // Check if any WiFi mode build flags are present
 #include <radios/Thetis_GPS.h>
+
+#if defined(WIFIAP_ENABLE) || defined(WIFICLIENT_ENABLE) // Check if any WiFi mode build flags are present
 #include <radios/Thetis_WiFi.h>
 #endif
 
