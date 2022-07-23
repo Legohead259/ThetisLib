@@ -30,7 +30,7 @@ bool Config::begin(const char *configFileName, uint8_t maxLineLength) {
 	_line = (char *) malloc(_lineSize);
   	if (_line == 0) {
 		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL.println("out of memory");
+		DEBUG_SERIAL_PORT.println("out of memory");
 		#endif
 		_atEnd = true;
 		return false;
@@ -44,8 +44,8 @@ bool Config::begin(const char *configFileName, uint8_t maxLineLength) {
   	_file = SPIFFS.open(configFileName, FILE_READ);
   	if (!_file) {
 		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL.print("Could not open SD file: ");
-		DEBUG_SERIAL.println(configFileName);
+		DEBUG_SERIAL_PORT.print("Could not open SD file: ");
+		DEBUG_SERIAL_PORT.println(configFileName);
 		#endif
 		_atEnd = true;
 		return false;
@@ -128,8 +128,8 @@ bool Config::readNextSetting() {
 		if (_lineLength >= _lineSize - 1) { // -1 for a terminating null.
 			_line[_lineLength] = '\0';
 			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL.print("Line too long: ");
-			DEBUG_SERIAL.println(_line);
+			DEBUG_SERIAL_PORT.print("Line too long: ");
+			DEBUG_SERIAL_PORT.println(_line);
 			#endif
 			_atEnd = true;
 			return false;
@@ -161,16 +161,16 @@ bool Config::readNextSetting() {
 	*/
 	if (_valueIndex < 0) {
 		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL.print("Missing '=' in line: ");
-		DEBUG_SERIAL.println(_line);
+		DEBUG_SERIAL_PORT.print("Missing '=' in line: ");
+		DEBUG_SERIAL_PORT.println(_line);
 		#endif
 		_atEnd = true;
 		return false;
 	}
 	if (_valueIndex == 1) {
 		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL.print("Missing Name in line: =");
-		DEBUG_SERIAL.println(_line[_valueIndex]);
+		DEBUG_SERIAL_PORT.print("Missing Name in line: =");
+		DEBUG_SERIAL_PORT.println(_line[_valueIndex]);
 		#endif
 		_atEnd = true;
 		return false;
