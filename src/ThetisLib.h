@@ -37,7 +37,7 @@ typedef enum Status {
 // =============================
 
 
-typedef struct {
+struct telemtry_t {
     time_t epoch;               // Timestamp in seconds since UNIX epoch (January 1, 1970)
     long curmSecond;            // Current fraction of second of reading
     float voltage;              // Battery voltage in V
@@ -74,7 +74,7 @@ typedef struct {
     float imuTemp;              // °Celsius from the IMU
     Status_t state;              // State reported by the package.
     uint8_t packetSize;         // The size of the telemetry packet
-} telemetry_t;
+} data;
 
 
 // ============================
