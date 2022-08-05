@@ -21,7 +21,7 @@ extern sensors_vec_t eulerAngles;
 // === LSM6DSO32 FUNCTIONS ===
 // ===========================
 
-extern Adafruit_LSM6DSO32 DSO32_IMU;
+extern Adafruit_LSM6DSO32 dso32;
 
 bool initDSO32( lsm6dso32_accel_range_t accelRange=LSM6DSO32_ACCEL_RANGE_8_G, 
                 lsm6ds_gyro_range_t gyroRange=LSM6DS_GYRO_RANGE_250_DPS,

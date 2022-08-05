@@ -50,6 +50,21 @@ bool initDSO32( lsm6dso32_accel_range_t accelRange,
 void pollDSO32() {
     dso32.getEvent(&accel, &gyro, &temp);
 
+    // Update Kalman Filter
+    // measurement matrix
+    K.H = { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, nmea.isValid(), 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, nmea.isValid(), 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, nmea.isValid(), 0.0,
+			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, nmea.isValid() };
+
+    
+
     // Update AHRS filter
     mahony.updateIMU(gyro.gyro.x, gyro.gyro.y, gyro.gyro.z,
                       accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
