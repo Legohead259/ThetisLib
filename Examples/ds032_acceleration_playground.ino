@@ -120,7 +120,7 @@ void calcLinAccel(sensors_vec_t &linAccel, sensors_vec_t &accel, double fc, doub
 
     Qb = filter.getQuaternion();
     // imu::Vector<3> gravBody = Qb.rotateVector(gravGlobal);
-    imu::Quaternion gravBody = Qb.invert() * imu::Quaternion(0, gravGlobal) * Qb;
+    imu::Quaternion gravBody = Qb.inv * imuert() * imu::Quaternion(0, gravGlobal) * Qb;
     // Serial.printf("X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", gravBody.x(), gravBody.y(), gravBody.z());
 
     float linAccelX = accel.x - gravBody.x();
