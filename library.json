@@ -21,7 +21,9 @@
         "adafruit/Adafruit Unified Sensor": "^1.1.5",
         "adafruit/Adafruit BNO055": "^1.5.3",
         "adafruit/Adafruit LSM6DS": "^4.7.0",
-        "adafruit/Adafruit NeoPixel": "^1.10.5"
+        "adafruit/Adafruit NeoPixel": "^1.10.5",
+        "paulstoffregen/Time": "^1.6.1",
+        "rfetick/Kalman": "^1.1.0"
     },
     "frameworks": "Arduino",
     "platforms": "Thetis"

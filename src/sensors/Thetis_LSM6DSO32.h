@@ -1,10 +1,8 @@
 #ifndef THETIS_LSM6DSO32_H
 #define THETIS_LSM6DSO32_H
 
-#include <filters/ButterworthBP2.h>
-#include <filters/Kalman.h>
-#include <AHRS/MahonyAHRS.h>
 #include <utility/imumaths.h>
+#include <AHRS/ThetisAHRS.h>
 
 #include <Adafruit_LSM6DSO32.h>
 

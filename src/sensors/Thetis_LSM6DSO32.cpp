@@ -6,11 +6,6 @@
 
 
 Adafruit_LSM6DSO32 dso32;
-Kalman kalmanX;
-Kalman kalmanY;
-Kalman kalmanZ;
-
-Mahony mahony(52); // Instantiate a Mahony filter with a sample frequency of 52 Hz
 
 double accelSampleFreq; // Accelerometer sampling frequency
 double gyroSampleFreq; // Gyroscope sampling frequency
