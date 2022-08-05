@@ -88,6 +88,6 @@ void initAHRS() {
 // ===================================
 
 
-#include <MahonyAHRS.h>
+#include "MahonyAHRS.h"
 
 Mahony mahony(52); // Instantiate a Mahony filter with a sample frequency of 52 Hz
