@@ -22,7 +22,7 @@
         "adafruit/Adafruit BNO055": "^1.5.3",
         "adafruit/Adafruit LSM6DS": "^4.7.0",
         "adafruit/Adafruit NeoPixel": "^1.10.5",
-        "https://github.com/me-no-dev/ESPAsyncWebServer.git":"",
+        // "me-no-dev/ESP Async WebServer": "^1.2.3", - Broken until 1.2.4+ release
         "ayushsharma82/AsyncElegantOTA": "^2.2.5"
     },
     "frameworks": "Arduino",
