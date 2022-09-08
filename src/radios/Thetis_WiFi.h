@@ -5,6 +5,7 @@
 #include "ESPAsyncWebServer.h"
 #include <SPIFFS.h>
 #include "../filesystem/ThetisConfig.h"
+#include <AsyncElegantOTA.h>
 
 // Configuration Data
 // extern uint8_t deviceID;
