@@ -1,4 +1,4 @@
-#include "Thetis_LSM6DSO32.h"
+#include "lsm6dso32.h"
 
 // ===========================
 // === LSM6DSO32 FUNCTIONS ===

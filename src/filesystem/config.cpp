@@ -5,7 +5,7 @@
  * a version of which should have been supplied with this file.
  */
  
-#include "ThetisConfig.h"
+#include "config.h"
 
 ConfigData cfgData;
 

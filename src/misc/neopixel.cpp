@@ -1,4 +1,4 @@
-#include "Thetis_NeoPixel.h"
+#include "neopixel.h"
 
 // ==========================
 // === NEOPIXEL FUNCTIONS ===

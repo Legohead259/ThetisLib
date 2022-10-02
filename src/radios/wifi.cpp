@@ -1,4 +1,4 @@
-#include "Thetis_WiFi.h"
+#include "wifi.h"
 
 AsyncWebServer server(80); // Create AsyncWebServer object on port 80
 

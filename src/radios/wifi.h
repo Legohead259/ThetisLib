@@ -4,7 +4,7 @@
 #include "WiFi.h"
 #include "ESPAsyncWebServer.h"
 #include <SPIFFS.h>
-#include "../filesystem/ThetisConfig.h"
+#include "../filesystem/config.h"
 #include <AsyncElegantOTA.h>
 
 // Configuration Data

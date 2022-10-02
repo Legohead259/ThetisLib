@@ -83,7 +83,8 @@ typedef struct {
 
 
 #include <filesystem/ThetisFS.h>
-#include <filesystem/ThetisConfig.h>
+#include <filesystem/config.h>
+#include "filesystem/logging.h"
 
 
 // ===========================
@@ -101,18 +102,18 @@ void getISO8601Time_RTC(char *buf);
 // ========================
 
 
-#include <sensors/Thetis_BNO055.h>
-#include <sensors/Thetis_LSM6DSO32.h> 
+#include <sensors/bno055.h>
+#include <sensors/lsm6dso32.h> 
 
 
 // =======================
 // === RADIO FUNCTIONS ===
 // =======================
 
-#include <radios/Thetis_GPS.h>
+#include <radios/gps.h>
 
 #if defined(WIFIAP_ENABLE) || defined(WIFICLIENT_ENABLE) // Check if any WiFi mode build flags are present
-#include <radios/Thetis_WiFi.h>
+#include <radios/wifi.h>
 #endif
 
 // ==========================
@@ -120,7 +121,7 @@ void getISO8601Time_RTC(char *buf);
 // ==========================
 
 
-#include <misc/Thetis_NeoPixel.h>
+#include <misc/neopixel.h>
 
 
 // =========================

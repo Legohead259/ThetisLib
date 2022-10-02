@@ -1,4 +1,4 @@
-#include "Thetis_GPS.h"
+#include "gps.h"
 
 // ============================
 // === GPS MODULE FUNCTIONS ===

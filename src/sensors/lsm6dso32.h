@@ -1,7 +1,6 @@
 #ifndef THETIS_LSM6DSO32_H
 #define THETIS_LSM6DSO32_H
 
-#include <filters/ButterworthBP2.h>
 #include <filters/Kalman.h>
 #include <AHRS/MahonyAHRS.h>
 #include <utility/imumaths.h>

@@ -171,24 +171,3 @@ void testFileIO(fs::FS &fs, const char * path) {
     DEBUG_SERIAL.printf("%u bytes written for %u ms\n\r", 2048 * 512, end);
     file.close();
 }
-
-bool initLogFile(fs::FS &fs, char * path, char * header) {
-    for (uint8_t x=0; x<255; x++) { // Initialize log file
-        sprintf(path, "/log_%03d.csv", x);
-        if (!fs.exists(path)) break; // If a new unique log file has been named, exit loop
-        if (x==254) return false; // If no unique log could be created, return an error
-    }
-    if (!fs.open(path, FILE_WRITE)) {
-        #ifdef SDCARD_DEBUG
-        DEBUG_SERIAL.println("Unable to open file for writing");
-        #endif
-        return false; // If unable to open the new log file, return an error
-    }
-    #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL.printf("Logging to: %s", path);
-    #endif
-
-    // Write header for the log file
-    writeFile(fs, path, header);
-    return true;
-}
