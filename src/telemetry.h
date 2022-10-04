@@ -1,3 +1,6 @@
+#ifndef TELEMETRY_H
+#define TELEMETRY_H
+
 struct telemetry_t {
     time_t epoch;               // Timestamp in seconds since UNIX epoch (January 1, 1970)
     long curmSecond;            // Current fraction of second of reading
@@ -34,5 +37,6 @@ struct telemetry_t {
     float quatZ;                //
     float imuTemp;              // °Celsius from the IMU
     Status_t state;              // State reported by the package.
-    uint8_t packetSize;         // The size of the telemetry packet
 } data;
+
+#endif // TELEMETRY_H
