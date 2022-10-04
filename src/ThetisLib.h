@@ -4,8 +4,8 @@
 
 #include <Arduino.h>
 
-// Telemetry data functions
-#include "telemetry.h"
+// Shared data functions
+#include "data.h"
 
 // Miscellaneous functions
 #include "misc/neopixel.h"
