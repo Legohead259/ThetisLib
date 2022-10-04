@@ -1,9 +1,15 @@
-#ifndef TELEMETRY_H
-#define TELEMETRY_H
+#ifndef DATA_H
+#define DATA_H
 
-struct telemetry_t {
+struct {
     time_t epoch;               // Timestamp in seconds since UNIX epoch (January 1, 1970)
-    long curmSecond;            // Current fraction of second of reading
+    uint16_t GPSYear;           // Current year from GPS data
+    uint8_t GPSMonth;           // Current month from GPS data
+    uint8_t GPSDay;             // Current day from GPS data
+    uint8_t GPSHour;            // Current hour from GPS data
+    uint8_t GPSminute;          // Current minute from GPS data
+    uint8_t GPSSeconds;         // Current year from GPS data
+    uint8_t GPShundreths;       // Current fraction of second of reading
     float voltage;              // Battery voltage in V
     bool GPSFix;                // If GPS has positive fix on location
     uint8_t numSats;            // Number of satellites GPS is communicating with
@@ -36,7 +42,7 @@ struct telemetry_t {
     float quatY;                //
     float quatZ;                //
     float imuTemp;              // °Celsius from the IMU
-    int8_t state;              // State reported by the package.
+    uint8_t state;              // State reported by the package.
 } data;
 
 #endif // TELEMETRY_H
