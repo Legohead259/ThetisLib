@@ -50,9 +50,9 @@ bool initGPS() {
 //     out.printf("Sending: %s\n\r", _buf);
 // }
 
-// =========================
-// === WRAPPER FUNCTIONS ===
-// =========================
+// ===========================
+// === TIMESTAMP FUNCTIONS ===
+// ===========================
 
 
 void getISO8601Time(char *buf) {
@@ -63,6 +63,36 @@ void getISO8601Time(char *buf) {
         _oldMillis = millis();
     }
     sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ",nmea.getYear(), nmea.getMonth(), nmea.getDay(), nmea.getHour(), nmea.getMinute(), nmea.getSecond(), millis()-_oldMillis);
+}
+
+void syncInternalClockGPS() {
+    Serial.println();
+    Serial.print("Attempting to sync internal clock to GPS time...");
+    unsigned long _timeoutStart = millis();
+    while(!GPS) { // Wait for a GPS message to arrive
+        if (millis() >= _timeoutStart+GPS_TIMEOUT) return; // Stop attempt, if TIMEOUT occurs
+    }
+
+    while(GPS.available()) { // Check for an available GPS message
+        char c = GPS.read();
+        Serial.print(c); // Debug
+        nmea.process(c);
+    }
+    if (nmea.isValid()) { // If the GPS has a good fix, reset the internal clock to the GPS time
+        timeElements.Year = nmea.getYear()-1970;
+        timeElements.Month = nmea.getMonth();
+        timeElements.Day = nmea.getDay();
+        timeElements.Hour = nmea.getHour();
+        timeElements.Minute = nmea.getMinute();
+        timeElements.Second = nmea.getSecond();
+
+        setTime(makeTime(timeElements)); // Reset internal clock
+        Serial.println("Done!");
+    }
+    else {
+        Serial.println("GPS fix was not valid - did not sync");
+    }
+    Serial.println();
 }
 
 

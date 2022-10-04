@@ -8,6 +8,9 @@
 
 #include <utility/MicroNMEA.h>
 
+#define GPS_SYNC_INTERVAL 1 // minutes
+#define GPS_TIMEOUT 5000 // ms
+
 // TODO: Implement MTK3339 API
 // TODO: Make GPS object-oriented
 
@@ -31,5 +34,6 @@ extern volatile bool ppsTriggered;
 bool initGPS();
 
 void getISO8601Time(char *buf);
+void syncInternalClockGPS();
 
 #endif // ndef THETIS_GPS_H
