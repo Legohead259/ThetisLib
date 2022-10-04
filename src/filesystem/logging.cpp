@@ -179,9 +179,13 @@ bool writeTelemetryData() {
 
 
 // ============================
-// === FORMATTING FUNCTIONS ===
+// === TIMESTAMP FUNCTIONS ===
 // ============================
 
+
+void getISO8601Time_GPS(char *buf) {
+    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", data.GPSYear, data.GPSMonth, data.GPSDay, data.GPSHour, data.GPSMinute, data.GPSSecond, data.GPSHundreth);
+}
 
 void getISO8601Time_RTC(char *buf) {
     breakTime(now(), timeElements);
@@ -200,6 +204,27 @@ void getISO8601Time_RTC(char *buf) {
 
     // Format timestamp into ISO8601 format
     sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", timeElements.Year+1970, timeElements.Month, timeElements.Day, timeElements.Hour, timeElements.Minute, timeElements.Second, curMSecond);
+}
+
+void syncInternalClockGPS() {
+    Serial.println();
+    Serial.print("Attempting to sync internal clock to GPS time...");
+
+    if (data.GPSFix) { // If the GPS has a good fix, reset the internal clock to the GPS time
+        timeElements.Year = data.GPSYear-1970;
+        timeElements.Month = data.GPSMonth;
+        timeElements.Day = data.GPSDay;
+        timeElements.Hour = data.GPSHour;
+        timeElements.Minute = data.GPSMinute;
+        timeElements.Second = data.GPSSecond;
+
+        setTime(makeTime(timeElements)); // Reset internal clock
+        Serial.println("Done!");
+    }
+    else {
+        Serial.println("GPS fix was not valid - did not sync");
+    }
+    Serial.println();
 }
 
 

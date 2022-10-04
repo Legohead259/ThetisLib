@@ -3,6 +3,7 @@
 
 #include <FS.h>
 #include <TimeLib.h>
+#include "../data.h"
 
 #define LOG_BTN_HOLD_TIME 500 // ms
 
@@ -21,7 +22,11 @@ bool writeFile(fs::FS &fs, const char * path, const char * message);
 // Log file functions
 void formatHeader(char *buf);
 bool initTelemetryLogFile(fs::FS &fs);
+
+// Timestamp functions
+void getISO8601Time_GPS(char *buf);
 void getISO8601Time_RTC(char *buf);
+void syncInternalClockGPS();
 
 // Logging ISRs
 void IRAM_ATTR logButtonISR();
