@@ -24,6 +24,9 @@
 
 // Radio functions
 #include "radios/gps.h"
+
+#ifdef WIFI_ENABLE
 #include "radios/wifi.h"
+#endif // WIFI_ENABLE
 
 #endif // THETISLIB_H
