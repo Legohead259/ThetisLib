@@ -19,7 +19,8 @@ extern tmElements_t timeElements;
 bool writeFile(fs::FS &fs, const char * path, const char * message);
 
 // Log file functions
-bool initTelemetryLogFile(fs::FS &fs, char * path, char * header);
+void formatHeader(char *buf);
+bool initTelemetryLogFile(fs::FS &fs);
 
 // Logging ISRs
 void IRAM_ATTR logButtonISR();
