@@ -1,6 +1,6 @@
 #ifndef THETISLIB_H
 #define THETISLIB_H
-#define THETISLIB_VERSION "0.2.0"
+#define THETISLIB_VERSION "1.2.0"
 
 #include <Arduino.h>
 
@@ -82,9 +82,8 @@ typedef struct {
 // ============================
 
 
-#include <filesystem/ThetisFS.h>
-#include <filesystem/config.h>
-#include "filesystem/logging.h"
+#include "filesystem/ThetisFS.h"
+#include "filesystem/config.h"
 
 
 // ===========================
@@ -102,18 +101,18 @@ void getISO8601Time_RTC(char *buf);
 // ========================
 
 
-#include <sensors/bno055.h>
-#include <sensors/lsm6dso32.h> 
+#include "sensors/bno055.h"
+#include "sensors/lsm6dso32.h" 
 
 
 // =======================
 // === RADIO FUNCTIONS ===
 // =======================
 
-#include <radios/gps.h>
+#include "radios/gps.h"
 
 #if defined(WIFIAP_ENABLE) || defined(WIFICLIENT_ENABLE) // Check if any WiFi mode build flags are present
-#include <radios/wifi.h>
+#include "radios/wifi.h"
 #endif
 
 // ==========================
@@ -121,7 +120,7 @@ void getISO8601Time_RTC(char *buf);
 // ==========================
 
 
-#include <misc/neopixel.h>
+#include "misc/neopixel.h"
 
 
 // =========================
