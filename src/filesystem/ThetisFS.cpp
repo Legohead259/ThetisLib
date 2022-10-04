@@ -1,5 +1,5 @@
 #include "ThetisFS.h"
- 
+
 bool initSDCard() {
     #ifdef SDCARD_DEBUG
     DEBUG_SERIAL_PORT.print("Initializing filesystem...");
@@ -18,62 +18,62 @@ bool initSDCard() {
 
 
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
-    DEBUG_SERIAL.printf("Listing directory: %s\n\r", dirname);
+    DEBUG_SERIAL_PORT.printf("Listing directory: %s\n\r", dirname);
     File root = fs.open(dirname);
     if (!root) {
-        DEBUG_SERIAL.println("Failed to open directory");
+        DEBUG_SERIAL_PORT.println("Failed to open directory");
         return;
     }
     if (!root.isDirectory()) {
-        DEBUG_SERIAL.println("Not a directory");
+        DEBUG_SERIAL_PORT.println("Not a directory");
         return;
     }
 
     File file = root.openNextFile();
     while (file) {
         if (file.isDirectory()) {
-            DEBUG_SERIAL.print("  DIR : ");
-            DEBUG_SERIAL.println(file.name());
+            DEBUG_SERIAL_PORT.print("  DIR : ");
+            DEBUG_SERIAL_PORT.println(file.name());
             if (levels){
                 listDir(fs, file.path(), levels--);
             }
         } 
         else {
-            DEBUG_SERIAL.print("  FILE: ");
-            DEBUG_SERIAL.print(file.name());
-            DEBUG_SERIAL.print("  SIZE: ");
-            DEBUG_SERIAL.println(file.size());
+            DEBUG_SERIAL_PORT.print("  FILE: ");
+            DEBUG_SERIAL_PORT.print(file.name());
+            DEBUG_SERIAL_PORT.print("  SIZE: ");
+            DEBUG_SERIAL_PORT.println(file.size());
         }
         file = root.openNextFile();
     }
 }
 
 bool createDir(fs::FS &fs, const char * path) {
-    DEBUG_SERIAL.printf("Creating Dir: %s ...", path);
+    DEBUG_SERIAL_PORT.printf("Creating Dir: %s ...", path);
     bool _success = fs.mkdir(path);
-    DEBUG_SERIAL.println(_success ? "done!" : "couldn't create directory!");
+    DEBUG_SERIAL_PORT.println(_success ? "done!" : "couldn't create directory!");
     return _success;
 }
 
 bool removeDir(fs::FS &fs, const char * path) {
-    DEBUG_SERIAL.printf("Removing Dir: %s ", path);
+    DEBUG_SERIAL_PORT.printf("Removing Dir: %s ", path);
     bool _success = fs.rmdir(path);
-    DEBUG_SERIAL.println(_success ? "done!" : "couldn't remove directory!");
+    DEBUG_SERIAL_PORT.println(_success ? "done!" : "couldn't remove directory!");
     return _success;
 }
 
 bool readFile(fs::FS &fs, const char * path) {
-    DEBUG_SERIAL.printf("Reading file: %s\r\n", path);
+    DEBUG_SERIAL_PORT.printf("Reading file: %s\r\n", path);
 
     File file = fs.open(path);
     if (!file) {
-        DEBUG_SERIAL.println("Failed to open file for reading");
+        DEBUG_SERIAL_PORT.println("Failed to open file for reading");
         return false;
     }
 
-    DEBUG_SERIAL.print("Read from file: ");
+    DEBUG_SERIAL_PORT.print("Read from file: ");
     while (file.available()) {
-        DEBUG_SERIAL.write(file.read());
+        DEBUG_SERIAL_PORT.write(file.read());
     }
     file.close();
     return true;
@@ -121,16 +121,16 @@ bool appendFile(fs::FS &fs, const char * path, const char * message) {
 }
 
 bool renameFile(fs::FS &fs, const char * path1, const char * path2) {
-    DEBUG_SERIAL.printf("Renaming file %s to %s\n\r", path1, path2);
+    DEBUG_SERIAL_PORT.printf("Renaming file %s to %s\n\r", path1, path2);
     bool _success = fs.rename(path1, path2);
-    DEBUG_SERIAL.println(_success ? "File renamed" : "Failed to rename file");
+    DEBUG_SERIAL_PORT.println(_success ? "File renamed" : "Failed to rename file");
     return _success;
 }
 
 bool deleteFile(fs::FS &fs, const char * path) {
-    DEBUG_SERIAL.printf("Deleting file: %s\n\r", path);
+    DEBUG_SERIAL_PORT.printf("Deleting file: %s\n\r", path);
     bool _success = fs.remove(path);
-    DEBUG_SERIAL.println(_success ? "File deleted" : "Failed to delete file");
+    DEBUG_SERIAL_PORT.println(_success ? "File deleted" : "Failed to delete file");
     return _success;
 }
 
@@ -153,16 +153,16 @@ void testFileIO(fs::FS &fs, const char * path) {
             len -= toRead;
         }
         end = millis() - start;
-        DEBUG_SERIAL.printf("%u bytes read for %u ms\n\r", flen, end);
+        DEBUG_SERIAL_PORT.printf("%u bytes read for %u ms\n\r", flen, end);
         file.close();
     } 
     else {
-        DEBUG_SERIAL.println("Failed to open file for reading");
+        DEBUG_SERIAL_PORT.println("Failed to open file for reading");
     }
 
     file = fs.open(path, FILE_WRITE);
     if (!file) {
-        DEBUG_SERIAL.println("Failed to open file for writing");
+        DEBUG_SERIAL_PORT.println("Failed to open file for writing");
         return;
     }
 
@@ -172,7 +172,7 @@ void testFileIO(fs::FS &fs, const char * path) {
         file.write(buf, 512);
     }
     end = millis() - start;
-    DEBUG_SERIAL.printf("%u bytes written for %u ms\n\r", 2048 * 512, end);
+    DEBUG_SERIAL_PORT.printf("%u bytes written for %u ms\n\r", 2048 * 512, end);
     file.close();
 }
 
