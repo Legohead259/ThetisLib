@@ -21,6 +21,7 @@ bool writeFile(fs::FS &fs, const char * path, const char * message);
 // Log file functions
 void formatHeader(char *buf);
 bool initTelemetryLogFile(fs::FS &fs);
+void getISO8601Time_RTC(char *buf);
 
 // Logging ISRs
 void IRAM_ATTR logButtonISR();
