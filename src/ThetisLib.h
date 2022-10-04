@@ -4,21 +4,19 @@
 
 #include <Arduino.h>
 
-// Status functions
-#include "states.h"
-
 // Telemetry data functions
 #include "telemetry.h"
+
+// Miscellaneous functions
+#include "misc/neopixel.h"
 
 // Filesystem functions
 #include "filesystem/ThetisFS.h"
 #include "filesystem/config.h"
 #include "filesystem/logging.h"
 
-// Timestamp functions
-#include <TimeLib.h>
-extern tmElements_t timeElements;
-void getISO8601Time_RTC(char *buf);
+// Status functions
+#include "states.h"
 
 // Sensor functions
 #include "sensors/bno055.h"
@@ -27,8 +25,5 @@ void getISO8601Time_RTC(char *buf);
 // Radio functions
 #include "radios/gps.h"
 #include "radios/wifi.h"
-
-// Miscellaneous functions
-#include "misc/neopixel.h"
 
 #endif // THETISLIB_H
