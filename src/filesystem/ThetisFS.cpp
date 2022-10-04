@@ -2,9 +2,20 @@
 
 bool initSDCard() {
     #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL_PORT.print("Initializing filesystem...");
+    DEBUG_SERIAL_PORT.print("Initializing SD card filesystem...");
     #endif
     bool _success = SD.begin();
+    #ifdef SDCARD_DEBUG
+    DEBUG_SERIAL_PORT.println(_success ? "done!" : "Failed to initialize filesystem!");
+    #endif
+    return _success;
+}
+
+bool initSPIFFS() {
+    #ifdef SDCARD_DEBUG
+    DEBUG_SERIAL_PORT.print("Initializing SPIFFS filesystem...");
+    #endif
+    bool _success = SPIFFS.begin();
     #ifdef SDCARD_DEBUG
     DEBUG_SERIAL_PORT.println(_success ? "done!" : "Failed to initialize filesystem!");
     #endif

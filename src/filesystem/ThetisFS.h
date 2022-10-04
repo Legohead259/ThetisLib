@@ -3,8 +3,10 @@
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
+#include <SPIFFS.h>
 
 bool initSDCard();
+bool initSPIFFS();
 
 // Filesystem Functions
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels);
