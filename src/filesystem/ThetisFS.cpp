@@ -1,17 +1,21 @@
 #include "ThetisFS.h"
-
-#define DEBUG_SERIAL Serial // TODO: Declare this in a variants file
  
 bool initSDCard() {
     #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL.print("Initializing filesystem...");
+    DEBUG_SERIAL_PORT.print("Initializing filesystem...");
     #endif
     bool _success = SD.begin();
     #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL.println(_success ? "done!" : "Failed to initialize filesystem!");
+    DEBUG_SERIAL_PORT.println(_success ? "done!" : "Failed to initialize filesystem!");
     #endif
     return _success;
 }
+
+
+// ============================
+// === FILESYSTEM FUNCTIONS ===
+// ============================
+
 
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
     DEBUG_SERIAL.printf("Listing directory: %s\n\r", dirname);
@@ -170,4 +174,34 @@ void testFileIO(fs::FS &fs, const char * path) {
     end = millis() - start;
     DEBUG_SERIAL.printf("%u bytes written for %u ms\n\r", 2048 * 512, end);
     file.close();
+}
+
+
+// =========================
+// === LOGGING FUNCTIONS ===
+// =========================
+
+
+bool initTelemetryLogFile(fs::FS &fs, char * path, char * header) {
+    #ifdef SDCARD_DEBUG
+    Serial.print("Initializing telemetry log file...");
+    #endif
+    for (uint8_t x=0; x<255; x++) { // Initialize log file
+        sprintf(path, "/log_%03d.csv", x);
+        if (!fs.exists(path)) break; // If a new unique log file has been named, exit loop
+        if (x==254) return false; // If no unique log could be created, return an error
+    }
+    if (!fs.open(path, FILE_WRITE)) {
+        #ifdef SDCARD_DEBUG
+        Serial.println("Unable to open file for writing");
+        #endif
+        return false; // If unable to open the new log file, return an error
+    }
+    #ifdef SDCARD_DEBUG
+    Serial.printf("Logging to: %s\n\r", path);
+    #endif
+
+    // Write header for the log file
+    writeFile(fs, path, header);
+    return true;
 }
