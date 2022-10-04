@@ -1,11 +1,6 @@
 #ifndef THETIS_GPS_H
 #define THETIS_GPS_H
 
-// =====================
-// === GPS FUNCTIONS ===
-// =====================
-
-
 #include <utility/MicroNMEA.h>
 
 #define GPS_SYNC_INTERVAL 1 // minutes
@@ -22,7 +17,7 @@ typedef enum {
 typedef enum {
     REFRESH_RATE_CMD = 220,
     BAUDRATE_CMD = 251,
-    SENTANCE_TYPES_CMD = 14
+    SENTENCE_TYPES_CMD = 14
 } gps_commands_t;
 
 extern HardwareSerial& GPS;

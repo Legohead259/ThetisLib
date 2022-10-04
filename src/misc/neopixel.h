@@ -59,7 +59,7 @@ const uint32_t LIME     = Adafruit_NeoPixel::Color(125, 0, 255);
 
 const float brightness = 0.1;
 
-void initNeoPixel();
+bool initNeoPixel();
 void pulseLED(uint32_t color);
 void rainbow();
 uint32_t Wheel(byte wheelPos);
