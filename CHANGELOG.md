@@ -15,18 +15,34 @@ Release sections
 ### Security 
 -->
 
-## Unreleased
+## 1.2.0 - 2022-XX-XX [UNRELEASED]
 
 ### **TODO**
-- Implemented ThetisAPI
+- Major refactor
 
+### Added
+- Certain telemetry can now be dynamically logged using compiler build flags
+- Added GPS timestamp segments to the data structure
+- Added `initSPIFFS()` function to filesystem
+
+### Changed
+- Removed the `packetSize` parameter from the telemetry data structure. This can be replaced by `sizeof(data)` in practice.
+- Changed type of `state` parameter in the telemetry data structure to `uint8_t` to remove cyclic dependency. `status_t` can be cast to `uint8_t`
+- Renamed the data structure from `telemetry` to `data` to better reflect its use in the code
+- Migrated all time stamping functions in `logging`
+- Changed the return type of `initNeoPixel()` to `bool` for consistency. [NOTE:] This only returns true, in the future we should change it so that it can detect when the NEOPIXEL_EN gate is open
+
+
+---
+
+## 1.1.6 - 2022-07-29
 ### Added
 - Added configuration data struct to `ThetisConfig`
 
 ### Changed
 - Imported the `loadConfigurations()` function from the main application into `ThetisConfig`
 - Changed `DEBUG_SERIAL` to `DEBUG_SERIAL_PORT` in  `ThetisConfig`
-
+- Changed `DEBUG_SERIAL` to `DEBUG_SERIAL_PORT` in `ThetisFs`
 ---
 
 ## 1.1.5 - 2022-07-22
