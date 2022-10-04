@@ -7,7 +7,7 @@
  
 #include "config.h"
 
-ConfigData cfgData;
+Config config;
 
 /*
  * Opens the given file on the SD card.
@@ -44,7 +44,7 @@ bool Config::begin(const char *configFileName, uint8_t maxLineLength) {
   	_file = SPIFFS.open(configFileName, FILE_READ);
   	if (!_file) {
 		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL_PORT.print("Could not open SD file: ");
+		DEBUG_SERIAL_PORT.print("Could not open file: ");
 		DEBUG_SERIAL_PORT.println(configFileName);
 		#endif
 		_atEnd = true;
@@ -55,6 +55,39 @@ bool Config::begin(const char *configFileName, uint8_t maxLineLength) {
 	_atEnd = false;
 	
 	return true;
+}
+
+void Config::loadConfigurations() {
+	while (readNextSetting()) {
+		if (nameIs("id")) {
+			configData.deviceID = getIntValue();
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("The ID of this device is configured to: ");
+			DEBUG_SERIAL_PORT.println(configData.deviceID);
+			#endif
+		}
+		else if (nameIs("client_ssid")) {
+			strcpy(configData.ssid, getValue());
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("Client SSID configured to: ");
+			DEBUG_SERIAL_PORT.println(configData.ssid);
+			#endif
+		}
+		else if (nameIs("client_password")) {
+			strcpy(configData.password, getValue());
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("Client password configured to: ");
+			DEBUG_SERIAL_PORT.println(configData.password);
+			#endif
+		}
+		else {
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("Unknown setting name: ");
+			DEBUG_SERIAL_PORT.println(getName());
+			#endif
+		}
+	}
+	end();
 }
 
 /*
@@ -189,39 +222,6 @@ bool Config::nameIs(const char *name) {
     	return true;
   	}	
   	return false;
-}
-
-void Config::loadConfigurations() {
-	while (readNextSetting()) {
-		if (nameIs("id")) {
-			cfgData.deviceID = getIntValue();
-			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL_PORT.print("The ID of this device is configured to: ");
-			DEBUG_SERIAL_PORT.println(cfgData.deviceID);
-			#endif
-		}
-		else if (nameIs("client_ssid")) {
-			strcpy(cfgData.ssid, getValue());
-			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL_PORT.print("Client SSID configured to: ");
-			DEBUG_SERIAL_PORT.println(cfgData.ssid);
-			#endif
-		}
-		else if (nameIs("client_password")) {
-			strcpy(cfgData.password, getValue());
-			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL_PORT.print("Client password configured to: ");
-			DEBUG_SERIAL_PORT.println(cfgData.password);
-			#endif
-		}
-		else {
-			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL_PORT.print("Unknown setting name: ");
-			DEBUG_SERIAL_PORT.println(getName());
-			#endif
-		}
-	}
-	end();
 }
 
 /*

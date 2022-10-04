@@ -11,23 +11,21 @@
 #ifndef ThetisConfig_h
 #define ThetisConfig_h
 
-// #define SDCONFIG_DEBUG // Enable debugging
-
 #include <Arduino.h>
 #include <SPIFFS.h>
 // #include <Ethernet.h>
 
-struct ConfigData {
+struct {
 	uint8_t deviceID;
 	char FW_VERSION[8];
 	char HW_REVISION[8];
 	char ssid[32];
 	char password[32];
-};
-extern ConfigData cfgData;
+  	bool gpsEnable;
+} configData;
 
 class Config {
-  private:
+private:
     File _file;            // the open configuration file
     bool _atEnd;        // If true, there is no more of the file to read.
     char *_line;           // the current line of the file (see _lineLength)
@@ -38,17 +36,19 @@ class Config {
                            //  (or -1 if none)
                            // (the name part is at &_line[0])
   
-  public:
+public:
     bool begin(const char *configFileName, uint8_t maxLineLength);
+	void loadConfigurations();
     void end();
     bool readNextSetting();
     bool nameIs(const char *name);
     const char *getName();
     const char *getValue();
     int getIntValue();
-    void loadConfigurations();
     // IPAddress getIPAddress();
     bool getBooleanValue();
     char *copyValue();
 };
+
+extern Config config;
 #endif
