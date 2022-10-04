@@ -7,10 +7,10 @@ struct {
     uint8_t GPSMonth;           // Current month from GPS data
     uint8_t GPSDay;             // Current day from GPS data
     uint8_t GPSHour;            // Current hour from GPS data
-    uint8_t GPSminute;          // Current minute from GPS data
-    uint8_t GPSSeconds;         // Current year from GPS data
-    uint8_t GPShundreths;       // Current fraction of second of reading
-    float voltage;              // Battery voltage in V
+    uint8_t GPSMinute;          // Current minute from GPS data
+    uint8_t GPSSecond;         // Current year from GPS data
+    uint8_t GPSHundreth;       // Current fraction of second of reading
+    float voltage;              // Battery voltage in volts
     bool GPSFix;                // If GPS has positive fix on location
     uint8_t numSats;            // Number of satellites GPS is communicating with
     uint8_t HDOP;               // Accuracy of GPS reading. Lower is better. In tenths (divide by 10. when displaying)
