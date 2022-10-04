@@ -1,18 +1,11 @@
 #ifndef THETIS_WIFIH
 #define THETIS_WIFIH
 
-#include "WiFi.h"
-#include "ESPAsyncWebServer.h"
+#include <WiFi.h>
+#include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
-#include "../filesystem/config.h"
 #include <AsyncElegantOTA.h>
-
-// Configuration Data
-// extern uint8_t deviceID;
-// extern const char FW_VERSION[];
-// extern const char HW_REVISION[];
-// extern char ssid[32];
-// extern char password[32];
+#include "../filesystem/config.h"
 
 extern AsyncWebServer server; // Create AsyncWebServer object on port 80
 
