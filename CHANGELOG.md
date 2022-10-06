@@ -15,9 +15,7 @@ Release sections
 ### Security 
 -->
 
-## 1.2.0 - 2022-XX-XX [UNRELEASED]
-
-### **TODO**
+## 1.2.0 - 2022-10-06
 - Major refactor
 
 ### Added
@@ -32,7 +30,7 @@ Release sections
 - Changed type of `state` parameter in the telemetry data structure to `uint8_t` to remove cyclic dependency. `status_t` can be cast to `uint8_t`
 - Renamed the data structure from `telemetry` to `data` to better reflect its use in the code
 - Migrated all time stamping functions in `logging`
-- Changed the return type of `initNeoPixel()` to `bool` for consistency. [NOTE:] This only returns true, in the future we should change it so that it can detect when the NEOPIXEL_EN gate is open
+- Changed the return type of `initNeoPixel()` to `bool` for consistency. **NOTE**: This only returns true, in the future we should change it so that it can detect when the NEOPIXEL_EN gate is open
 - Moved all sensor fusion functions from `lsm6dso32` to `fusion` to make future development easier
 - Changed declaration of `data` to fix memory addressing error
 
