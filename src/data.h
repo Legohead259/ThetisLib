@@ -1,7 +1,10 @@
 #ifndef DATA_H
 #define DATA_H
 
-struct {
+#include <TimeLib.h>
+#include <Arduino.h>
+
+struct data_t {
     time_t epoch;               // Timestamp in seconds since UNIX epoch (January 1, 1970)
     uint16_t GPSYear;           // Current year from GPS data
     uint8_t GPSMonth;           // Current month from GPS data
@@ -43,6 +46,8 @@ struct {
     float quatZ;                //
     float imuTemp;              // °Celsius from the IMU
     uint8_t state;              // State reported by the package.
-} data;
+};
 
-#endif // TELEMETRY_H
+extern data_t data;
+
+#endif // DATA_H
