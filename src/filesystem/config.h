@@ -21,7 +21,6 @@ struct {
 	char HW_REVISION[8];
 	char ssid[32];
 	char password[32];
-  	bool gpsEnable;
 } configData;
 
 class Config {
