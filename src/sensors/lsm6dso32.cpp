@@ -6,25 +6,9 @@
 
 
 Adafruit_LSM6DSO32 dso32;
-Kalman kalmanX;
-Kalman kalmanY;
-Kalman kalmanZ;
-
-Mahony mahony(52); // Instantiate a Mahony filter with a sample frequency of 52 Hz
 
 double accelSampleFreq; // Accelerometer sampling frequency
 double gyroSampleFreq; // Gyroscope sampling frequency
-
-sensors_event_t accel;
-sensors_event_t gyro;
-sensors_event_t temp;
-
-sensors_vec_t linAccel;
-sensors_vec_t accelAngle;
-sensors_vec_t ufAngle;
-sensors_vec_t cfAngle;
-sensors_vec_t kfAngle;
-sensors_vec_t eulerAngles;
 
 bool initDSO32( lsm6dso32_accel_range_t accelRange, 
                 lsm6ds_gyro_range_t gyroRange,
@@ -55,13 +39,6 @@ bool initDSO32( lsm6dso32_accel_range_t accelRange,
 void pollDSO32() {
     dso32.getEvent(&accel, &gyro, &temp);
 
-    // Update AHRS filter
-    mahony.updateIMU(gyro.gyro.x, gyro.gyro.y, gyro.gyro.z,
-                      accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
-
-    // Calculate the linear accelerations
-    linAccel = calcLinAccel();
-
     // Convert gyro to deg/s from rad/s
     gyro.gyro.x *= RAD_TO_DEG;
     gyro.gyro.y *= RAD_TO_DEG;
@@ -76,30 +53,8 @@ void pollDSO32() {
 
     #ifdef LSM6DSO_DEBUG_PLOTTER
     // Serial plotter print statements
-    DEBUG_SERIAL_PORT.printf("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n\r",data.accelX, data.accelY, data.accelZ, 
-                                                            data.linAccelX, data.linAccelY, data.linAccelZ);
+    DEBUG_SERIAL_PORT.printf("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n\r",data.accelX, data.accelY, data.accelZ, data.linAccelX, data.linAccelY, data.linAccelZ);
     #endif // LSM6DSO_DEBUG_PLOTTER
-}
-
-sensors_vec_t calcLinAccel() {
-    sensors_vec_t linAccel;
-
-    // Graviational acceleration in NED coordinate system
-    imu::Vector<3> gravGlobal = {0, 0, 9.81};
-    imu::Quaternion Qb = mahony.getQuaternion();
-    imu::Quaternion gravBody = Qb.invert() * imu::Quaternion(0, gravGlobal) * Qb;
-    // Serial.printf("X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", gravBody.x(), gravBody.y(), gravBody.z());
-
-    linAccel.x = accel.acceleration.x - gravBody.x();
-    linAccel.y = accel.acceleration.y - gravBody.y();
-    linAccel.z = accel.acceleration.z - gravBody.z();
-
-    // DEBUG statement
-    #ifdef LSM6DSO_DEBUG
-    DEBUG_SERIAL_PORT.printf("LinAccel X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", linAccel.x, linAccel.y, linAccel.z);
-    #endif
-
-    return linAccel;
 }
 
 double setSampleFrequency(lsm6ds_data_rate_t dataRate) {
