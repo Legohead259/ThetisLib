@@ -9,6 +9,8 @@
 
 extern AsyncWebServer server; // Create AsyncWebServer object on port 80
 
+bool initWIFIAP();
+
 // Prototypes
 String processor(const String &var);
 #endif // THETIS_WIFIH
