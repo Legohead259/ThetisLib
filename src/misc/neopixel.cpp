@@ -1,4 +1,4 @@
-#include "Thetis_NeoPixel.h"
+#include "neopixel.h"
 
 // ==========================
 // === NEOPIXEL FUNCTIONS ===
@@ -6,7 +6,8 @@
 
 Adafruit_NeoPixel pixel(1, NEOPIXEL_DATA, NEO_RGB + NEO_KHZ800);
 
-void initNeoPixel() {
+bool initNeoPixel() {
+    // TODO: Create a check that the NeoPixel gate is open
     #ifdef NEOPIXEL_DEBUG
     DEBUG_SERIAL_PORT.print("Initializing NeoPixel...");
     #endif
@@ -17,6 +18,7 @@ void initNeoPixel() {
     #ifdef NEOPIXEL_DEBUG
     DEBUG_SERIAL_PORT.println("done!");
     #endif
+    return true;
 }
 
 void pulseLED(uint32_t color) {

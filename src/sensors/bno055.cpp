@@ -1,4 +1,4 @@
-#include "Thetis_BNO055.h"
+#include "bno055.h"
 
 Adafruit_BNO055 bno;
 

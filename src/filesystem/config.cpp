@@ -5,7 +5,9 @@
  * a version of which should have been supplied with this file.
  */
  
-#include "ThetisConfig.h"
+#include "config.h"
+
+Config config;
 
 /*
  * Opens the given file on the SD card.
@@ -15,7 +17,7 @@
  *
  * NOTE: SD.begin() must be called before calling our begin().
  */
-bool Config::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength) {
+bool Config::begin(const char *configFileName, uint8_t maxLineLength) {
 	_lineLength = 0;
 	_lineSize = 0;
 	_valueIndex = -1;
@@ -28,7 +30,7 @@ bool Config::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength
 	_line = (char *) malloc(_lineSize);
   	if (_line == 0) {
 		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL.println("out of memory");
+		DEBUG_SERIAL_PORT.println("out of memory");
 		#endif
 		_atEnd = true;
 		return false;
@@ -39,11 +41,11 @@ bool Config::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength
    * we don't save it. To minimize memory use, we don't copy it.
    */
    
-  	_file = fs.open(configFileName, FILE_READ);
+  	_file = SPIFFS.open(configFileName, FILE_READ);
   	if (!_file) {
 		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL.print("Could not open SD file: ");
-		DEBUG_SERIAL.println(configFileName);
+		DEBUG_SERIAL_PORT.print("Could not open file: ");
+		DEBUG_SERIAL_PORT.println(configFileName);
 		#endif
 		_atEnd = true;
 		return false;
@@ -53,6 +55,39 @@ bool Config::begin(fs::FS &fs, const char *configFileName, uint8_t maxLineLength
 	_atEnd = false;
 	
 	return true;
+}
+
+void Config::loadConfigurations() {
+	while (readNextSetting()) {
+		if (nameIs("id")) {
+			configData.deviceID = getIntValue();
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("The ID of this device is configured to: ");
+			DEBUG_SERIAL_PORT.println(configData.deviceID);
+			#endif
+		}
+		else if (nameIs("client_ssid")) {
+			strcpy(configData.ssid, getValue());
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("Client SSID configured to: ");
+			DEBUG_SERIAL_PORT.println(configData.ssid);
+			#endif
+		}
+		else if (nameIs("client_password")) {
+			strcpy(configData.password, getValue());
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("Client password configured to: ");
+			DEBUG_SERIAL_PORT.println(configData.password);
+			#endif
+		}
+		else {
+			#ifdef CONFIG_DEBUG
+			DEBUG_SERIAL_PORT.print("Unknown setting name: ");
+			DEBUG_SERIAL_PORT.println(getName());
+			#endif
+		}
+	}
+	end();
 }
 
 /*
@@ -126,8 +161,8 @@ bool Config::readNextSetting() {
 		if (_lineLength >= _lineSize - 1) { // -1 for a terminating null.
 			_line[_lineLength] = '\0';
 			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL.print("Line too long: ");
-			DEBUG_SERIAL.println(_line);
+			DEBUG_SERIAL_PORT.print("Line too long: ");
+			DEBUG_SERIAL_PORT.println(_line);
 			#endif
 			_atEnd = true;
 			return false;
@@ -159,16 +194,16 @@ bool Config::readNextSetting() {
 	*/
 	if (_valueIndex < 0) {
 		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL.print("Missing '=' in line: ");
-		DEBUG_SERIAL.println(_line);
+		DEBUG_SERIAL_PORT.print("Missing '=' in line: ");
+		DEBUG_SERIAL_PORT.println(_line);
 		#endif
 		_atEnd = true;
 		return false;
 	}
 	if (_valueIndex == 1) {
 		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL.print("Missing Name in line: =");
-		DEBUG_SERIAL.println(_line[_valueIndex]);
+		DEBUG_SERIAL_PORT.print("Missing Name in line: =");
+		DEBUG_SERIAL_PORT.println(_line[_valueIndex]);
 		#endif
 		_atEnd = true;
 		return false;

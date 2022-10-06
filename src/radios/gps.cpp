@@ -1,4 +1,4 @@
-#include "Thetis_GPS.h"
+#include "gps.h"
 
 // ============================
 // === GPS MODULE FUNCTIONS ===
@@ -49,22 +49,6 @@ bool initGPS() {
 //     MicroNMEA::sendSentence(gps, _buf);
 //     out.printf("Sending: %s\n\r", _buf);
 // }
-
-// =========================
-// === WRAPPER FUNCTIONS ===
-// =========================
-
-
-void getISO8601Time(char *buf) {
-    static long _oldMillis = 0;
-    static uint8_t _oldSecond = 0;
-    if (nmea.getSecond() != _oldSecond) { // One second has passed, reset millis offset and second
-        _oldSecond = nmea.getSecond();
-        _oldMillis = millis();
-    }
-    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ",nmea.getYear(), nmea.getMonth(), nmea.getDay(), nmea.getHour(), nmea.getMinute(), nmea.getSecond(), millis()-_oldMillis);
-}
-
 
 // =========================
 // === HANDLER FUNCTIONS ===
