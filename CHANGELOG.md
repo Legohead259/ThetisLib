@@ -26,6 +26,7 @@ Release sections
 - Added `initSPIFFS()` function to filesystem
 - Added a `fusion` file to handle the IMU sensor fusion and filtering
 - Added several dependency libraries
+- Added `data.cpp` source file
 
 ### Changed
 - Changed type of `state` parameter in the telemetry data structure to `uint8_t` to remove cyclic dependency. `status_t` can be cast to `uint8_t`
@@ -33,11 +34,13 @@ Release sections
 - Migrated all time stamping functions in `logging`
 - Changed the return type of `initNeoPixel()` to `bool` for consistency. [NOTE:] This only returns true, in the future we should change it so that it can detect when the NEOPIXEL_EN gate is open
 - Moved all sensor fusion functions from `lsm6dso32` to `fusion` to make future development easier
+- Changed declaration of `data` to fix memory addressing error
 
 ### Removed
 - Removed the `packetSize` parameter from the telemetry data structure. This can be replaced by `sizeof(data)` in practice.
 - Removed the Kalman filter files since they are being replaced by the proper Kalman library downloaded from PIO
 - Removed MicroNMEA library since it is now a downloadable dependency
+- Removed `gps_enable` parameter from the configuration data structure
 ---
 
 ## 1.1.6 - 2022-07-29
