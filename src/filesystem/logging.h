@@ -21,7 +21,8 @@ bool writeFile(fs::FS &fs, const char * path, const char * message);
 
 // Log file functions
 void formatHeader(char *buf);
-bool initTelemetryLogFile(fs::FS &fs);
+bool initDataLogFile(fs::FS &fs);
+bool logData(fs::FS &fs);
 
 // Timestamp functions
 void getISO8601Time_GPS(char *buf);

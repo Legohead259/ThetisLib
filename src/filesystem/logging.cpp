@@ -14,84 +14,86 @@ tmElements_t timeElements;
 
 void formatHeader(char *buf) {
     #ifdef LOG_ALL
-        #define LOG_VOLTAGE
-        #define LOG_GPS
-        #define LOG_IMU
-        #define LOG_ORIENTATION
-        #define LOG_STATE
+    #define LOG_VOLTAGE
+    #define LOG_GPS
+    #define LOG_IMU
+    #define LOG_ORIENTATION
+    #define LOG_STATE
     #endif // LOG_ALL
 
     #ifdef LOG_IMU
-        #define LOG_ACCELEROMETER
-        #define LOG_GYROSCOPE
-        #define LOG_MAGNETOMETER
+    #define LOG_ACCELEROMETER
+    #define LOG_GYROSCOPE
+    #define LOG_MAGNETOMETER
     #endif // LOG_IMU
 
     #ifdef LOG_ORIENTATION
-        #define LOG_ORIENTATION_EULER
-        #define LOG_ORIENTATION_QUATERNION
+    #define LOG_ORIENTATION_EULER
+    #define LOG_ORIENTATION_QUATERNION
     #endif // LOG_ORIENTATION
 
     // Add timestamp header
     strcat(buf, "Timestamp ISO8601,");
 
     #ifdef LOG_VOLTAGE
-        strcat(buf, "Voltage (V),");
+    strcat(buf, "Voltage (V),");
     #endif // LOG_VOLTAGE
 
     #ifdef LOG_GPS
-        strcat(buf, "GPS Fix,");
-        strcat(buf, "Num Sats,");
-        strcat(buf, "HDOP,");
-        strcat(buf, "Latitude (deg),");
-        strcat(buf, "Longitude (deg),");
-        strcat(buf, "Speed (kts),");
-        strcat(buf, "Course (deg),");
+    strcat(buf, "GPS Fix,");
+    strcat(buf, "Num Sats,");
+    strcat(buf, "HDOP,");
+    strcat(buf, "Latitude (deg),");
+    strcat(buf, "Longitude (deg),");
+    strcat(buf, "Speed (kts),");
+    strcat(buf, "Course (deg),");
     #endif // LOG_GPS
 
     #ifdef LOG_ACCELEROMETER
-        strcat(buf, "Accel Cal,");
-        strcat(buf, "Accel X (m/s/s),");
-        strcat(buf, "Accel Y (m/s/s),");
-        strcat(buf, "Accel Z (m/s/s),");
-        strcat(buf, "Lin Accel X (m/s/s),");
-        strcat(buf, "Lin Accel Y (m/s/s),");
-        strcat(buf, "Lin Accel Z (m/s/s),");
+    strcat(buf, "Accel Cal,");
+    strcat(buf, "Accel X (m/s/s),");
+    strcat(buf, "Accel Y (m/s/s),");
+    strcat(buf, "Accel Z (m/s/s),");
+    strcat(buf, "Lin Accel X (m/s/s),");
+    strcat(buf, "Lin Accel Y (m/s/s),");
+    strcat(buf, "Lin Accel Z (m/s/s),");
     #endif // LOG_ACCELEROMETER
 
     #ifdef LOG_GYROSCOPE
-        strcat(buf, "Gyro Cal,");
-        strcat(buf, "Gyro X (rad/s),");
-        strcat(buf, "Gyro Y (rad/s),");
-        strcat(buf, "Gyro Z (rad/s),");
+    strcat(buf, "Gyro Cal,");
+    strcat(buf, "Gyro X (rad/s),");
+    strcat(buf, "Gyro Y (rad/s),");
+    strcat(buf, "Gyro Z (rad/s),");
     #endif // LOG_GYROSCOPE
 
     #ifdef LOG_MAGNETOMETER
-        strcat(buf, "Mag Cal,");
-        strcat(buf, "Mag X (mG),");
-        strcat(buf, "Mag Y (mG),");
-        strcat(buf, "Mag Z (mG),");
+    strcat(buf, "Mag Cal,");
+    strcat(buf, "Mag X (mG),");
+    strcat(buf, "Mag Y (mG),");
+    strcat(buf, "Mag Z (mG),");
     #endif // LOG_VOLTAGE
 
     #ifdef LOG_ORIENTATION_EULER
-        strcat(buf, "Roll (deg),");
-        strcat(buf, "Pitch (deg),");
-        strcat(buf, "Yaw (deg),");
+    strcat(buf, "Roll (deg),");
+    strcat(buf, "Pitch (deg),");
+    strcat(buf, "Yaw (deg),");
     #endif // LOG_ORIENTATION_EULER
 
     #ifdef LOG_ORIENTATION_QUATERNION
-        strcat(buf, "Quat W,");
-        strcat(buf, "Quat X,");
-        strcat(buf, "Quat Y,");
-        strcat(buf, "Quat Z,");
+    strcat(buf, "Quat W,");
+    strcat(buf, "Quat X,");
+    strcat(buf, "Quat Y,");
+    strcat(buf, "Quat Z,");
     #endif // LOG_ORIENTATION_QUATERNION
 
     #ifdef LOG_STATE
-        strcat(buf, "State,");
+    strcat(buf, "State,");
     #endif // LOG_STATE
+
+    strcat(buf,"\n\r");
 }
 
-bool initTelemetryLogFile(fs::FS &fs) {
+bool initDataLogFile(fs::FS &fs) {
     #ifdef SDCARD_DEBUG
     DEBUG_SERIAL_PORT.print("Initializing telemetry log file...");
     #endif
@@ -117,15 +119,14 @@ bool initTelemetryLogFile(fs::FS &fs) {
     return true;
 }
 
-/**
-bool writeTelemetryData() {
+bool logData(fs::FS &fs) {
     #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL_PORT.printf("Writing telemetry packet to: %s", filename);
+    DEBUG_SERIAL_PORT.printf("Writing telemetry packet to: %s", telemetryLogFilename);
     #endif
-    File _dataFile = SD.open(filename, FILE_APPEND);
+    File _dataFile = fs.open(telemetryLogFilename, FILE_APPEND);
     if (!_dataFile) {
         #ifdef SDCARD_DEBUG
-        DEBUG_SERIAL_PORT.printf("Could not write to %s", filename);
+        DEBUG_SERIAL_PORT.printf("Could not write to %s", telemetryLogFilename);
         #endif
         return false;
     }
@@ -133,7 +134,12 @@ bool writeTelemetryData() {
     char _timestamp[32];
     getISO8601Time_RTC(_timestamp);
     _dataFile.print(_timestamp);
+    
+    #ifdef LOG_VOLTAGE
     _dataFile.printf("%0.3f,", data.voltage);
+    #endif // LOG_VOLTAGE
+
+    #ifdef LOG_GPS
     _dataFile.printf("%d,", data.GPSFix);
     _dataFile.printf("%d,", data.numSats);
     _dataFile.printf("%d,", data.HDOP);
@@ -141,41 +147,65 @@ bool writeTelemetryData() {
     _dataFile.printf("%0.3f,", data.longitude / 1E6);
     _dataFile.printf("%0.3f,", data.GPSSpeed / 1E3);
     _dataFile.printf("%0.3f,", data.GPSCourse / 1E3);
-    _dataFile.printf("%d,", data.sysCal);
-    _dataFile.printf("%d,", data.gyroCal);
+    #endif // LOG_GPS
+
+    #ifdef LOG_ACCELEROMETER
+    // DEBUG
+    DEBUG_SERIAL_PORT.println((int) &data, HEX);
+    // DEBUG_SERIAL_PORT.printf("Acceleration X: %0.3f \n\r", data.accelX);
+    // DEBUG_SERIAL_PORT.printf("Acceleration Y: %0.3f \n\r", data.accelY);
+    // DEBUG_SERIAL_PORT.printf("Acceleration Z: %0.3f \n\r", data.accelZ);
+
+    // TODO: Point at same memory address!
+
     _dataFile.printf("%d,", data.accelCal);
-    _dataFile.printf("%d,", data.magCal);
     _dataFile.printf("%0.3f,", data.accelX);
     _dataFile.printf("%0.3f,", data.accelY);
     _dataFile.printf("%0.3f,", data.accelZ);
-    _dataFile.printf("%0.3f,", data.magX);
-    _dataFile.printf("%0.3f,", data.magY);
-    _dataFile.printf("%0.3f,", data.magZ);
-    _dataFile.printf("%0.3f,", data.gyroX);
-    _dataFile.printf("%0.3f,", data.gyroY);
-    _dataFile.printf("%0.3f,", data.gyroZ);
-    _dataFile.printf("%0.3f,", data.roll);
-    _dataFile.printf("%0.3f,", data.pitch);
-    _dataFile.printf("%0.3f,", data.yaw);
     _dataFile.printf("%0.3f,", data.linAccelX);
     _dataFile.printf("%0.3f,", data.linAccelY);
     _dataFile.printf("%0.3f,", data.linAccelZ);
+    #endif // LOG_ACCELEROMETER
+
+    #ifdef LOG_GYROSCOPE
+    _dataFile.printf("%d,", data.gyroCal);
+    _dataFile.printf("%0.3f,", data.gyroX);
+    _dataFile.printf("%0.3f,", data.gyroY);
+    _dataFile.printf("%0.3f,", data.gyroZ);
+    #endif // LOG_GYROSCOPE
+
+    #ifdef LOG_MAGNETOMETER
+    _dataFile.printf("%d,", data.magCal);
+    _dataFile.printf("%0.3f,", data.magX);
+    _dataFile.printf("%0.3f,", data.magY);
+    _dataFile.printf("%0.3f,", data.magZ);
+    #endif // LOG_MAGNETOMETER
+
+    #ifdef LOG_ORIENTATION_EULER
+    _dataFile.printf("%0.3f,", data.roll);
+    _dataFile.printf("%0.3f,", data.pitch);
+    _dataFile.printf("%0.3f,", data.yaw);
+    #endif // LOG_ORIENTATION_EULER
+
+    #ifdef LOG_ORIENTATION_QUATERNION
     _dataFile.printf("%0.3f,", data.quatW);
     _dataFile.printf("%0.3f,", data.quatX);
     _dataFile.printf("%0.3f,", data.quatY);
     _dataFile.printf("%0.3f,", data.quatZ);
-    _dataFile.printf("%0.3f,", data.imuTemp);
+    #endif // LOG_ORIENTATION_QUATERNION
+
+    #ifdef LOG_STATE
     _dataFile.printf("%d,", data.state);
-    _dataFile.print(data.packetSize);
+    #endif
+
     _dataFile.println();
     _dataFile.close();
 
     #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL_PORT.printf("Wrote to: %s\n\r", filename);
+    DEBUG_SERIAL_PORT.printf("Wrote to: %s\n\r", telemetryLogFilename);
     #endif
     return true;
 }
-**/
 
 
 // ============================
