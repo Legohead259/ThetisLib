@@ -92,19 +92,19 @@ bool readFile(fs::FS &fs, const char * path) {
 
 bool writeFile(fs::FS &fs, const char * path, const char * message) {
     #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL.printf("Writing file: %s\n\r", path);
+    DEBUG_SERIAL_PORT.printf("Writing file: %s\n\r", path);
     #endif
     File file = fs.open(path, FILE_WRITE);
     if (!file) {
         #ifdef SDCARD_DEBUG
-        DEBUG_SERIAL.println("Failed to open file for writing");
+        DEBUG_SERIAL_PORT.println("Failed to open file for writing");
         #endif
         return false;
     }
 
     bool _success = file.print(message);
     #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL.println(_success ? "Message written!" : "Failed to write message");
+    DEBUG_SERIAL_PORT.println(_success ? "Message written!" : "Failed to write message");
     #endif
     file.close();
     return _success;
@@ -112,20 +112,20 @@ bool writeFile(fs::FS &fs, const char * path, const char * message) {
 
 bool appendFile(fs::FS &fs, const char * path, const char * message) {
     #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL.printf("Appending file: %s\n\r", path);
+    DEBUG_SERIAL_PORT.printf("Appending file: %s\n\r", path);
     #endif
 
     File file = fs.open(path, FILE_APPEND);
     if (!file) {
         #ifdef SDCARD_DEBUG
-        DEBUG_SERIAL.println("Failed to open file for appending");
+        DEBUG_SERIAL_PORT.println("Failed to open file for appending");
         #endif
         return false;
     }
 
     bool _success = file.print(message);
     #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL.println(_success ? "Message appended!" : "Failed to append message");
+    DEBUG_SERIAL_PORT.println(_success ? "Message appended!" : "Failed to append message");
     #endif
     file.close();
     return _success;
