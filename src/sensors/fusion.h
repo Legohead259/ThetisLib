@@ -1,12 +1,10 @@
 #ifndef IMU_H
 #define IMU_H
 
-#include <MicroNMEA.h>
-extern MicroNMEA nmea;
-
 #include "lsm6dso32.h"
 #include "../AHRS/MahonyAHRS.h"
 #include "../utility/imumaths.h"
+#include "../data.h"
 
 unsigned int imuPollRate = 52.0; // Hz
 unsigned long imuPollInterval = 1000/imuPollRate; // ms
@@ -34,6 +32,7 @@ sensors_vec_t eulerAngles;
 #define q_a 	0.1 // Process error - acceleration
 #define q_g 	0.1 // Process error - gyroscope
 
+BLA::Matrix<N_obs> obs; // observation vector
 KALMAN<N_state, N_obs> K_imu; // Kalman filter object
 unsigned long currMillis;
 float dt;
@@ -108,14 +107,6 @@ void updateFusion() {
     // -- Update Kalman Filter --
     // --------------------------
 
-    // Generate measurement matrix
-    K_imu.H = { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 
-                0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 
-                0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 
-                0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 
-                0.0, 0.0, 0.0, 0.0, 0.0, 1.0 };
-
     // Create measurement matrix
     BLA::Matrix<N_obs> meas;
     meas(0) = accel.acceleration.x;
@@ -124,9 +115,10 @@ void updateFusion() {
 	meas(3) = gyro.gyro.x;
 	meas(4) = gyro.gyro.y;
 	meas(5) = gyro.gyro.z;
+    obs = K_imu.H * meas;
     
     // Update Kalman filter
-    K_imu.update(meas);
+    K_imu.update(obs);
 
     // Update data structure
     data.accelX = K_imu.x(0);
@@ -135,6 +127,16 @@ void updateFusion() {
     data.gyroX  = K_imu.x(3);
     data.gyroY  = K_imu.x(4);
     data.gyroZ  = K_imu.x(5);
+
+    #ifdef KALMAN_IMU_DEBUG
+    DEBUG_SERIAL_PORT.printf("Acceleration X: %0.3f | %0.3f \n\r", K_imu.x(0), data.accelX);
+    DEBUG_SERIAL_PORT.printf("Acceleration Y: %0.3f | %0.3f \n\r", K_imu.x(1), data.accelY);
+    DEBUG_SERIAL_PORT.printf("Acceleration Z: %0.3f | %0.3f \n\r", K_imu.x(2), data.accelZ);
+    DEBUG_SERIAL_PORT.printf("Gyroscope    X: %0.3f | %0.3f \n\r", K_imu.x(3), data.gyroX);
+    DEBUG_SERIAL_PORT.printf("Gyroscope    Y: %0.3f | %0.3f \n\r", K_imu.x(4), data.gyroY);
+    DEBUG_SERIAL_PORT.printf("Gyroscope    Z: %0.3f | %0.3f \n\r", K_imu.x(5), data.gyroZ);
+    #endif
+    DEBUG_SERIAL_PORT.println((int) &data, HEX);
 
     // --------------------------
     // -- Update Mahony Filter --
