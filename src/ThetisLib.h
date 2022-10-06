@@ -19,8 +19,7 @@
 #include "states.h"
 
 // Sensor functions
-#include "sensors/bno055.h"
-#include "sensors/lsm6dso32.h" 
+#include "sensors/fusion.h"
 
 // Radio functions
 #include "radios/gps.h"
