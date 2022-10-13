@@ -7,7 +7,7 @@
 #include "../data.h"
 
 unsigned int imuPollRate = 52.0; // Hz
-unsigned long imuPollInterval = 1000/imuPollRate; // ms
+unsigned long imuPollInterval = 1000/imuPollRate; // time between IMU polls [ms]
 
 Mahony mahony(imuPollRate);
 
