@@ -6,13 +6,14 @@
 
 struct data_t {
     time_t epoch;               // Timestamp in seconds since UNIX epoch (January 1, 1970)
+    unsigned long mSecond;      // Milliseconds since last epoch second
     uint16_t GPSYear;           // Current year from GPS data
     uint8_t GPSMonth;           // Current month from GPS data
     uint8_t GPSDay;             // Current day from GPS data
     uint8_t GPSHour;            // Current hour from GPS data
     uint8_t GPSMinute;          // Current minute from GPS data
-    uint8_t GPSSecond;         // Current year from GPS data
-    uint8_t GPSHundreth;       // Current fraction of second of reading
+    uint8_t GPSSecond;          // Current year from GPS data
+    uint8_t GPSHundredth;       // Current fraction of second of reading
     float voltage;              // Battery voltage in volts
     bool GPSFix;                // If GPS has positive fix on location
     uint8_t numSats;            // Number of satellites GPS is communicating with

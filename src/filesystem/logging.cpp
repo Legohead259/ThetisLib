@@ -242,7 +242,7 @@ bool logData(fs::FS &fs) {
 
 
 void getISO8601Time_GPS(char *buf) {
-    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", data.GPSYear, data.GPSMonth, data.GPSDay, data.GPSHour, data.GPSMinute, data.GPSSecond, data.GPSHundreth);
+    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", data.GPSYear, data.GPSMonth, data.GPSDay, data.GPSHour, data.GPSMinute, data.GPSSecond, data.GPSHundredth);
 }
 
 void getISO8601Time_RTC(char *buf) {
