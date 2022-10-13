@@ -25,15 +25,24 @@ struct data_t {
     uint8_t gyroCal = 0;        // IMU gyroscope calibration, 0-3 with 3 being fully calibrated
     uint8_t accelCal = 0;       // IMU accelerometer calibration, 0-3 with 3 being fully calibrated
     uint8_t magCal = 0;         // IMU magnetometer calibration, 0-3 with 3 being fully calibrated
-    float accelX;               // m/s^2
-    float accelY;               // m/s^2
-    float accelZ;               // m/s^2
-    float gyroX;                // rad/s
-    float gyroY;                // rad/s
-    float gyroZ;                // rad/s
-    float magX;                 // mGauss
-    float magY;                 // mGauss
-    float magZ;                 // mGauss
+    float rawAccelX;            // m/s^2
+    float rawAccelY;            // m/s^2
+    float rawAccelZ;            // m/s^2
+    float accelX;               // m/s^2 - filtered through a Kalman filter
+    float accelY;               // m/s^2 - filtered through a Kalman filter
+    float accelZ;               // m/s^2 - filtered through a Kalman filter
+    float rawGyroX;             // rad/s
+    float rawGyroY;             // rad/s
+    float rawGyroZ;             // rad/s
+    float gyroX;                // rad/s - filtered through a Kalman filter
+    float gyroY;                // rad/s - filtered through a Kalman filter
+    float gyroZ;                // rad/s - filtered through a Kalman filter
+    float rawMagX;              // mGauss
+    float rawMagY;              // mGauss
+    float rawMagZ;              // mGauss
+    float magX;                 // mGauss - filtered through a Kalman filter
+    float magY;                 // mGauss - filtered through a Kalman filter
+    float magZ;                 // mGauss - filtered through a Kalman filter
     float roll;                 // degrees
     float pitch;                // degrees
     float yaw;                  // degrees

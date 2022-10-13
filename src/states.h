@@ -20,7 +20,9 @@ typedef enum Status {
 } status_t;
 
 static void updateSystemState() {
+    // TODO: Determine better method for IMU calibration
     bool _isIMUCalibrated = data.sysCal == 3 && data.accelCal == 3 && data.gyroCal == 3 && data.magCal == 3;
+    _isIMUCalibrated = true; // Override since we are not calculating calibration, yet
 
     if (!_isIMUCalibrated && !data.GPSFix)                      data.state = STANDBY;
     else if (_isIMUCalibrated && !data.GPSFix && !isLogging)    data.state = READY_NO_GPS;

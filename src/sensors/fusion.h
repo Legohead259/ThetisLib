@@ -103,6 +103,14 @@ void updateFusion() {
 
     pollDSO32();
 
+    // Insert raw measurement readings into data structure
+    data.rawAccelX = accel.acceleration.x;
+    data.rawAccelY = accel.acceleration.y;
+    data.rawAccelZ = accel.acceleration.z;
+    data.rawGyroX = gyro.gyro.x;
+    data.rawGyroY = gyro.gyro.y;
+    data.rawGyroZ = gyro.gyro.z;
+
     // --------------------------
     // -- Update Kalman Filter --
     // --------------------------
@@ -136,7 +144,6 @@ void updateFusion() {
     DEBUG_SERIAL_PORT.printf("Gyroscope    Y: %0.3f | %0.3f \n\r", K_imu.x(4), data.gyroY);
     DEBUG_SERIAL_PORT.printf("Gyroscope    Z: %0.3f | %0.3f \n\r", K_imu.x(5), data.gyroZ);
     #endif
-    DEBUG_SERIAL_PORT.println((int) &data, HEX);
 
     // --------------------------
     // -- Update Mahony Filter --
@@ -144,6 +151,16 @@ void updateFusion() {
 
     mahony.updateIMU(data.gyroX, data.gyroY, data.gyroZ,
                     data.accelX, data.accelY, data.accelZ);
+    data.roll = mahony.getRoll();
+    data.pitch = mahony.getPitch();
+    data.yaw = mahony.getYaw();
+    
+    float _quat[4];
+    mahony.getQuaternionComps(_quat);
+    data.quatW = _quat[0];
+    data.quatX = _quat[1];
+    data.quatY = _quat[2];
+    data.quatZ = _quat[3];
 
     // ------------------------------------
     // -- Calculate linear accelerations --

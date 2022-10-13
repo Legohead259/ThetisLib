@@ -49,6 +49,12 @@ void formatHeader(char *buf) {
     strcat(buf, "Course (deg),");
     #endif // LOG_GPS
 
+    #ifdef LOG_RAW_ACCELEROMETER
+    strcat(buf, "Raw Accel X (m/s/s),");
+    strcat(buf, "Raw Accel Y (m/s/s),");
+    strcat(buf, "Raw Accel Z (m/s/s),");
+    #endif // LOG_RAW_ACCELEROMETER
+
     #ifdef LOG_ACCELEROMETER
     strcat(buf, "Accel Cal,");
     strcat(buf, "Accel X (m/s/s),");
@@ -59,6 +65,12 @@ void formatHeader(char *buf) {
     strcat(buf, "Lin Accel Z (m/s/s),");
     #endif // LOG_ACCELEROMETER
 
+    #ifdef LOG_RAW_GYROSCOPE
+    strcat(buf, "Raw Gyro X (rad/s),");
+    strcat(buf, "Raw Gyro Y (rad/s),");
+    strcat(buf, "Raw Gyro Z (rad/s),");
+    #endif // LOG_RAW_GYROSCOPE
+
     #ifdef LOG_GYROSCOPE
     strcat(buf, "Gyro Cal,");
     strcat(buf, "Gyro X (rad/s),");
@@ -66,12 +78,18 @@ void formatHeader(char *buf) {
     strcat(buf, "Gyro Z (rad/s),");
     #endif // LOG_GYROSCOPE
 
+    #ifdef LOG_RAW_MAGNETOMETER
+    strcat(buf, "Raw Mag X (mG),");
+    strcat(buf, "Raw Mag Y (mG),");
+    strcat(buf, "Raw Mag Z (mG),");
+    #endif // LOG_RAW_MAGNETOMETER
+    
     #ifdef LOG_MAGNETOMETER
     strcat(buf, "Mag Cal,");
     strcat(buf, "Mag X (mG),");
     strcat(buf, "Mag Y (mG),");
     strcat(buf, "Mag Z (mG),");
-    #endif // LOG_VOLTAGE
+    #endif // LOG_MAGNETOMETER
 
     #ifdef LOG_ORIENTATION_EULER
     strcat(buf, "Roll (deg),");
@@ -133,7 +151,7 @@ bool logData(fs::FS &fs) {
 
     char _timestamp[32];
     getISO8601Time_RTC(_timestamp);
-    _dataFile.print(_timestamp);
+    _dataFile.printf("%s,", _timestamp);
     
     #ifdef LOG_VOLTAGE
     _dataFile.printf("%0.3f,", data.voltage);
@@ -149,15 +167,13 @@ bool logData(fs::FS &fs) {
     _dataFile.printf("%0.3f,", data.GPSCourse / 1E3);
     #endif // LOG_GPS
 
+    #ifdef LOG_RAW_ACCELEROMETER
+    _dataFile.printf("%0.3f,", data.rawAccelX);
+    _dataFile.printf("%0.3f,", data.rawAccelY);
+    _dataFile.printf("%0.3f,", data.rawAccelZ);
+    #endif // LOG_RAW_ACCELEROMETER
+
     #ifdef LOG_ACCELEROMETER
-    // DEBUG
-    DEBUG_SERIAL_PORT.println((int) &data, HEX);
-    // DEBUG_SERIAL_PORT.printf("Acceleration X: %0.3f \n\r", data.accelX);
-    // DEBUG_SERIAL_PORT.printf("Acceleration Y: %0.3f \n\r", data.accelY);
-    // DEBUG_SERIAL_PORT.printf("Acceleration Z: %0.3f \n\r", data.accelZ);
-
-    // TODO: Point at same memory address!
-
     _dataFile.printf("%d,", data.accelCal);
     _dataFile.printf("%0.3f,", data.accelX);
     _dataFile.printf("%0.3f,", data.accelY);
@@ -167,12 +183,24 @@ bool logData(fs::FS &fs) {
     _dataFile.printf("%0.3f,", data.linAccelZ);
     #endif // LOG_ACCELEROMETER
 
+    #ifdef LOG_RAW_GYROSCOPE
+    _dataFile.printf("%0.3f,", data.rawGyroX);
+    _dataFile.printf("%0.3f,", data.rawGyroY);
+    _dataFile.printf("%0.3f,", data.rawGyroZ);
+    #endif // LOG_RAW_GYROSCOPE
+
     #ifdef LOG_GYROSCOPE
     _dataFile.printf("%d,", data.gyroCal);
     _dataFile.printf("%0.3f,", data.gyroX);
     _dataFile.printf("%0.3f,", data.gyroY);
     _dataFile.printf("%0.3f,", data.gyroZ);
     #endif // LOG_GYROSCOPE
+
+    #ifdef LOG_RAW_MAGNETOMETER
+    _dataFile.printf("%0.3f,", data.rawMagX);
+    _dataFile.printf("%0.3f,", data.rawMagY);
+    _dataFile.printf("%0.3f,", data.rawMagZ);
+    #endif // LOG_MAGNETOMETER
 
     #ifdef LOG_MAGNETOMETER
     _dataFile.printf("%d,", data.magCal);
