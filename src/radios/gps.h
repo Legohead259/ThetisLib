@@ -2,7 +2,9 @@
 #define THETIS_GPS_H
 
 #include <MicroNMEA.h>
+#include "../data.h"
 
+#define GPS_POLL_INTERVAL 100 // ms
 #define GPS_SYNC_INTERVAL 1 // minutes
 #define GPS_TIMEOUT 5000 // ms
 
@@ -35,6 +37,7 @@ extern bool ledState;
 extern volatile bool ppsTriggered;
 
 bool initGPS();
+void pollGPS();
 
 void getISO8601Time(char *buf);
 void syncInternalClockGPS();
