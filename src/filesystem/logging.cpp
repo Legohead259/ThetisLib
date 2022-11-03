@@ -131,9 +131,9 @@ bool initDataLogFile(fs::FS &fs) {
     #endif
 
     // Write header for the log file
-    char _headerBuf[512];
-    formatHeader(_headerBuf);
-    writeFile(fs, telemetryLogFilename, _headerBuf);
+    // char _headerBuf[512];
+    // formatHeader(_headerBuf);
+    // writeFile(fs, telemetryLogFilename, _headerBuf);
     return true;
 }
 
@@ -232,6 +232,19 @@ bool logData(fs::FS &fs) {
     #ifdef SDCARD_DEBUG
     DEBUG_SERIAL_PORT.printf("Wrote to: %s\n\r", telemetryLogFilename);
     #endif
+    return true;
+}
+
+bool logDataBin(fs::FS &fs) {
+    File _dataFile = fs.open(telemetryLogFilename, FILE_APPEND);
+    if (!_dataFile) {
+        #ifdef SDCARD_DEBUG
+        DEBUG_SERIAL_PORT.printf("Could not write to %s", telemetryLogFilename);
+        #endif
+        return false;
+    }
+    _dataFile.write((uint8_t*) &data, sizeof(data));
+    _dataFile.close();
     return true;
 }
 
