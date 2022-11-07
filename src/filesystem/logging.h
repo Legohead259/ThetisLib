@@ -26,6 +26,7 @@ bool logData(fs::FS &fs);
 bool logDataBin(fs::FS &fs);
 
 // Timestamp functions
+void updateTimestamp();
 void getISO8601Time_GPS(char *buf);
 void getISO8601Time_RTC(char *buf);
 void syncInternalClockGPS();

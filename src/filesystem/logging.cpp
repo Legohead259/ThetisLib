@@ -236,6 +236,7 @@ bool logData(fs::FS &fs) {
 }
 
 bool logDataBin(fs::FS &fs) {
+    updateTimestamp();
     File _dataFile = fs.open(telemetryLogFilename, FILE_APPEND);
     if (!_dataFile) {
         #ifdef SDCARD_DEBUG
@@ -252,6 +253,25 @@ bool logDataBin(fs::FS &fs) {
 // ============================
 // === TIMESTAMP FUNCTIONS ===
 // ============================
+
+
+void updateTimestamp() {
+    breakTime(now(), timeElements);
+    static long _lastSecond = 0;
+    static long _lastMSecond = 0;
+    long curMSecond = millis();
+    if (timeElements.Second == _lastSecond) {
+        curMSecond = millis() - _lastMSecond;
+        // Serial.println((int) curMSecond); //DEBUG
+    }
+    else {
+        _lastSecond = timeElements.Second;
+        _lastMSecond = millis();
+        curMSecond = 0;
+    }
+    data.epoch = now();
+    data.mSecond = curMSecond;
+}
 
 
 void getISO8601Time_GPS(char *buf) {
