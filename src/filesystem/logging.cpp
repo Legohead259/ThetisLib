@@ -116,7 +116,7 @@ bool initDataLogFile(fs::FS &fs) {
     DEBUG_SERIAL_PORT.print("Initializing telemetry log file...");
     #endif
     for (uint8_t x=0; x<255; x++) { // Initialize log file
-        sprintf(telemetryLogFilename, "/log_%03d.csv", x);
+        sprintf(telemetryLogFilename, "/log_%03d.bin", x);
         if (!fs.exists(telemetryLogFilename)) break; // If a new unique log file has been named, exit loop
         if (x==254) return false; // If no unique log could be created, return an error
     }
