@@ -15,6 +15,21 @@ Release sections
 ### Security 
 -->
 
+## [UNRELEASED] 1.3.0 - 
+
+### Added
+- Added `pollGPS()` function
+- Added raw IMU readings to logging functions
+- Added raw IMU readings to data packet
+- Added a function to log data to the file in a binary format
+- Added an `updateTimestamp()` function to update the data packet epoch
+
+### Changed
+- Changed log file extension to 'bin' instead of 'csv'
+
+### Fixed
+- Fixed minor typos throughout
+
 ## 1.2.0 - 2022-10-06
 - Major refactor
 
