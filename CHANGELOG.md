@@ -23,9 +23,19 @@ Release sections
 - Added raw IMU readings to data packet
 - Added a function to log data to the file in a binary format
 - Added an `updateTimestamp()` function to update the data packet epoch
+- Added ability to change IMU information from configuration data
+- Aded ability to change sensor fusion update rate from configuration data
+- Expanded the configuration options that can be saved to SPIFFS
+  - More device information
+  - WiFi information
+  - Sensor information
+  - Logging information
 
 ### Changed
 - Changed log file extension to 'bin' instead of 'csv'
+- Changed configuration parsing behavior to be more efficient to add new parameters
+- Changed `configData` structure to reflect to configuration options
+- Changed some names in `configData` structure
 
 ### Fixed
 - Fixed minor typos throughout
