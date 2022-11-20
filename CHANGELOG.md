@@ -15,7 +15,10 @@ Release sections
 ### Security 
 -->
 
-## [UNRELEASED] 1.3.0 - 
+## [UNRELEASED] 1.4.0 - 
+### TODO
+
+## 1.3.0 - 2022-11-20 
 
 ### Added
 - Added `pollGPS()` function
