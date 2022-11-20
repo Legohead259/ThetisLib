@@ -7,9 +7,6 @@
 
 Adafruit_LSM6DSO32 dso32;
 
-double accelSampleFreq; // Accelerometer sampling frequency
-double gyroSampleFreq; // Gyroscope sampling frequency
-
 bool initDSO32( lsm6dso32_accel_range_t accelRange, 
                 lsm6ds_gyro_range_t gyroRange,
                 lsm6ds_data_rate_t dataRate) {
@@ -27,8 +24,6 @@ bool initDSO32( lsm6dso32_accel_range_t accelRange,
         dso32.setGyroRange(gyroRange);
         dso32.setAccelDataRate(dataRate);
         dso32.setGyroDataRate(dataRate);
-        accelSampleFreq = setSampleFrequency(dataRate);
-        gyroSampleFreq = setSampleFrequency(dataRate);
         #ifdef LSM6DSO_DEBUG
         DEBUG_SERIAL_PORT.println("done!");
         #endif
@@ -57,42 +52,94 @@ void pollDSO32() {
     #endif // LSM6DSO_DEBUG_PLOTTER
 }
 
-double setSampleFrequency(lsm6ds_data_rate_t dataRate) {
-    double _res;
-    switch (dataRate) {
-        case LSM6DS_RATE_SHUTDOWN:
-            _res = 0;
-            break;
-        case LSM6DS_RATE_12_5_HZ:
-            _res = 12.5;
-            break;
-        case LSM6DS_RATE_26_HZ:
-            _res = 26;
-            break;
-        case LSM6DS_RATE_52_HZ:
-            _res = 52;
-            break;
-        case LSM6DS_RATE_104_HZ:
-            _res = 104;
-            break;
-        case LSM6DS_RATE_208_HZ:
-            _res = 208;
-            break;
-        case LSM6DS_RATE_416_HZ:
-            _res = 416;
-            break;
-        case LSM6DS_RATE_833_HZ:
-            _res = 833;
-            break;
-        case LSM6DS_RATE_1_66K_HZ:
-            _res = 1660;
-            break;
-        case LSM6DS_RATE_3_33K_HZ:
-            _res = 3330;
-            break;
-        case LSM6DS_RATE_6_66K_HZ:
-            _res = 6660;
-            break;
+// =========================
+// === UTILITY FUNCTIONS === 
+// =========================
+
+lsm6dso32_accel_range_t getAccelRange(uint8_t range) {
+    switch (range) {
+        case 4:
+            return LSM6DSO32_ACCEL_RANGE_4_G;
+        case 8:
+            return LSM6DSO32_ACCEL_RANGE_8_G;
+        case 16:
+            return LSM6DSO32_ACCEL_RANGE_16_G;
+        default:
+            return LSM6DSO32_ACCEL_RANGE_4_G;
     }
-    return _res;
+}
+
+lsm6ds_gyro_range_t getGyroRange(uint16_t range) {
+    switch (range) {
+        case 125:
+            return LSM6DS_GYRO_RANGE_125_DPS;
+        case 250:
+            return LSM6DS_GYRO_RANGE_250_DPS;
+        case 500:
+            return LSM6DS_GYRO_RANGE_500_DPS;
+        case 1000:
+            return LSM6DS_GYRO_RANGE_1000_DPS;
+        case 2000:
+            return LSM6DS_GYRO_RANGE_2000_DPS;
+        default:
+            return LSM6DS_GYRO_RANGE_125_DPS;
+    }
+}
+
+lsm6ds_data_rate_t getDataRate(double rate) {
+    switch ((int) rate*10) {
+        case 0:
+            return LSM6DS_RATE_SHUTDOWN;
+        case 125:
+            return LSM6DS_RATE_12_5_HZ;
+        case 260:
+            return LSM6DS_RATE_26_HZ;
+        case 520:
+            return LSM6DS_RATE_52_HZ;
+        case 1040:
+            return LSM6DS_RATE_104_HZ;
+        case 2080:
+            return LSM6DS_RATE_208_HZ;
+        case 4160:
+            return LSM6DS_RATE_416_HZ;
+        case 8330:
+            return LSM6DS_RATE_833_HZ;
+        case 16600:
+            return LSM6DS_RATE_1_66K_HZ;
+        case 33300:
+            return LSM6DS_RATE_3_33K_HZ;
+        case 66600:
+            return LSM6DS_RATE_6_66K_HZ;
+        default:
+            return LSM6DS_RATE_SHUTDOWN; 
+    }
+}
+
+double getDataRate(lsm6ds_data_rate_t rate) {
+    switch (rate) {
+        case LSM6DS_RATE_SHUTDOWN:
+            return 0;
+        case LSM6DS_RATE_12_5_HZ:
+            return 12.5;
+        case LSM6DS_RATE_26_HZ:
+            return 26;
+        case LSM6DS_RATE_52_HZ:
+            return 52;
+        case LSM6DS_RATE_104_HZ:
+            return 104;
+        case LSM6DS_RATE_208_HZ:
+            return 208;
+        case LSM6DS_RATE_416_HZ:
+            return 416;
+        case LSM6DS_RATE_833_HZ:
+            return 833;
+        case LSM6DS_RATE_1_66K_HZ:
+            return 1660;
+        case LSM6DS_RATE_3_33K_HZ:
+            return 3330;
+        case LSM6DS_RATE_6_66K_HZ:
+            return 6660;
+        default:
+            return 208;
+    }
 }
