@@ -20,9 +20,7 @@ extern tmElements_t timeElements;
 bool writeFile(fs::FS &fs, const char * path, const char * message);
 
 // Log file functions
-void formatHeader(char *buf);
 bool initDataLogFile(fs::FS &fs);
-bool logData(fs::FS &fs);
 bool logDataBin(fs::FS &fs);
 
 // Timestamp functions

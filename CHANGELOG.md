@@ -30,6 +30,9 @@ Release sections
 ### Fixed
 - Fixed minor typos throughout
 
+### Deprecated
+- Deprecated all human-readable logging functions
+
 ## 1.2.0 - 2022-10-06
 - Major refactor
 
