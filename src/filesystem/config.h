@@ -15,13 +15,28 @@
 #include <SPIFFS.h>
 // #include <Ethernet.h>
 
-struct {
-	uint8_t deviceID;
+struct config_data_t {
+	uint8_t DEVICE_ID;
 	char FW_VERSION[8];
 	char HW_REVISION[8];
+    
+    bool wifiEnable;
 	char ssid[32];
 	char password[32];
-} configData;
+    uint8_t wifiMode;
+
+    uint8_t accelRange;
+    uint16_t gyroRange;
+    uint8_t magRange;
+    uint16_t imuDataRate;
+    uint16_t magDataRate;
+    uint8_t fusionUpdateRate;
+
+    uint8_t loggingUpdateRate;
+    uint8_t eventLogLevel;
+};
+
+extern config_data_t configData;
 
 class Config {
 private:

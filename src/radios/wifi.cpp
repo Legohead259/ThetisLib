@@ -6,8 +6,8 @@ bool initWIFIAP() {
     #ifdef WIFI_DEBUG
     DEBUG_SERIAL_PORT.print("Starting WiFi access point...");
     #endif
-    sprintf(configData.ssid, "Thetis-%03u", configData.deviceID); // Format AP SSID based on Device ID
-    if (!WiFi.softAP(configData.ssid, "")) { // Start the access point with the deviceID SSID and no password
+    sprintf(configData.ssid, "Thetis-%03u", configData.DEVICE_ID); // Format AP SSID based on Device ID
+    if (!WiFi.softAP(configData.ssid, "")) { // Start the access point with the DEVICE_ID SSID and no password
         #ifdef WIFI_DEBUG
         DEBUG_SERIAL_PORT.println("Failed to start access point!");
         #endif
@@ -41,7 +41,7 @@ String processor(const String &var) {
     DEBUG_SERIAL_PORT.print(var); DEBUG_SERIAL_PORT.print(": ");
     if (var == "DEVICE_ID") {
         char _deviceIDStr[4];
-        sprintf(_deviceIDStr, "%03u", configData.deviceID);
+        sprintf(_deviceIDStr, "%03u", configData.DEVICE_ID);
         DEBUG_SERIAL_PORT.println(_deviceIDStr);
         return _deviceIDStr;
     }

@@ -7,6 +7,8 @@
  
 #include "config.h"
 
+config_data_t configData;
+
 Config config;
 
 /*
@@ -59,33 +61,87 @@ bool Config::begin(const char *configFileName, uint8_t maxLineLength) {
 
 void Config::loadConfigurations() {
 	while (readNextSetting()) {
+		char _logBuf[64] = "";
+
+		// ----- Device Settings -----
 		if (nameIs("id")) {
-			configData.deviceID = getIntValue();
-			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL_PORT.print("The ID of this device is configured to: ");
-			DEBUG_SERIAL_PORT.println(configData.deviceID);
-			#endif
+			configData.DEVICE_ID = getIntValue();
+			sprintf(_logBuf, "Setting device ID to: %d", configData.DEVICE_ID);
 		}
-		else if (nameIs("client_ssid")) {
-			strcpy(configData.ssid, getValue());
-			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL_PORT.print("Client SSID configured to: ");
-			DEBUG_SERIAL_PORT.println(configData.ssid);
-			#endif
+		else if (nameIs("fwVersion")) {
+			strcpy(configData.FW_VERSION, getValue());
+			sprintf(_logBuf, "Setting device firmware version to: %s", configData.FW_VERSION);
 		}
-		else if (nameIs("client_password")) {
+		else if (nameIs("hwRevision")) {
+			strcpy(configData.HW_REVISION, getValue());
+			sprintf(_logBuf, "Setting device hardware revision to: %s", configData.HW_REVISION);
+		}
+		// ----- WiFi Settings -----
+		else if (nameIs("wifiEnable")) {
+			configData.wifiEnable = getBooleanValue();
+			sprintf(_logBuf, "WiFi radio is: %s", configData.wifiEnable ? "Enabled" : "Disabled");
+		}
+		else if (nameIs("wifiMode")) {
+			configData.wifiMode = getIntValue();
+			sprintf(_logBuf, "WiFi mode set to: %s", configData.wifiMode == 1 ? "Access Point" : "Client");
+		}
+		else if (nameIs("ssid")) {
+			if (configData.wifiMode == 1) { // WiFi mode is access point (broadcast)
+				sprintf(configData.ssid, "THETIS-%03d", configData.DEVICE_ID);
+				sprintf(_logBuf, "Device will broadcast SSID: %s", configData.ssid); 
+			}
+			else { // WiFi mode is client
+				strcpy(configData.ssid, getValue());
+				sprintf(_logBuf, "Device will connect to SSID: %s", configData.ssid);
+			}
+		}
+		else if (nameIs("password")) {
 			strcpy(configData.password, getValue());
-			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL_PORT.print("Client password configured to: ");
-			DEBUG_SERIAL_PORT.println(configData.password);
-			#endif
+			sprintf(_logBuf, "Device will %s: %s", configData.wifiMode == 1 ? "require password" : "use password",
+													configData.password);
+		}
+		// ----- Sensor Settings -----
+		else if (nameIs("accelRange")) {
+			configData.accelRange = getIntValue();
+			sprintf(_logBuf, "Accelerometer range set to: +/- %d G", configData.accelRange);
+		}
+		else if (nameIs("gyroRange")) {
+			configData.gyroRange = getIntValue();
+			sprintf(_logBuf, "Gyroscope range set to: +/- %d DPS", configData.gyroRange);
+		}
+		else if (nameIs("magRange")) {
+			configData.magRange = getIntValue();
+			sprintf(_logBuf, "Magnetometer range set to: +/- %d nT", configData.magRange);
+		}
+		else if (nameIs("imuDataRate")) {
+			configData.imuDataRate = getIntValue();
+			sprintf(_logBuf, "IMU data rate set to: %d Hz", configData.imuDataRate);
+		}
+		else if (nameIs("magDataRate")) {
+			configData.magDataRate = getIntValue();
+			sprintf(_logBuf, "Magnetometer data rate set to: %d Hz", configData.magDataRate);
+		}
+		else if (nameIs("fusionUpdateRate")) {
+			configData.fusionUpdateRate = getIntValue();
+			sprintf(_logBuf, "Fusion update rate set to: %d Hz", configData.fusionUpdateRate);
+		}
+		// ----- Logging Settings -----
+		else if (nameIs("loggingUpdateRate")) {
+			configData.loggingUpdateRate= getIntValue();
+			sprintf(_logBuf, "Logging update rate set to: %d Hz", configData.loggingUpdateRate);
+		}
+		else if (nameIs("eventLogLevel")) {
+			configData.eventLogLevel = getIntValue();
+			sprintf(_logBuf, "Minimum event log level set to: %d", configData.eventLogLevel);
 		}
 		else {
-			#ifdef CONFIG_DEBUG
-			DEBUG_SERIAL_PORT.print("Unknown setting name: ");
-			DEBUG_SERIAL_PORT.println(getName());
-			#endif
+			sprintf(_logBuf, "Unknown parameter discovered: %s", getName());
 		}
+
+		// TODO: Make this an event log
+		#ifdef CONFIG_DEBUG
+		DEBUG_SERIAL_PORT.println(_logBuf);
+		#endif // CONFIG_DEBUG
 	}
 	end();
 }

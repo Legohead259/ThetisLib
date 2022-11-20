@@ -6,7 +6,7 @@
 #include "../utility/imumaths.h"
 #include "../data.h"
 
-unsigned int fusionUpdateRate = 200; // Hz
+uint8_t fusionUpdateRate = 200; // Hz - Default: 200
 unsigned long fusionUpdateInterval = 1000/fusionUpdateRate; // time between IMU polls [ms]
 
 Mahony mahony(fusionUpdateRate);
