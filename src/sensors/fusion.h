@@ -6,10 +6,10 @@
 #include "../utility/imumaths.h"
 #include "../data.h"
 
-unsigned int imuPollRate = 52.0; // Hz
-unsigned long imuPollInterval = 1000/imuPollRate; // time between IMU polls [ms]
+unsigned int fusionUpdateRate = 200; // Hz
+unsigned long fusionUpdateInterval = 1000/fusionUpdateRate; // time between IMU polls [ms]
 
-Mahony mahony(imuPollRate);
+Mahony mahony(fusionUpdateRate);
 
 sensors_event_t accel;
 sensors_event_t gyro;
