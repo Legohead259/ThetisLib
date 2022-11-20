@@ -21,7 +21,7 @@ bool writeFile(fs::FS &fs, const char * path, const char * message);
 
 // Log file functions
 bool initDataLogFile(fs::FS &fs);
-bool logDataBin(fs::FS &fs);
+bool logData(fs::FS &fs);
 
 // Timestamp functions
 void updateTimestamp();
