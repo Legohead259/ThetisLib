@@ -34,12 +34,6 @@ enum class LogLevel: uint8_t {
     TRACE           // Information that can be used to trace down a specific bug or code execution sequence
 };
 
-enum LoggerType {
-    TELEMETRY_LOGGER,   // Logger that saves the data packet to SD card file
-    DIAGNOSTIC_LOGGER,  // Logger that saves system events to another SD card file
-    SERIAL_LOGGER       // Logger that writes system events to the Serial port
-};
-
 class Logger {
 public:
     bool begin(Print* logger, LogLevel logLevel);
@@ -67,6 +61,10 @@ public:
     template <class T, typename... Args>
 	void error(T message, Args... args) {
 		log(LogLevel::ERROR, false, true, message, args...);
+	}
+	template <class T, typename... Args>
+	void warn(T message, Args... args) {
+		log(LogLevel::WARN, false, true, message, args...);
 	}
 	template <class T, typename... Args>
 	void info(T message, Args... args) {
