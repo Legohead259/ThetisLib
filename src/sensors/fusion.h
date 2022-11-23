@@ -27,10 +27,12 @@ sensors_vec_t eulerAngles;
 
 #define N_state 6 // Number of states - Acceleration (XYZ), Gyroscope (XYZ)
 #define N_obs 	6 // Number of observation - Acceleration (XYZ), Gyroscope (XYZ)
-#define r_a 	0.5 // Acceleration measurement noise (m/sec)
+#define r_a 	0.5 // Acceleration measurement noise (m/sec/sec)
 #define r_g 	1.0 // Gyroscope measurement noise (deg/sec)
+#define r_m     1.0 // Magnetometer measurement noise (nT)
 #define q_a 	0.1 // Process error - acceleration
 #define q_g 	0.1 // Process error - gyroscope
+#define q_m     0.1 // Process error - magnetometer
 
 BLA::Matrix<N_obs> obs; // observation vector
 KALMAN<N_state, N_obs> K_imu; // Kalman filter object
@@ -38,6 +40,7 @@ unsigned long currMillis;
 float dt;
 
 void initFusion() {
+    diagLogger->info("Initializing fusion algorithm");
     // Initialize Kalman Filter
 
 	// time evolution matrix (whatever... it will be updated in loop)
@@ -65,6 +68,9 @@ void initFusion() {
                 0.0,    0.0,	0.0, 	r_g2, 	0.0,	0.0,
                 0.0,	0.0,	0.0,	0.0,	r_g2, 	0.0,
                 0.0,	0.0,	0.0,	0.0,	0.0,	r_g2 };
+    diagLogger->verbose("Accelerometer variance set to: %d m/s/s", r_a);
+    diagLogger->verbose("Gyroscope variance set to: %d m/s/s", r_g);
+    diagLogger->verbose("Magnetometer variance set to: %d m/s/s", r_m);
     
     // model covariance matrix
 	float q_a2 = q_a*q_a;
@@ -75,6 +81,9 @@ void initFusion() {
                 0.0,    0.0,	0.0, 	q_g2, 	0.0,	0.0,
                 0.0,	0.0,	0.0,	0.0,	q_g2, 	0.0,
                 0.0,	0.0,	0.0,	0.0,	0.0,	q_g2 };
+    diagLogger->verbose("Accelerometer process noise set to: %d", q_a);
+    diagLogger->verbose("Gyroscope process noise set to: %d", q_g);
+    diagLogger->verbose("Magnetometer process noise set to: %d", q_m);
     
     currMillis = millis();
 }
@@ -89,10 +98,7 @@ void calcLinAccel() {
     data.linAccelY = data.accelY - gravBody.y();
     data.linAccelZ = data.accelZ - gravBody.z();
 
-    // DEBUG statement
-    #ifdef IMU_DEBUG
-    DEBUG_SERIAL_PORT.printf("LinAccel X: %0.3f \t\t Y: %0.3f \t\t Z: %0.3f \t\t m/s/s\n\r", data.accelX, data.accelY, data.accelZ);
-    #endif
+    diagLogger->verbose("LinAccel   X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.linAccelX, data.linAccelY, data.linAccelZ);
 }
 
 void updateFusion() {
@@ -110,6 +116,10 @@ void updateFusion() {
     data.rawGyroX = gyro.gyro.x;
     data.rawGyroY = gyro.gyro.y;
     data.rawGyroZ = gyro.gyro.z;
+
+    diagLogger->verbose("RawAccel   X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.rawAccelX, data.rawAccelY, data.rawAccelZ);
+    diagLogger->verbose("RawGyro    X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.rawGyroX, data.rawGyroY, data.rawGyroZ);
+
 
     // --------------------------
     // -- Update Kalman Filter --
@@ -136,14 +146,8 @@ void updateFusion() {
     data.gyroY  = K_imu.x(4);
     data.gyroZ  = K_imu.x(5);
 
-    #ifdef KALMAN_IMU_DEBUG
-    DEBUG_SERIAL_PORT.printf("Acceleration X: %0.3f | %0.3f \n\r", K_imu.x(0), data.accelX);
-    DEBUG_SERIAL_PORT.printf("Acceleration Y: %0.3f | %0.3f \n\r", K_imu.x(1), data.accelY);
-    DEBUG_SERIAL_PORT.printf("Acceleration Z: %0.3f | %0.3f \n\r", K_imu.x(2), data.accelZ);
-    DEBUG_SERIAL_PORT.printf("Gyroscope    X: %0.3f | %0.3f \n\r", K_imu.x(3), data.gyroX);
-    DEBUG_SERIAL_PORT.printf("Gyroscope    Y: %0.3f | %0.3f \n\r", K_imu.x(4), data.gyroY);
-    DEBUG_SERIAL_PORT.printf("Gyroscope    Z: %0.3f | %0.3f \n\r", K_imu.x(5), data.gyroZ);
-    #endif
+    diagLogger->verbose("Accel      X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.accelX, data.accelY, data.accelZ);
+    diagLogger->verbose("Gyroscope  X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.gyroX, data.gyroY, data.gyroZ);
 
     // --------------------------
     // -- Update Mahony Filter --
@@ -154,6 +158,8 @@ void updateFusion() {
     data.roll = mahony.getRoll();
     data.pitch = mahony.getPitch();
     data.yaw = mahony.getYaw();
+
+    diagLogger->verbose("Attitude   R: %0.3f \t P: %0.3f \t Y: %0.3f", data.roll, data.pitch, data.yaw);
     
     float _quat[4];
     mahony.getQuaternionComps(_quat);
@@ -161,6 +167,8 @@ void updateFusion() {
     data.quatX = _quat[1];
     data.quatY = _quat[2];
     data.quatZ = _quat[3];
+
+    diagLogger->verbose("Quaternion W: %0.3f \t X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.quatW, data.quatX, data.quatY, data.quatZ);
 
     // ------------------------------------
     // -- Calculate linear accelerations --

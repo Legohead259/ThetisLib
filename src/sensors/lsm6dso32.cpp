@@ -1,4 +1,5 @@
 #include "lsm6dso32.h"
+#include "../filesystem/logger.h"
 
 // ===========================
 // === LSM6DSO32 FUNCTIONS ===
@@ -10,23 +11,20 @@ Adafruit_LSM6DSO32 dso32;
 bool initDSO32( lsm6dso32_accel_range_t accelRange, 
                 lsm6ds_gyro_range_t gyroRange,
                 lsm6ds_data_rate_t dataRate) {
-    #ifdef LSM6DSO_DEBUG
-    DEBUG_SERIAL_PORT.print("Initializing DSO32 IMU...");
-    #endif
+    diagLogger->info("Starting LSM6DSO32 IMU...");
     if (!dso32.begin_I2C(0x6B)) {
-        #ifdef LSM6DSO_DEBUG
-        DEBUG_SERIAL_PORT.println("Failed to find LSM6DSO32 chip");
-        #endif
+        diagLogger->fatal("Failed to start LSM6DSO32 IMU!");
         return false;
     }
     else {
+        diagLogger->info("done!");
+        diagLogger->verbose("Setting DSO32 accelerometer range to : ±%d m/s/s", accelRange);
         dso32.setAccelRange(accelRange);
+        diagLogger->verbose("Setting DSO32 gyroscope range to : ±%d rad/sec", gyroRange);
         dso32.setGyroRange(gyroRange);
+        diagLogger->verbose("Setting DSO32 data rate to : %d Hz", dataRate);
         dso32.setAccelDataRate(dataRate);
         dso32.setGyroDataRate(dataRate);
-        #ifdef LSM6DSO_DEBUG
-        DEBUG_SERIAL_PORT.println("done!");
-        #endif
         return true;
     }
 }

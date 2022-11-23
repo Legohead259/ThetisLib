@@ -9,11 +9,12 @@
 
 // Miscellaneous functions
 #include "misc/neopixel.h"
+#include "misc/rtc.h"
 
 // Filesystem functions
 #include "filesystem/ThetisFS.h"
 #include "filesystem/config.h"
-#include "filesystem/logging.h"
+#include "filesystem/logger.h"
 
 // Status functions
 #include "states.h"

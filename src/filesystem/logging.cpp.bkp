@@ -5,6 +5,7 @@ unsigned long logButtonPresses = 0;
 char telemetryLogFilename[32];
 char diagnosticLogFilename[32];
 tmElements_t timeElements;
+File _dataFile;
 
 
 // ==========================
@@ -40,7 +41,6 @@ bool initDataLogFile(fs::FS &fs) {
 
 bool logData(fs::FS &fs) {
     updateTimestamp();
-    File _dataFile = fs.open(telemetryLogFilename, FILE_APPEND);
     if (!_dataFile) {
         #ifdef SDCARD_DEBUG
         DEBUG_SERIAL_PORT.printf("Could not write to %s", telemetryLogFilename);
@@ -48,7 +48,6 @@ bool logData(fs::FS &fs) {
         return false;
     }
     _dataFile.write((uint8_t*) &data, sizeof(data));
-    _dataFile.close();
     return true;
 }
 

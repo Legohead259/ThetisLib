@@ -40,6 +40,5 @@ bool initGPS();
 void pollGPS();
 
 void getISO8601Time(char *buf);
-void syncInternalClockGPS();
 
 #endif // ndef THETIS_GPS_H
