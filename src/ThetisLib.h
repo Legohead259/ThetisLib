@@ -20,7 +20,7 @@
 #include "states.h"
 
 // Sensor functions
-#include "sensors/fusion.h"
+#include "AHRS/fusion.h"
 
 // Radio functions
 #include "radios/gps.h"
