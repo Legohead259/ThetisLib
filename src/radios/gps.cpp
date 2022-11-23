@@ -12,28 +12,25 @@ bool ledState = LOW;
 volatile bool ppsTriggered = false;
 
 bool initGPS() {
-    #ifdef GPS_DEBUG
-    DEBUG_SERIAL_PORT.print("Initializing GPS..."); // DEBUG
-    #endif
+    diagLogger->info("Initializing GPS...");
     GPS.begin(9600); // Begin talking with GPS at default 9600 baud.
     // TODO: Automatically determine GPS initial baudrate
     if (!GPS) {
-        #ifdef GPS_DEBUG
-        DEBUG_SERIAL_PORT.println("Failed to initialize GPS"); // DEBUG
-        #endif
+        diagLogger->fatal("Failed to initialize GPS!");
         return false;
     }
+    diagLogger->info("done!");
     delay(10);
+    diagLogger->verbose("Setting GPS baud rate to 38400 BPS");
     MicroNMEA::sendSentence(GPS, "$PMTK251,38400");         // Set GPS baudrate to 38400
     delay(10);
     GPS.begin(38400);
+    diagLogger->verbose("Enabling NMEA RMC and GGA strings");
     MicroNMEA::sendSentence(GPS, "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0"); // Enable NMEA RMC and GGA sentences
+    diagLogger->verbose("Setting GPS update rate to 10 Hz");
     MicroNMEA::sendSentence(GPS, "$PMTK220,100");           // Set GPS update rate to 100 ms (10 Hz)
 
     // TODO: implement a check for good GPS data
-    #ifdef GPS_DEBUG
-    DEBUG_SERIAL_PORT.println("done!"); // DEBUG
-    #endif
     return true;
 }
 
