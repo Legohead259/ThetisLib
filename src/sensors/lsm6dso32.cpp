@@ -36,18 +36,6 @@ void pollDSO32() {
     gyro.gyro.x *= RAD_TO_DEG;
     gyro.gyro.y *= RAD_TO_DEG;
     gyro.gyro.z *= RAD_TO_DEG;
-
-    // Debug print statements
-    #ifdef LSM6DSO_DEBUG
-    DEBUG_SERIAL_PORT.printf("Accel X: %0.3f \tY: %0.3f \tZ: %0.3f m/s/s\n\r", accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
-    DEBUG_SERIAL_PORT.printf(" Gyro X: %0.3f \tY: %0.3f \tZ: %0.3f rad/s\n\r", gyro.gyro.x, gyro.gyro.y, gyro.gyro.z);
-    DEBUG_SERIAL_PORT.printf("Temperature: %0.3f °C\n\n\r", temp.temperature);
-    #endif // LSM6DSO_DEBUG
-
-    #ifdef LSM6DSO_DEBUG_PLOTTER
-    // Serial plotter print statements
-    DEBUG_SERIAL_PORT.printf("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n\r",data.accelX, data.accelY, data.accelZ, data.linAccelX, data.linAccelY, data.linAccelZ);
-    #endif // LSM6DSO_DEBUG_PLOTTER
 }
 
 // =========================
