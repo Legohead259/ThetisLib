@@ -3,6 +3,7 @@
 
 #include <TimeLib.h>
 #include "../data.h"
+#include "../filesystem/logger.h"
 
 extern tmElements_t tm;
 

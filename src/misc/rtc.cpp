@@ -3,8 +3,7 @@
 tmElements_t tm;
 
 void syncInternalClockGPS() {
-    Serial.println();
-    Serial.print("Attempting to sync internal clock to GPS time...");
+    diagLogger->info("Attempting to sync internal RTC to GPS...");
 
     if (data.GPSFix) { // If the GPS has a good fix, reset the internal clock to the GPS time
         tm.Year = data.GPSYear-1970;
@@ -15,12 +14,11 @@ void syncInternalClockGPS() {
         tm.Second = data.GPSSecond;
 
         setTime(makeTime(tm)); // Reset internal clock
-        Serial.println("Done!");
+        diagLogger->info("Done!");
     }
     else {
-        Serial.println("GPS fix was not valid - did not sync");
+        diagLogger->warn("Failed to synchronize - GPS fix not valid!");
     }
-    Serial.println();
 }
 
 void updateTimestamp() {
