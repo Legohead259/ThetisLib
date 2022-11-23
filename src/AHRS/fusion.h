@@ -1,10 +1,11 @@
 #ifndef IMU_H
 #define IMU_H
 
-#include "lsm6dso32.h"
-#include "../AHRS/MahonyAHRS.h"
+#include "../sensors/lsm6dso32.h"
+#include "MahonyAHRS.h"
 #include "../utility/imumaths.h"
 #include "../data.h"
+#include "../filesystem/logger.h"
 
 uint8_t fusionUpdateRate = 200; // Hz - Default: 200
 unsigned long fusionUpdateInterval = 1000/fusionUpdateRate; // time between IMU polls [ms]
