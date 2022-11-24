@@ -15,8 +15,31 @@ Release sections
 ### Security 
 -->
 
-## [UNRELEASED] 1.4.0 - 
-### TODO
+## 1.4.0 - 2022-11-23
+
+### Added
+- Added a massive rework to the logging system
+  - Added seven different logging levels that can be used to track events
+- Consolidated all logging functions into an object-oriented approach, allowing more flexibility
+- Loggers can specify which streams they send data to and what the information looks like
+- Ability to dynamically switch between streaming the event log to the Serial monitor or the file system, depending on USB connection
+- Expanded the configuration options that can be saved to SPIFFS
+  - Log level for print streaming
+  - Log level for event file
+- Added various `info`, `fatal`, and `verbose` statements throughout code to track flow
+
+### Changed
+- Changed static logging behavior to object-oriented
+- Moved `fusion.h` to `AHRS/` folder since that makes more sense
+- Removed state update behavior in `updateSystemState()`, for now
+
+### Deprecated
+- Deprecated the old `logging` files - they currently have the file extension `.bkp` for safekeeping - remove in next update!
+
+### Removed
+- Removed BNO055 files
+  
+---
 
 ## 1.3.0 - 2022-11-20 
 
@@ -27,7 +50,7 @@ Release sections
 - Added a function to log data to the file in a binary format
 - Added an `updateTimestamp()` function to update the data packet epoch
 - Added ability to change IMU information from configuration data
-- Aded ability to change sensor fusion update rate from configuration data
+- Added ability to change sensor fusion update rate from configuration data
 - Expanded the configuration options that can be saved to SPIFFS
   - More device information
   - WiFi information

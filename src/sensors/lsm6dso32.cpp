@@ -1,4 +1,5 @@
 #include "lsm6dso32.h"
+#include "../filesystem/logger.h"
 
 // ===========================
 // === LSM6DSO32 FUNCTIONS ===
@@ -10,23 +11,20 @@ Adafruit_LSM6DSO32 dso32;
 bool initDSO32( lsm6dso32_accel_range_t accelRange, 
                 lsm6ds_gyro_range_t gyroRange,
                 lsm6ds_data_rate_t dataRate) {
-    #ifdef LSM6DSO_DEBUG
-    DEBUG_SERIAL_PORT.print("Initializing DSO32 IMU...");
-    #endif
+    diagLogger->info("Starting LSM6DSO32 IMU...");
     if (!dso32.begin_I2C(0x6B)) {
-        #ifdef LSM6DSO_DEBUG
-        DEBUG_SERIAL_PORT.println("Failed to find LSM6DSO32 chip");
-        #endif
+        diagLogger->fatal("Failed to start LSM6DSO32 IMU!");
         return false;
     }
     else {
+        diagLogger->verbose("Setting DSO32 accelerometer range to : ±%d m/s/s", accelRange);
         dso32.setAccelRange(accelRange);
+        diagLogger->verbose("Setting DSO32 gyroscope range to : ±%d rad/sec", gyroRange);
         dso32.setGyroRange(gyroRange);
+        diagLogger->verbose("Setting DSO32 data rate to : %d Hz", dataRate);
         dso32.setAccelDataRate(dataRate);
         dso32.setGyroDataRate(dataRate);
-        #ifdef LSM6DSO_DEBUG
-        DEBUG_SERIAL_PORT.println("done!");
-        #endif
+        diagLogger->info("done!");
         return true;
     }
 }
@@ -38,18 +36,6 @@ void pollDSO32() {
     gyro.gyro.x *= RAD_TO_DEG;
     gyro.gyro.y *= RAD_TO_DEG;
     gyro.gyro.z *= RAD_TO_DEG;
-
-    // Debug print statements
-    #ifdef LSM6DSO_DEBUG
-    DEBUG_SERIAL_PORT.printf("Accel X: %0.3f \tY: %0.3f \tZ: %0.3f m/s/s\n\r", accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
-    DEBUG_SERIAL_PORT.printf(" Gyro X: %0.3f \tY: %0.3f \tZ: %0.3f rad/s\n\r", gyro.gyro.x, gyro.gyro.y, gyro.gyro.z);
-    DEBUG_SERIAL_PORT.printf("Temperature: %0.3f °C\n\n\r", temp.temperature);
-    #endif // LSM6DSO_DEBUG
-
-    #ifdef LSM6DSO_DEBUG_PLOTTER
-    // Serial plotter print statements
-    DEBUG_SERIAL_PORT.printf("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n\r",data.accelX, data.accelY, data.accelZ, data.linAccelX, data.linAccelY, data.linAccelZ);
-    #endif // LSM6DSO_DEBUG_PLOTTER
 }
 
 // =========================

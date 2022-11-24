@@ -4,6 +4,7 @@
 #include <FS.h>
 #include <TimeLib.h>
 #include "../data.h"
+#include <M2M_Logger.h>
 
 #define LOG_BTN_HOLD_TIME 500 // ms
 
@@ -11,8 +12,9 @@ extern unsigned long logButtonPresses;
 extern unsigned long logButtonStartTime;
 extern bool isLogging;
 
-extern char TelemetryLogFilename[32];
+extern char telemetryLogFilename[32];
 extern char diagnosticLogFilename[32];
+extern File _dataFile;
 
 extern tmElements_t timeElements;
 

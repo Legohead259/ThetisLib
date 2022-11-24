@@ -3,6 +3,7 @@
 
 #include <MicroNMEA.h>
 #include "../data.h"
+#include "../filesystem/logger.h"
 
 #define GPS_POLL_INTERVAL 100 // ms
 #define GPS_SYNC_INTERVAL 1 // minutes
@@ -40,6 +41,5 @@ bool initGPS();
 void pollGPS();
 
 void getISO8601Time(char *buf);
-void syncInternalClockGPS();
 
 #endif // ndef THETIS_GPS_H

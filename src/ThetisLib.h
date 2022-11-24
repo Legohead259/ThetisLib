@@ -9,17 +9,18 @@
 
 // Miscellaneous functions
 #include "misc/neopixel.h"
+#include "misc/rtc.h"
 
 // Filesystem functions
 #include "filesystem/ThetisFS.h"
 #include "filesystem/config.h"
-#include "filesystem/logging.h"
+#include "filesystem/logger.h"
 
 // Status functions
 #include "states.h"
 
 // Sensor functions
-#include "sensors/fusion.h"
+#include "AHRS/fusion.h"
 
 // Radio functions
 #include "radios/gps.h"
