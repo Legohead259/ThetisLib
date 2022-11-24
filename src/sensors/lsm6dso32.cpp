@@ -17,7 +17,6 @@ bool initDSO32( lsm6dso32_accel_range_t accelRange,
         return false;
     }
     else {
-        diagLogger->info("done!");
         diagLogger->verbose("Setting DSO32 accelerometer range to : ±%d m/s/s", accelRange);
         dso32.setAccelRange(accelRange);
         diagLogger->verbose("Setting DSO32 gyroscope range to : ±%d rad/sec", gyroRange);
@@ -25,6 +24,7 @@ bool initDSO32( lsm6dso32_accel_range_t accelRange,
         diagLogger->verbose("Setting DSO32 data rate to : %d Hz", dataRate);
         dso32.setAccelDataRate(dataRate);
         dso32.setGyroDataRate(dataRate);
+        diagLogger->info("done!");
         return true;
     }
 }

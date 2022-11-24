@@ -14,6 +14,7 @@
 #include <Arduino.h>
 #include <SPIFFS.h>
 // #include <Ethernet.h>
+#include "logger.h"
 
 struct config_data_t {
 	uint8_t DEVICE_ID;
@@ -33,7 +34,8 @@ struct config_data_t {
     uint8_t fusionUpdateRate;
 
     uint8_t loggingUpdateRate;
-    uint8_t eventLogLevel;
+    uint8_t logPrintLevel;
+    uint8_t logFileLevel;
 };
 
 extern config_data_t configData;

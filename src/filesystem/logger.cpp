@@ -42,20 +42,29 @@ bool Logger::begin(fs::SDFS &fs, uint8_t cs, LogLevel logLevel) {
 }
 
 bool Logger::begin(fs::SDFS &fs, uint8_t cs) {
+	diagLogger->info("Initializing data logger...");
 	fs = fs;
     if (!fs.begin(cs)) {
+		diagLogger->fatal("Failed to initialize filesystem!");
         return false;
     }
     for (uint16_t x = 0; x<999; x++) {
-        sprintf(dataLogFilename, "/log_%03d.txt", x);
+        sprintf(dataLogFilename, "/log_%03d.bin", x);
         if (!fs.exists(dataLogFilename)) break; // If a new unique log file has been named, exit loop
-        if (x==999) return false; // If no unique log could be created, return an error
+        if (x==999) {
+			diagLogger->fatal("No unique log file could be created!");
+			return false; // If no unique log could be created, return an error
+		} 
     }
     dataLogFile = fs.open(dataLogFilename, FILE_APPEND);
-    if (!dataLogFile) return false;
+    if (!dataLogFile) {
+		diagLogger->fatal("Unable to open data log file!");
+		return false;
+	}
     setFileLogger(&dataLogFile);
 	dataLogFile.close();
 	_isActive = true;
+	diagLogger->info("done!");
     return true;
 }
 
@@ -89,8 +98,58 @@ void Logger::setLogLevel(LogLevel logLevel) {
 	_logLevel = logLevel;
 }
 
+void Logger::setLogLevel(uint8_t logLevel) {
+	switch (logLevel) {
+		case (uint8_t) LogLevel::FATAL:
+			setLogLevel(LogLevel::FATAL);
+			break;
+		case (uint8_t) LogLevel::ERROR:
+			setLogLevel(LogLevel::ERROR);
+			break;
+		case (uint8_t) LogLevel::WARN:
+			setLogLevel(LogLevel::WARN);
+			break;
+		case (uint8_t) LogLevel::INFO:
+			setLogLevel(LogLevel::INFO);
+			break;
+		case (uint8_t) LogLevel::DEBUG:
+			setLogLevel(LogLevel::DEBUG);
+			break;
+		case (uint8_t) LogLevel::VERBOSE:
+			setLogLevel(LogLevel::VERBOSE);
+			break;
+		case (uint8_t) LogLevel::TRACE:
+			setLogLevel(LogLevel::TRACE);
+			break;
+		default:
+			setLogLevel(LogLevel::VERBOSE);
+			break;
+	}
+}
+
 LogLevel Logger::getLogLevel() {
 	return _logLevel;
+}
+
+LogLevel Logger::getLogLevel(uint8_t logLevel) {
+	switch (logLevel) {
+		case (uint8_t) LogLevel::FATAL:
+			return LogLevel::FATAL;
+		case (uint8_t) LogLevel::ERROR:
+			return LogLevel::ERROR;
+		case (uint8_t) LogLevel::WARN:
+			return LogLevel::WARN;
+		case (uint8_t) LogLevel::INFO:
+			return LogLevel::INFO;
+		case (uint8_t) LogLevel::DEBUG:
+			return LogLevel::DEBUG;
+		case (uint8_t) LogLevel::VERBOSE:
+			return LogLevel::VERBOSE;
+		case (uint8_t) LogLevel::TRACE:
+			return LogLevel::TRACE;
+		default:
+			return LogLevel::VERBOSE;
+	}
 }
 
 void Logger::setIncludeTimestamp(bool value) {
@@ -208,8 +267,8 @@ void Logger::log(LogLevel logLevel, bool isPart, bool writeLinefeed, const __Fla
 	}
 }
 
-void Logger::getLogLevelStr(char* outStr, LogLevel l) {
-    switch(l) {
+void Logger::getLogLevelStr(char* outStr, LogLevel logLevel) {
+    switch(logLevel) {
         case LogLevel::FATAL:
             strcpy(outStr, "FATAL");
             break;

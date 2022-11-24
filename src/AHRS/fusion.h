@@ -41,7 +41,7 @@ unsigned long currMillis;
 float dt;
 
 void initFusion() {
-    diagLogger->info("Initializing fusion algorithm");
+    diagLogger->info("Initializing fusion algorithm...");
     // Initialize Kalman Filter
 
 	// time evolution matrix (whatever... it will be updated in loop)
@@ -87,6 +87,7 @@ void initFusion() {
     diagLogger->verbose("Magnetometer process noise set to: %d", q_m);
     
     currMillis = millis();
+    diagLogger->info("done!");
 }
 
 void calcLinAccel() {

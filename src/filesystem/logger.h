@@ -49,7 +49,9 @@ public:
     void setSerialLogger(Print *logPort);
 	void setFileLogger(File* logger);
     void setLogLevel(LogLevel logLevel);
+	void setLogLevel(uint8_t loglevel);
 	LogLevel getLogLevel();
+	LogLevel getLogLevel(uint8_t loglevel);
 	void setIncludeTimestamp(bool value);
 	void setIncludeLogLevel(bool value);
 	void setFlushTimeout(unsigned value);
@@ -117,7 +119,7 @@ private:
     File diagLogFile;
 
     bool initDataLogFile(fs::SDFS &fs, char* filename);
-    void getLogLevelStr(char* outStr, LogLevel l);
+    void getLogLevelStr(char* outStr, LogLevel loglevel);
 	void printPrefix(LogLevel logLevel);
 	void print(const char *logLine);
 };

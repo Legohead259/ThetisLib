@@ -15,40 +15,30 @@ Config config;
  * Opens the given file on the SD card.
  * Returns true if successful, false if not.
  *
- * configFileName = the name of the configuration file on the SD card.
+ * configFilename = the name of the configuration file on the SD card.
  *
  * NOTE: SD.begin() must be called before calling our begin().
  */
-bool Config::begin(const char *configFileName, uint8_t maxLineLength) {
+bool Config::begin(const char *configFilename, uint8_t maxLineLength) {
+	diagLogger->info("Initializing configuration reader...");
 	_lineLength = 0;
 	_lineSize = 0;
 	_valueIndex = -1;
 	_atEnd = true;
 
-	/*
-	* Allocate a buffer for the current line.
-	*/
+	// Allocate a buffer for the current line.
 	_lineSize = maxLineLength + 1;
 	_line = (char *) malloc(_lineSize);
   	if (_line == 0) {
-		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL_PORT.println("out of memory");
-		#endif
+		diagLogger->fatal("Out of memory for configuration file!");
 		_atEnd = true;
 		return false;
   	}
 
-  /*
-   * To avoid stale references to configFileName
-   * we don't save it. To minimize memory use, we don't copy it.
-   */
-   
-  	_file = SPIFFS.open(configFileName, FILE_READ);
+   // To avoid stale references to configFilename we don't save it. To minimize memory use, we don't copy it.
+  	_file = SPIFFS.open(configFilename, FILE_READ);
   	if (!_file) {
-		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL_PORT.print("Could not open file: ");
-		DEBUG_SERIAL_PORT.println(configFileName);
-		#endif
+		diagLogger->fatal("Could not open file: %s", configFilename);
 		_atEnd = true;
 		return false;
   	}
@@ -56,10 +46,12 @@ bool Config::begin(const char *configFileName, uint8_t maxLineLength) {
 	// Initialize our reader
 	_atEnd = false;
 	
+	diagLogger->info("done!");
 	return true;
 }
 
 void Config::loadConfigurations() {
+	diagLogger->info("Reading configurations...");
 	while (readNextSetting()) {
 		char _logBuf[64] = "";
 
@@ -76,6 +68,7 @@ void Config::loadConfigurations() {
 			strcpy(configData.HW_REVISION, getValue());
 			sprintf(_logBuf, "Setting device hardware revision to: %s", configData.HW_REVISION);
 		}
+
 		// ----- WiFi Settings -----
 		else if (nameIs("wifiEnable")) {
 			configData.wifiEnable = getBooleanValue();
@@ -100,6 +93,7 @@ void Config::loadConfigurations() {
 			sprintf(_logBuf, "Device will %s: %s", configData.wifiMode == 1 ? "require password" : "use password",
 													configData.password);
 		}
+
 		// ----- Sensor Settings -----
 		else if (nameIs("accelRange")) {
 			configData.accelRange = getIntValue();
@@ -125,25 +119,29 @@ void Config::loadConfigurations() {
 			configData.fusionUpdateRate = getIntValue();
 			sprintf(_logBuf, "Fusion update rate set to: %d Hz", configData.fusionUpdateRate);
 		}
+
 		// ----- Logging Settings -----
 		else if (nameIs("loggingUpdateRate")) {
 			configData.loggingUpdateRate= getIntValue();
 			sprintf(_logBuf, "Logging update rate set to: %d Hz", configData.loggingUpdateRate);
 		}
-		else if (nameIs("eventLogLevel")) {
-			configData.eventLogLevel = getIntValue();
-			sprintf(_logBuf, "Minimum event log level set to: %d", configData.eventLogLevel);
+		else if (nameIs("logPrintLevel")) {
+			configData.logPrintLevel = getIntValue();
+			sprintf(_logBuf, "Minimum event print log level set to: %d", configData.logPrintLevel);
+		}
+		else if (nameIs("logFileLevel")) {
+			configData.logFileLevel = getIntValue();
+			sprintf(_logBuf, "Minimum event file log level set to: %d", configData.logFileLevel);
 		}
 		else {
-			sprintf(_logBuf, "Unknown parameter discovered: %s", getName());
+			diagLogger->warn("Unknown parameter discovered: %s", getName());
+			continue;
 		}
 
-		// TODO: Make this an event log
-		#ifdef CONFIG_DEBUG
-		DEBUG_SERIAL_PORT.println(_logBuf);
-		#endif // CONFIG_DEBUG
+		diagLogger->info("%s", _logBuf);
 	}
 	end();
+	diagLogger->info("done!");
 }
 
 /*

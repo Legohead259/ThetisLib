@@ -12,13 +12,9 @@ bool initSDCard() {
 }
 
 bool initSPIFFS() {
-    #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL_PORT.print("Initializing SPIFFS filesystem...");
-    #endif
+    diagLogger->info("Initializing SPIFFS filesystem...");
     bool _success = SPIFFS.begin();
-    #ifdef SDCARD_DEBUG
-    DEBUG_SERIAL_PORT.println(_success ? "done!" : "Failed to initialize filesystem!");
-    #endif
+    diagLogger->info(_success ? "done!" : "Failed to initialize filesystem!");
     return _success;
 }
 

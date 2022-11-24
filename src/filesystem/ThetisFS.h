@@ -4,6 +4,7 @@
 #include <SD.h>
 #include <SPI.h>
 #include <SPIFFS.h>
+#include "logger.h"
 
 bool initSDCard();
 bool initSPIFFS();
