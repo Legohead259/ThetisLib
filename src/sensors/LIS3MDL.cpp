@@ -1,0 +1,1 @@
+C:/Users/legoh/Documents/Projects/I2Cdevlib/Arduino/LIS3MDL/LIS3MDL.cpp

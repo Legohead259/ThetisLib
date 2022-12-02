@@ -27,7 +27,8 @@
         "tomstewart89/BasicLinearAlgebra": "^3.6",
         "stevemarple/MicroNMEA": "^2.0.6",
         "me-no-dev/ESP Async WebServer": "^1.2.3",
-        "me-no-dev/AsyncTCP": "^1.1.1"
+        "me-no-dev/AsyncTCP": "^1.1.1",
+        "jrowberg/I2Cdevlib-Core":"^1.0.0"
     },
     "frameworks": "Arduino",
     "platforms": "Thetis"
