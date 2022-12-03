@@ -135,14 +135,12 @@ LIS3MDL::LIS3MDL(uint8_t address) {
  * @see LIS3MDL_RA_CTRL5
  */
 bool LIS3MDL::initialize() {
-    bool _success = false;
-    _success = _success && testConnection();
-    _success = _success && I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL1, 0b00010000) &&
-    _success = _success && I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL2, 0b00000000) &&
-    _success = _success && I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL3, 0b00000011) &&
-    _success = _success && I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL4, 0b00000000) &&
-    _success = _success && I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL5, 0b00000000);
-    return _success;
+    return  testConnection() &&
+            I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL1, 0b00010000) &&
+            I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL2, 0b00000000) &&
+            I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL3, 0b00000011) &&
+            I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL4, 0b00000000) &&
+            I2Cdev::writeByte(devAddr, LIS3MDL_RA_CTRL5, 0b00000000);
 }
 
 /** 
@@ -396,7 +394,7 @@ void LIS3MDL::setSPIInterfaceMode(bool mode) {
  * @return the current mode (0x00-01). False (0) is the 4-wire interface
  * True (1) is the 3-wire interface
  */
-uint8_t LIS3MDL::getSPIInterfaceMode() {
+bool LIS3MDL::getSPIInterfaceMode() {
     I2Cdev::readBit(devAddr, LIS3MDL_RA_CTRL3, LIS3MDL_SIM_BIT, buffer);
     return buffer[0];
 }
@@ -479,7 +477,7 @@ void LIS3MDL::setEndianness(bool endianness) {
  * @return the current endianness (0x00-01). False (0) is LSB first
  * True (1) is MSB first
  */
-uint8_t LIS3MDL::getEndianness() {
+bool LIS3MDL::getEndianness() {
     I2Cdev::readBit(devAddr, LIS3MDL_RA_CTRL4, LIS3MDL_BLE_BIT, buffer);
     return buffer[0];
 }
@@ -534,3 +532,176 @@ bool LIS3MDL::getBlockDataUpdateEnable() {
 // ===================================
 // === STATUS REGISTERS, READ-ONLY ===
 // ===================================
+
+
+/**
+ * @brief Return the entire status register of the device
+ * 
+ * @return The entire status register
+ * @see LIS3MDL_ZYXOR_BIT
+ * @see LIS3MDL_ZOR_BIT
+ * @see LIS3MDL_YOR_BIT
+ * @see LIS3MDL_XOR_BIT
+ * @see LIS3MDL_ZYXDA_BIT
+ * @see LIS3MDL_ZDA_BIT
+ * @see LIS3MDL_YDA_BIT
+ * @see LIS3MDL_XDA_BIT
+ */
+uint8_t LIS3MDL::getStatus() {
+    I2Cdev::readByte(devAddr, LIS3MDL_RA_STATUS, buffer);
+    return buffer[0];
+}
+
+/**
+ * @brief Get the status of the X-, Y-, Z-axis overrun
+ * 
+ * @return The status of the X-, Y-, Z-axis overrun 
+ */
+bool LIS3MDL::getXYZDataOverrun() {
+    I2Cdev::readBit(devAddr, LIS3MDL_RA_STATUS, LIS3MDL_ZYXOR_BIT, buffer);
+    return buffer[0];
+}
+
+/**
+ * @brief Get the status of the Z-axis overrun
+ * 
+ * @return The status of the Z-axis overrun 
+ */
+bool LIS3MDL::getZDataOverrun() {
+    I2Cdev::readBit(devAddr, LIS3MDL_RA_STATUS, LIS3MDL_ZOR_BIT, buffer);
+    return buffer[0];
+}
+
+/**
+ * @brief Get the status of the Y-axis overrun
+ * 
+ * @return The status of the Y-axis overrun 
+ */
+bool LIS3MDL::getYDataOverrun() {
+    I2Cdev::readBit(devAddr, LIS3MDL_RA_STATUS, LIS3MDL_YOR_BIT, buffer);
+    return buffer[0];
+}
+
+/**
+ * @brief Get the status of the X-axis overrun
+ * 
+ * @return The status of the X-axis overrun 
+ */
+bool LIS3MDL::getXDataOverrun() {
+    I2Cdev::readBit(devAddr, LIS3MDL_RA_STATUS, LIS3MDL_XOR_BIT, buffer);
+    return buffer[0];
+}
+
+/**
+ * @brief Get the status of the X-, Y-, Z-axis data available
+ * 
+ * @return The status of the X-, Y-, Z-axis data available 
+ */
+bool LIS3MDL::getXYZDataAvailable() {
+    I2Cdev::readBit(devAddr, LIS3MDL_RA_STATUS, LIS3MDL_ZYXDA_BIT, buffer);
+    return buffer[0];
+}
+
+/**
+ * @brief Get the status of the Z-axis data available
+ * 
+ * @return The status of the Z-axis data available 
+ */
+bool LIS3MDL::getZDataAvailable() {
+    I2Cdev::readBit(devAddr, LIS3MDL_RA_STATUS, LIS3MDL_ZDA_BIT, buffer);
+    return buffer[0];
+}
+
+/**
+ * @brief Get the status of the Y-axis data available
+ * 
+ * @return The status of the Y-axis data available 
+ */
+bool LIS3MDL::getYDataAvailable() {
+    I2Cdev::readBit(devAddr, LIS3MDL_RA_STATUS, LIS3MDL_YDA_BIT, buffer);
+    return buffer[0];
+}
+
+/**
+ * @brief Get the status of the X-axis data available
+ * 
+ * @return The status of the X-axis data available 
+ */
+bool LIS3MDL::getXDataAvailable() {
+    I2Cdev::readBit(devAddr, LIS3MDL_RA_STATUS, LIS3MDL_XDA_BIT, buffer);
+    return buffer[0];
+}
+
+
+// ==================================
+// === OUT_* REGISTERS, READ-ONLY ===
+// ==================================
+
+
+/**
+ * @brief Get the total magnetic field detected by the device
+ * 
+ * @param x X-axis reading in Gauss
+ * @param y 
+ * @param z 
+ */
+void LIS3MDL::getMagneticField(uint16_t* x, uint16_t* y, uint16_t* z) {
+
+}
+
+/**
+ * @brief Get the magnetic field for the X-axis
+ * 
+ * @return The strength of the magnetic field in the X-axis in mGauss
+ */
+uint16_t LIS3MDL::getMagneticFieldX() {
+    I2Cdev::readBytes(devAddr, LIS3MDL_OUT_X_L, 2, buffer);
+    switch (getFullScale()) {
+        case LIS3MDL_FULL_SCALE_4_G:
+            return buffer[0,1] / 6842 * 1000;
+        case LIS3MDL_FULL_SCALE_8_G:
+            return buffer[0,1] / 3421 * 1000;
+        case LIS3MDL_FULL_SCALE_12_G:
+            return buffer[0,1] / 2281 * 1000;
+        case LIS3MDL_FULL_SCALE_16_G:
+            return buffer[0,1] / 1711 * 1000;
+    };
+}
+
+/**
+ * @brief Get the magnetic field for the Y-axis
+ * 
+ * @return The strength of the magnetic field in the Y-axis in mGauss
+ */
+uint16_t LIS3MDL::getMagneticFieldY() {
+    I2Cdev::readBytes(devAddr, LIS3MDL_OUT_Y_L, 2, buffer);
+    switch (getFullScale()) {
+        case LIS3MDL_FULL_SCALE_4_G:
+            return buffer[0,1] / 6842 * 1000;
+        case LIS3MDL_FULL_SCALE_8_G:
+            return buffer[0,1] / 3421 * 1000;
+        case LIS3MDL_FULL_SCALE_12_G:
+            return buffer[0,1] / 2281 * 1000;
+        case LIS3MDL_FULL_SCALE_16_G:
+            return buffer[0,1] / 1711 * 1000;
+    };
+}
+/**
+ * @brief Get the magnetic field for the Z-axis
+ * 
+ * @return The strength of the magnetic field in the Z-axis in mGauss
+ */
+uint16_t LIS3MDL::getMagneticFieldZ() {
+    I2Cdev::readBytes(devAddr, LIS3MDL_OUT_Z_L, 2, buffer);
+    switch (getFullScale()) {
+        case LIS3MDL_FULL_SCALE_4_G:
+            return buffer[0,1] / 6842 * 1000;
+        case LIS3MDL_FULL_SCALE_8_G:
+            return buffer[0,1] / 3421 * 1000;
+        case LIS3MDL_FULL_SCALE_12_G:
+            return buffer[0,1] / 2281 * 1000;
+        case LIS3MDL_FULL_SCALE_16_G:
+            return buffer[0,1] / 1711 * 1000;
+    };
+}
+

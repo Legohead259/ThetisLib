@@ -190,7 +190,7 @@ class LIS3MDL {
 
         bool initialize();
         bool testConnection();
--
+
         // WHO_AM_I register, read-only
         uint8_t getDeviceID();
 
@@ -277,13 +277,12 @@ class LIS3MDL {
         bool getInterruptTriggered();
 
         // INT_THS registers, r/w
-        void setInterruptThreshold(uint16t ths);
+        void setInterruptThreshold(uint16_t ths);
         uint16_t getInterruptThreshold();
 
     private:
         uint8_t devAddr;
         uint8_t buffer[6];
-        uint8_t status;
 };
 
 #endif /* LIS3MDL_H */
