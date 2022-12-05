@@ -130,9 +130,9 @@
 #define LIS3MDL_PTH_X_BIT   7
 #define LIS3MDL_PTH_Y_BIT   6
 #define LIS3MDL_PTH_Z_BIT   5
-#define LIS3MDL_PTH_X_BIT   4
-#define LIS3MDL_PTH_Y_BIT   3
-#define LIS3MDL_PTH_Z_BIT   2
+#define LIS3MDL_NTH_X_BIT   4
+#define LIS3MDL_NTH_Y_BIT   3
+#define LIS3MDL_NTH_Z_BIT   2
 #define LIS3MDL_MROI_BIT    1
 #define LIS3MDL_INT_BIT     0
 
@@ -175,7 +175,7 @@
 // --- Table 28: System operating mode selection ---
 #define LIS3MDL_MD_CC_MODE  0x00 // Continuous-conversion mode
 #define LIS3MDL_MD_SC_MODE  0x01 // Single-conversion mode (only valid for 0.625Hz to 80Hz)
-#define LIS3MDL_MD_PD_MODE 0x02 // Power-down mode
+#define LIS3MDL_MD_PD_MODE  0x02 // Power-down mode
 
 // --- Table 31: Z-axis operating mode selection ---
 #define LIS3MDL_OMZ_LP_MODE     0x00 // Low-power mode
@@ -257,22 +257,23 @@ class LIS3MDL {
         bool getInterruptGenerationEnableY();
         void enableInterruptGenerationZ(bool en);
         bool getInterruptGenerationEnableZ();
-        void setActiveHighInt(bool high);
-        bool getActiveHighInt();
+        void setInterruptMode(bool mode);
+        bool getInterruptMode();
         void enableLatchIntRequest(bool en);
         bool getLatchIntRequestEnable();
         void enableInterrupt(bool en);
         bool getInterruptEnable();
 
         // INT_SRC register, r/w
-        void setIntThresholdSide(bool sidedness);
-        bool getIntThresholdSize();
-        void setIntThresholdSideX(bool sidedness);
-        bool getIntThresholdSizeX(); 
-        void setIntThresholdSideY(bool sidedness);
-        bool getIntThresholdSizeY(); 
-        void setIntThresholdSideZ(bool sidedness);
-        bool getIntThresholdSizeZ();
+        uint8_t clearInt();
+        bool getPosIntThreshold(bool *x, bool *y, bool *z);
+        bool getPosIntThresholdX(); 
+        bool getPosIntThresholdY(); 
+        bool getPosIntThresholdZ();
+        bool getNegIntThreshold(bool *x, bool *y, bool *z);
+        bool getNegIntThresholdX(); 
+        bool getNegIntThresholdY(); 
+        bool getNegIntThresholdZ();
         bool getInternalMeasurementRangeOverflow();
         bool getInterruptTriggered();
 
