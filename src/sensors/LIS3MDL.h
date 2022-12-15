@@ -266,11 +266,11 @@ class LIS3MDL {
 
         // INT_SRC register, r/w
         uint8_t clearInt();
-        bool getPosIntThreshold(bool *x, bool *y, bool *z);
+        void getPosIntThreshold(bool *x, bool *y, bool *z);
         bool getPosIntThresholdX(); 
         bool getPosIntThresholdY(); 
         bool getPosIntThresholdZ();
-        bool getNegIntThreshold(bool *x, bool *y, bool *z);
+        void getNegIntThreshold(bool *x, bool *y, bool *z);
         bool getNegIntThresholdX(); 
         bool getNegIntThresholdY(); 
         bool getNegIntThresholdZ();

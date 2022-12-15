@@ -2,7 +2,7 @@
 #define IMU_H
 
 #include "../sensors/lsm6dso32.h"
-#ifdef REVF2 || REVG2
+#ifdef defined(REV_F2) || defined(REV_G2)
 #include "../sensors/LIS3MDL.h"
 #endif // REVf2 || REVG2
 #include "MahonyAHRS.h"

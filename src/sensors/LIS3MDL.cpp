@@ -928,7 +928,9 @@ bool LIS3MDL::getInterruptTriggered() {
  * @param ths The threshold at which the interrupt will be triggered, in Gauss
  */
 void LIS3MDL::setInterruptThreshold(uint16_t ths) {
-    I2Cdev::writeBytes(devAddr, LIS3MDL_OUT_THS_L, 2, ths);
+    buffer[1] = ths & 0xFF00;
+    buffer[0] = ths & 0x00FF; 
+    I2Cdev::writeBytes(devAddr, LIS3MDL_OUT_THS_L, 2, buffer);
 }
 
 /**
