@@ -52,7 +52,7 @@ void pollGPS() {
         char c = GPS.read();
         nmea.process(c);
     }
-    diagLogger->verbose("GPS Sentence: %s", nmea.getSentence());
+    diagLogger->trace("GPS Sentence: %s", nmea.getSentence());
 
     //Parse timestamp
     data.GPSYear = nmea.getYear();
@@ -75,9 +75,9 @@ void pollGPS() {
 
     char _buf[64];
     getISO8601Time_GPS(_buf);
-    diagLogger->verbose("GPS Date: %s", _buf);
-    diagLogger->verbose("GPS Fix:  %s \t Sats: %d \t HDOP: %d", data.GPSFix ? "true" : "false", data.numSats, data.HDOP);
-    diagLogger->verbose("GPS Lat:  %0.3f \t Lon: %0.3f \t Speed: %0.3f \t Course %0.3f", (float) data.latitude/1E6, (float) data.longitude/1E6, (float) data.GPSSpeed/1E3, (float) data.GPSCourse/1E3);
+    diagLogger->trace("GPS Date: %s", _buf);
+    diagLogger->trace("GPS Fix:  %s \t Sats: %d \t HDOP: %d", data.GPSFix ? "true" : "false", data.numSats, data.HDOP);
+    diagLogger->trace("GPS Lat:  %0.3f \t Lon: %0.3f \t Speed: %0.3f \t Course %0.3f", (float) data.latitude/1E6, (float) data.longitude/1E6, (float) data.GPSSpeed/1E3, (float) data.GPSCourse/1E3);
 }
 
 // =========================
