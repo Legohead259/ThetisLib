@@ -1,19 +1,19 @@
 #include "rtc.h"
 
-tmElements_t tm;
+tmElements_t espRTCTime;
 
 void syncInternalClockGPS() {
     diagLogger->info("Attempting to sync internal RTC to GPS...");
 
     if (data.GPSFix) { // If the GPS has a good fix, reset the internal clock to the GPS time
-        tm.Year = data.GPSYear-1970;
-        tm.Month = data.GPSMonth;
-        tm.Day = data.GPSDay;
-        tm.Hour = data.GPSHour;
-        tm.Minute = data.GPSMinute;
-        tm.Second = data.GPSSecond;
+        espRTCTime.Year = data.GPSYear-1970;
+        espRTCTime.Month = data.GPSMonth;
+        espRTCTime.Day = data.GPSDay;
+        espRTCTime.Hour = data.GPSHour;
+        espRTCTime.Minute = data.GPSMinute;
+        espRTCTime.Second = data.GPSSecond;
 
-        setTime(makeTime(tm)); // Reset internal clock
+        setTime(makeTime(espRTCTime)); // Reset internal clock
         diagLogger->info("Done!");
     }
     else {
@@ -22,16 +22,16 @@ void syncInternalClockGPS() {
 }
 
 void updateTimestamp() {
-    breakTime(now(), tm);
+    breakTime(now(), espRTCTime);
     static long _lastSecond = 0;
     static long _lastMSecond = 0;
     long curMSecond = millis();
-    if (tm.Second == _lastSecond) {
+    if (espRTCTime.Second == _lastSecond) {
         curMSecond = millis() - _lastMSecond;
         // Serial.println((int) curMSecond); //DEBUG
     }
     else {
-        _lastSecond = tm.Second;
+        _lastSecond = espRTCTime.Second;
         _lastMSecond = millis();
         curMSecond = 0;
     }
@@ -44,20 +44,20 @@ void getISO8601Time_GPS(char *buf) {
 }
 
 void getISO8601Time_RTC(char *buf) {
-    breakTime(now(), tm);
+    breakTime(now(), espRTCTime);
     static long _lastSecond = 0;
     static long _lastMSecond = 0;
     long curMSecond = millis();
-    if (tm.Second == _lastSecond) {
+    if (espRTCTime.Second == _lastSecond) {
         curMSecond = millis() - _lastMSecond;
         // Serial.println((int) curMSecond); //DEBUG
     }
     else {
-        _lastSecond = tm.Second;
+        _lastSecond = espRTCTime.Second;
         _lastMSecond = millis();
         curMSecond = 0;
     }
 
     // Format timestamp into ISO8601 format
-    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", tm.Year+1970, tm.Month, tm.Day, tm.Hour, tm.Minute, tm.Second, curMSecond);
+    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", espRTCTime.Year+1970, espRTCTime.Month, espRTCTime.Day, espRTCTime.Hour, espRTCTime.Minute, espRTCTime.Second, curMSecond);
 }
