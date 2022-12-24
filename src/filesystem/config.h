@@ -27,6 +27,7 @@ struct config_data_t {
     bool wifiEnable;
 	char ssid[32];
 	char password[32];
+    bool ftpEnable;
     char ftpUser[32];
     char ftpPassword[32];
     uint8_t wifiMode;

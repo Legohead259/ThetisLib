@@ -84,6 +84,10 @@ void Config::loadConfigurations() {
 			strcpy(configData.password, getValue());
 			sprintf(_logBuf, "Device will use WiFi password: %s", configData.password);
 		}
+		else if (nameIs("ftpEnable")) {
+			configData.ftpEnable = getBooleanValue();
+			sprintf(_logBuf, "FTP server is: %s", configData.ftpEnable ? "Enabled" : "Disabled");
+		}
 		else if (nameIs("ftpUser")) {
 			strcpy(configData.ftpUser, getValue());
 			sprintf(_logBuf, "Device will require FTP username: %s", configData.ftpUser);
