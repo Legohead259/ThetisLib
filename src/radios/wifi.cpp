@@ -36,7 +36,7 @@ bool initWIFIAP() {
 bool initWIFIClient() {
     diagLogger->info("Starting WiFi Client...");
     // TODO: Check if SSID and password fields are available, if not return error
-    if (!WiFi.begin(configData.ssid, configData.password)) {
+    if (!WiFi.begin("adafruit", "ffffffff")) {
         diagLogger->error("Failed to start WiFi client!");
         return false;
     }
