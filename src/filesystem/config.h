@@ -16,14 +16,19 @@
 // #include <Ethernet.h>
 #include "logger.h"
 
+enum wifi_mode {
+    WIFI_AP_MODE = 1,
+    WIFI_CLIENT_MODE
+};
+
 struct config_data_t {
 	uint8_t DEVICE_ID;
-	char FW_VERSION[8];
-	char HW_REVISION[8];
     
     bool wifiEnable;
 	char ssid[32];
 	char password[32];
+    char ftpUser[32];
+    char ftpPassword[32];
     uint8_t wifiMode;
 
     uint8_t accelRange;
