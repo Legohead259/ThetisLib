@@ -3,38 +3,70 @@
 AsyncWebServer server(80); // Create AsyncWebServer object on port 80
 
 bool initWIFIAP() {
-    #ifdef WIFI_DEBUG
-    DEBUG_SERIAL_PORT.print("Starting WiFi access point...");
-    #endif
-    sprintf(configData.ssid, "Thetis-%03u", configData.DEVICE_ID); // Format AP SSID based on Device ID
-    if (!WiFi.softAP(configData.ssid, "")) { // Start the access point with the DEVICE_ID SSID and no password
-        #ifdef WIFI_DEBUG
-        DEBUG_SERIAL_PORT.println("Failed to start access point!");
-        #endif
+    diagLogger->info("Starting WiFi access point...");
+    if (!WiFi.softAP(configData.ssid, "")) { // Start the access point with the config SSID and password
+        diagLogger->error("Failed to start access point!");
         return false;
     }
-    #ifdef WIFI_DEBUG
-    DEBUG_SERIAL_PORT.println("done!");
-    #endif
+    diagLogger->info("done!");
 
     IPAddress IP = WiFi.softAPIP();
-    #ifdef WIFI_DEBUG
-    DEBUG_SERIAL_PORT.print("AP IP address: ");
-    DEBUG_SERIAL_PORT.println(IP);
-    #endif
+    char _buf[32];
+    sprintf(_buf, "AP IP address: %s", IP.toString());
+    diagLogger->info(_buf);
 
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         request->send(SPIFFS, "/index.html", String(), false, processor);
+        diagLogger->verbose("Client requesting index!");
     });
     
     // Route to load style.css file
     server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
         request->send(SPIFFS, "/style.css", "text/css");
+        diagLogger->verbose("Client requesting styling!");
     });
 
     // Start server
     server.begin();
+    diagLogger->info("done!");
+    return true;
+}
+
+bool initWIFIClient() {
+    diagLogger->info("Starting WiFi Client...");
+    // TODO: Check if SSID and password fields are available, if not return error
+    if (!WiFi.begin(configData.ssid, configData.password)) {
+        diagLogger->error("Failed to start WiFi client!");
+        return false;
+    }
+    else {
+        connectToWIFI(); // Attempt to connect to WiFi network
+        return true;
+    }
+}
+
+bool connectToWIFI() {
+    char _buf[64];
+    sprintf(_buf, "Connecting to SSID: %s", configData.ssid);
+    diagLogger->info(_buf);
+    sprintf(_buf, "Using password: %s", configData.password);
+    diagLogger->info(_buf);
+    unsigned long _startMillis = millis();
+    while (WiFi.status() != WL_CONNECTED && millis()-_startMillis < WIFI_CONNECT_TIMEOUT*1000) { // Wait for TIMEOUT seconds while connection is tested
+        delay(125);
+    }
+
+    if (WiFi.status() != WL_CONNECTED) {
+        diagLogger->warn("Could not connect to WiFi network!");
+        return false;
+    }
+    else {
+        diagLogger->info("Connected!");
+        sprintf(_buf, "Client IP Address: %s", WiFi.localIP());
+        diagLogger->verbose(_buf);
+        return true;
+    }
 }
 
 String processor(const String &var) {
@@ -46,12 +78,12 @@ String processor(const String &var) {
         return _deviceIDStr;
     }
     else if (var == "FW_VERSION") {
-        DEBUG_SERIAL_PORT.println(configData.FW_VERSION);
-        return configData.FW_VERSION;
+        DEBUG_SERIAL_PORT.println(STR(__FIRMWARE_VERSION__));
+        return STR(__FIRMWARE_VERSION__);
     }
     else if (var == "HW_REVISION") {
-        DEBUG_SERIAL_PORT.println(configData.HW_REVISION);
-        return configData.HW_REVISION;
+        DEBUG_SERIAL_PORT.println(STR(__HARDWARE_VERSION__));
+        return STR(__HARDWARE_VERSION__);
     }
     DEBUG_SERIAL_PORT.println("Unknown handle");
     return var;
