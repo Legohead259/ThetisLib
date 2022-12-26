@@ -6,6 +6,11 @@
 #include <SPIFFS.h>
 #include "logger.h"
 
+extern char wifiSSID[20];
+extern char wifi_pass[20];
+extern char ftp_name[20];
+extern char ftp_pass[20];
+
 bool initSDCard();
 bool initSPIFFS();
 
@@ -19,3 +24,5 @@ bool appendFile(fs::FS &fs, const char * path, const char * message);
 bool renameFile(fs::FS &fs, const char * path1, const char * path2);
 bool deleteFile(fs::FS &fs, const char * path);
 void testFileIO(fs::FS &fs, const char * path);
+void authDecode();
+

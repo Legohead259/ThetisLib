@@ -2,7 +2,7 @@
 #define IMU_H
 
 #include "../sensors/lsm6dso32.h"
-#ifdef defined(REV_F2) || defined(REV_G2)
+#if defined(REV_F2) || defined(REV_G2)
 #include "../sensors/LIS3MDL.h"
 #endif // REVf2 || REVG2
 #include "MahonyAHRS.h"
@@ -103,7 +103,7 @@ void calcLinAccel() {
     data.linAccelY = data.accelY - gravBody.y();
     data.linAccelZ = data.accelZ - gravBody.z();
 
-    diagLogger->verbose("LinAccel   X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.linAccelX, data.linAccelY, data.linAccelZ);
+    diagLogger->trace("LinAccel   X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.linAccelX, data.linAccelY, data.linAccelZ);
 }
 
 void updateFusion() {
@@ -122,8 +122,8 @@ void updateFusion() {
     data.rawGyroY = gyro.gyro.y;
     data.rawGyroZ = gyro.gyro.z;
 
-    diagLogger->verbose("RawAccel   X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.rawAccelX, data.rawAccelY, data.rawAccelZ);
-    diagLogger->verbose("RawGyro    X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.rawGyroX, data.rawGyroY, data.rawGyroZ);
+    diagLogger->trace("RawAccel   X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.rawAccelX, data.rawAccelY, data.rawAccelZ);
+    diagLogger->trace("RawGyro    X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.rawGyroX, data.rawGyroY, data.rawGyroZ);
 
 
     // --------------------------
@@ -151,8 +151,8 @@ void updateFusion() {
     data.gyroY  = K_imu.x(4);
     data.gyroZ  = K_imu.x(5);
 
-    diagLogger->verbose("Accel      X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.accelX, data.accelY, data.accelZ);
-    diagLogger->verbose("Gyroscope  X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.gyroX, data.gyroY, data.gyroZ);
+    diagLogger->trace("Accel      X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.accelX, data.accelY, data.accelZ);
+    diagLogger->trace("Gyroscope  X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.gyroX, data.gyroY, data.gyroZ);
 
     // --------------------------
     // -- Update Mahony Filter --
@@ -164,7 +164,7 @@ void updateFusion() {
     data.pitch = mahony.getPitch();
     data.yaw = mahony.getYaw();
 
-    diagLogger->verbose("Attitude   R: %0.3f \t P: %0.3f \t Y: %0.3f", data.roll, data.pitch, data.yaw);
+    diagLogger->trace("Attitude   R: %0.3f \t P: %0.3f \t Y: %0.3f", data.roll, data.pitch, data.yaw);
     
     float _quat[4];
     mahony.getQuaternionComps(_quat);
@@ -173,7 +173,7 @@ void updateFusion() {
     data.quatY = _quat[2];
     data.quatZ = _quat[3];
 
-    diagLogger->verbose("Quaternion W: %0.3f \t X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.quatW, data.quatX, data.quatY, data.quatZ);
+    diagLogger->trace("Quaternion W: %0.3f \t X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.quatW, data.quatX, data.quatY, data.quatZ);
 
     // ------------------------------------
     // -- Calculate linear accelerations --

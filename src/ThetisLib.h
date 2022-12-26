@@ -12,7 +12,7 @@
 #include "misc/rtc.h"
 
 // Filesystem functions
-#include "filesystem/ThetisFS.h"
+#include "filesystem/files.h"
 #include "filesystem/config.h"
 #include "filesystem/logger.h"
 
@@ -25,8 +25,7 @@
 // Radio functions
 #include "radios/gps.h"
 
-#ifdef WIFI_ENABLE
+// WiFi functions
 #include "radios/wifi.h"
-#endif // WIFI_ENABLE
 
 #endif // THETISLIB_H

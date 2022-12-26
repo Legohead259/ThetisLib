@@ -1,4 +1,11 @@
-#include "ThetisFS.h"
+#include "files.h"
+
+char authData[200] = {0};
+
+char wifiSSID[20] = {0};
+char wifi_pass[20] = {0};
+char ftp_name[20] = {0};
+char ftp_pass[20] = {0};
 
 bool initSDCard() {
     #ifdef SDCARD_DEBUG

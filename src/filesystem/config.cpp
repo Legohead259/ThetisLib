@@ -60,14 +60,6 @@ void Config::loadConfigurations() {
 			configData.DEVICE_ID = getIntValue();
 			sprintf(_logBuf, "Setting device ID to: %d", configData.DEVICE_ID);
 		}
-		else if (nameIs("fwVersion")) {
-			strcpy(configData.FW_VERSION, getValue());
-			sprintf(_logBuf, "Setting device firmware version to: %s", configData.FW_VERSION);
-		}
-		else if (nameIs("hwRevision")) {
-			strcpy(configData.HW_REVISION, getValue());
-			sprintf(_logBuf, "Setting device hardware revision to: %s", configData.HW_REVISION);
-		}
 
 		// ----- WiFi Settings -----
 		else if (nameIs("wifiEnable")) {
@@ -90,8 +82,19 @@ void Config::loadConfigurations() {
 		}
 		else if (nameIs("password")) {
 			strcpy(configData.password, getValue());
-			sprintf(_logBuf, "Device will %s: %s", configData.wifiMode == 1 ? "require password" : "use password",
-													configData.password);
+			sprintf(_logBuf, "Device will use WiFi password: %s", configData.password);
+		}
+		else if (nameIs("ftpEnable")) {
+			configData.ftpEnable = getBooleanValue();
+			sprintf(_logBuf, "FTP server is: %s", configData.ftpEnable ? "Enabled" : "Disabled");
+		}
+		else if (nameIs("ftpUser")) {
+			strcpy(configData.ftpUser, getValue());
+			sprintf(_logBuf, "Device will require FTP username: %s", configData.ftpUser);
+		}
+		else if (nameIs("ftpPassword")) {
+			strcpy(configData.ftpPassword, getValue());
+			sprintf(_logBuf, "Device will require FTP password: %s", configData.ftpPassword);
 		}
 
 		// ----- Sensor Settings -----

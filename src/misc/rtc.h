@@ -5,7 +5,7 @@
 #include "../data.h"
 #include "../filesystem/logger.h"
 
-extern tmElements_t tm;
+extern tmElements_t espRTCTime;
 
 void syncInternalClockGPS();
 void updateTimestamp();
