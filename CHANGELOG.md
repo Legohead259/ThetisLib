@@ -15,6 +15,25 @@ Release sections
 ### Security 
 -->
 
+## 1.5.0 - 2022-12-25
+
+### Known bugs
+- Configurations not loading properly into functions ([#22](https://github.com/Legohead259/ThetisLib/issues/22)
+
+### Added
+- Added a File Transfer Protocol (FTP) server
+- Added WiFi client initialization functions
+- Added configuration options for FTP server and username
+
+### Changed
+- Migrated sensor data to use the `trace` log level
+- Renamed the WiFi source files to fit current naming conventions
+
+### Fixed
+- Fixed compile error with `tm` and WiFi functions
+
+---
+
 ## 1.4.0 - 2022-11-23
 
 ### Added
