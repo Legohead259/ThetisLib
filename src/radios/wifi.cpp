@@ -1,5 +1,7 @@
 #include "wifi.h"
 
+const char* PARAM_INPUT_1 = "state";
+
 AsyncWebServer server(80); // Create AsyncWebServer object on port 80
 FtpServer ftpServer;
 
@@ -26,6 +28,38 @@ bool initWIFIAP() {
     server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
         request->send(SPIFFS, "/style.css", "text/css");
         diagLogger->verbose("Client requesting styling!");
+    });
+
+    // Send a GET request to <ESP_IP>/update?state=<inputMessage>
+    server.on("/update", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        char inputMessage[32];
+        String inputParam;
+        // GET input1 value on <ESP_IP>/update?state=<inputMessage>
+        if (request->hasParam("state")) {
+            sprintf(inputMessage, "Got log state as: %s", request->getParam("state")->value());
+            diagLogger->debug(inputMessage);
+            inputParam = "state";
+            isLogging = !isLogging;
+            digitalWrite(LED_BUILTIN, isLogging);
+        }
+        else {
+            diagLogger->warn("Invalid log state update request received!");
+            inputParam = "none";
+        }
+
+        if (isLogging) {
+            dataLogger.start(SD);
+        }
+        else {
+            dataLogger.stop();
+        }
+
+        request->send(200, "text/plain", "OK");
+  });
+
+    // Send a GET request to <ESP_IP>/state
+    server.on("/state", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        request->send(200, "text/plain", String(isLogging));
     });
 
     // Start server
@@ -141,22 +175,23 @@ void _transferCallback(FtpTransferOperation ftpOperation, const char* name, unsi
     */
 }
 
-String processor(const String &var) {
-    DEBUG_SERIAL_PORT.print(var); DEBUG_SERIAL_PORT.print(": ");
-    if (var == "DEVICE_ID") {
-        char _deviceIDStr[4];
-        sprintf(_deviceIDStr, "%03u", configData.DEVICE_ID);
-        DEBUG_SERIAL_PORT.println(_deviceIDStr);
-        return _deviceIDStr;
+
+// ========================
+// === SERVER FUNCTIONS ===
+// ========================
+
+
+String processor(const String& var) {
+    //Serial.println(var);
+    if (var == "BUTTONPLACEHOLDER") {
+        String buttons ="";
+        String outputStateValue = outputState();
+        buttons += "<h4>Log Enable <span id=\"outputState\"></span></h4><label class=\"switch\"><input type=\"checkbox\" onchange=\"toggleCheckbox(this)\" id=\"output\" " + outputStateValue + "><span class=\"slider\"></span></label>";
+        return buttons;
     }
-    else if (var == "FW_VERSION") {
-        DEBUG_SERIAL_PORT.println(STR(__FIRMWARE_VERSION__));
-        return STR(__FIRMWARE_VERSION__);
-    }
-    else if (var == "HW_REVISION") {
-        DEBUG_SERIAL_PORT.println(STR(__HARDWARE_VERSION__));
-        return STR(__HARDWARE_VERSION__);
-    }
-    DEBUG_SERIAL_PORT.println("Unknown handle");
-    return var;
+    return String();
+}
+
+String outputState() {
+    return "";
 }

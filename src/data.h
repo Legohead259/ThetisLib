@@ -4,6 +4,8 @@
 #include <TimeLib.h>
 #include <Arduino.h>
 
+extern bool isLogging;
+
 struct data_t {
     time_t epoch;               // Timestamp in seconds since UNIX epoch (January 1, 1970)
     unsigned long mSecond;      // Milliseconds since last epoch second
