@@ -17,6 +17,8 @@
 extern AsyncWebServer server; // Create AsyncWebServer object on port 80
 extern FtpServer ftpServer;
 
+extern const char* PARAM_INPUT_1;
+
 bool initWIFIAP();
 bool initWIFIClient();
 bool connectToWIFI();
@@ -27,4 +29,5 @@ void _transferCallback(FtpTransferOperation ftpOperation, const char* name, unsi
 
 // Prototypes
 String processor(const String &var);
+String outputState();
 #endif // THETIS_WIFIH
