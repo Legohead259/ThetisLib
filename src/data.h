@@ -57,7 +57,7 @@ struct data_t {
     float quatY;                //
     float quatZ;                //
     float imuTemp;              // °Celsius from the IMU
-    uint8_t state;              // State reported by the package.
+    int8_t state;              // State reported by the package.
 };
 
 extern data_t data;

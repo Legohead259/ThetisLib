@@ -1,3 +1,8 @@
+#ifndef STATES_H
+#define STATES_H
+
+#include "filesystem/logger.h"
+
 /*
 Status Table:
 State           |  Color  |  Indication  |  Description
@@ -11,6 +16,7 @@ Standby         |  AMBER  |    Solid     | Accelerometer is not calibrated yet
 */
 
 typedef enum Status {
+    ERROR = -1,
     BOOTING,
     LOGGING_NO_GPS,
     LOGGING_GPS,
@@ -19,16 +25,63 @@ typedef enum Status {
     STANDBY
 } status_t;
 
+static int8_t _lastState = -2;
+
+static void getStateString(char* buf, int8_t s) {
+    switch (s) {
+        case ERROR:
+            strcpy(buf, "ERROR");
+            break;
+        case BOOTING:
+            strcpy(buf, "BOOTING");
+            break;
+        case LOGGING_NO_GPS:
+            strcpy(buf, "LOGGING, NO GPS");
+            break;
+        case LOGGING_GPS:
+            strcpy(buf, "LOGGING WITH GPS");
+            break;
+        case READY_NO_GPS:
+            strcpy(buf, "READY, NO GPS");
+            break;
+        case READY_GPS:
+            strcpy(buf, "READY WITH GPS");
+            break;
+        case STANDBY:
+            strcpy(buf, "STANDBY");
+            break;
+        default:
+            strcpy(buf, "");
+            break;
+    }
+}
+
+static void setSystemState(int8_t s) {
+    if (data.state == s) return; // Do not change system state if there is no difference
+    
+    char stateStr[20];
+    getStateString(stateStr, s);
+    char _buf[64];
+    sprintf(_buf, "Setting system state to: %s", stateStr);
+    diagLogger->info(_buf);
+    _lastState = data.state;
+    data.state = s;
+}
+
+static void getSystemState(char* buf) {
+    getStateString(buf, data.state);
+}
+
 static void updateSystemState() {
     // TODO: Determine better method for IMU calibration
     // bool _isIMUCalibrated = data.sysCal == 3 && data.accelCal == 3 && data.gyroCal == 3 && data.magCal == 3;
-    // _isIMUCalibrated = true; // Override since we are not calculating calibration, yet
+    bool _isIMUCalibrated = true; // Override since we are not calculating calibration, yet
 
-    // if (!_isIMUCalibrated && !data.GPSFix)                      data.state = STANDBY;
-    // else if (_isIMUCalibrated && !data.GPSFix && !isLogging)    data.state = READY_NO_GPS;
-    // else if (_isIMUCalibrated && data.GPSFix  && !isLogging)    data.state = READY_GPS;
-    // else if (_isIMUCalibrated && !data.GPSFix && isLogging)     data.state = LOGGING_NO_GPS;
-    // else if (_isIMUCalibrated && data.GPSFix  && isLogging)     data.state = LOGGING_GPS;
+    if (!_isIMUCalibrated && !data.GPSFix)                      setSystemState(STANDBY);
+    else if (_isIMUCalibrated && !data.GPSFix && !isLogging)    setSystemState(READY_NO_GPS);
+    else if (_isIMUCalibrated && data.GPSFix  && !isLogging)    setSystemState(READY_GPS);
+    else if (_isIMUCalibrated && !data.GPSFix && isLogging)     setSystemState(LOGGING_NO_GPS);
+    else if (_isIMUCalibrated && data.GPSFix  && isLogging)     setSystemState(LOGGING_GPS);
 }
 
 static void updateSystemLED() {
@@ -56,3 +109,5 @@ static void updateSystemLED() {
             break;
     }
 }
+
+#endif // STATES_H
