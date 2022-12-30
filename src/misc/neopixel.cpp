@@ -1,4 +1,5 @@
 #include "neopixel.h"
+#include "../filesystem/logger.h"
 
 // ==========================
 // === NEOPIXEL FUNCTIONS ===
@@ -27,7 +28,7 @@ void pulseLED(uint32_t color) {
     static long _lastCheck = 0;
     static uint8_t _i = 0;
 
-    if (millis() >= _lastCheck + NEOPIXEL_CYCLE_TIME/(NUM_STEPS*2)) {
+    if (millis()-NEOPIXEL_CYCLE_TIME/(NUM_STEPS*2) >= _lastCheck) {
         // Change pixel brightness
         pixel.setBrightness(_pixelBrightness);
         pixel.setPixelColor(0, color);
@@ -41,15 +42,18 @@ void pulseLED(uint32_t color) {
         // Calculate next brightness (sinusoidal)
         float _iRad = _i * PI / 180;
         _pixelBrightness = sin(_iRad) * MAXIMUM_BRIGHTNESS;
-        if (_i+(180/NUM_STEPS) >= 180) _i = 0; // Increment _i and check if it is greater than 180; reset to 0 if it is
+        if (++_i + (180/NUM_STEPS) >= 180) _i = 0; // Increment _i and check if it is greater than 180; reset to 0 if it is
         _lastCheck = millis();
     }
 
     // DEBUG Statements
-    #ifdef NEOPIXEL_DEBUG
-    DEBUG_SERIAL_PORT.printf("_pixelBrightness: %d\r\n", _pixelBrightness);
-    DEBUG_SERIAL_PORT.printf("_isBrightnessInc: %d\r\n", _isBrightnessInc);
-    #endif
+    // char _buf[20];
+    // sprintf(_buf, "Color: %d", color);
+    // diagLogger->debug(_buf);
+    // sprintf(_buf, "Brightness: %d", _pixelBrightness);
+    // diagLogger->debug(_buf);
+    // sprintf(_buf, "Increasing: %d", _isBrightnessInc);
+    // diagLogger->debug(_buf);
 }
 
 void rainbow() {

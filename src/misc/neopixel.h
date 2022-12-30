@@ -14,7 +14,7 @@
 #define MAXIMUM_BRIGHTNESS 32
 #define NUM_STEPS 50
 #define BRIGHTNESS_STEP MAXIMUM_BRIGHTNESS/NUM_STEPS
-#define NEOPIXEL_CYCLE_TIME 3000 // ms - Bright to bright time
+#define NEOPIXEL_CYCLE_TIME 1500 // ms - Bright to bright time
 
 /*
 Code Table:

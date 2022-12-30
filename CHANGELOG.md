@@ -14,6 +14,22 @@ Release sections
 ### Removed
 ### Security 
 -->
+## [UNRELEASED] 1.5.2 - 2022-12-29
+
+### Added
+- Added functions to change and log the system state
+
+### Fixed
+- Fixed NeoPixel functionality ([#25](https://github.com/Legohead259/ThetisLib/issues/25))
+
+---
+
+## [UNRELEASED] 1.5.1 - 2022-12-27
+
+### Added
+- Added HTTP server to handle GET requests for log enable and disable
+
+---
 
 ## 1.5.0 - 2022-12-25
 
