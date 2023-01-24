@@ -22,6 +22,11 @@ void syncInternalClockGPS() {
 }
 
 void updateTimestamp() {
+    data.epoch = now();
+    data.mSecond = updateRTCms();
+}
+
+long updateRTCms() {
     breakTime(now(), espRTCTime);
     static long _lastSecond = 0;
     static long _lastMSecond = 0;
@@ -35,8 +40,7 @@ void updateTimestamp() {
         _lastMSecond = millis();
         curMSecond = 0;
     }
-    data.epoch = now();
-    data.mSecond = curMSecond;
+    return curMSecond;
 }
 
 void getISO8601Time_GPS(char *buf) {
@@ -44,20 +48,6 @@ void getISO8601Time_GPS(char *buf) {
 }
 
 void getISO8601Time_RTC(char *buf) {
-    breakTime(now(), espRTCTime);
-    static long _lastSecond = 0;
-    static long _lastMSecond = 0;
-    long curMSecond = millis();
-    if (espRTCTime.Second == _lastSecond) {
-        curMSecond = millis() - _lastMSecond;
-        // Serial.println((int) curMSecond); //DEBUG
-    }
-    else {
-        _lastSecond = espRTCTime.Second;
-        _lastMSecond = millis();
-        curMSecond = 0;
-    }
-
     // Format timestamp into ISO8601 format
-    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", espRTCTime.Year+1970, espRTCTime.Month, espRTCTime.Day, espRTCTime.Hour, espRTCTime.Minute, espRTCTime.Second, curMSecond);
+    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", espRTCTime.Year+1970, espRTCTime.Month, espRTCTime.Day, espRTCTime.Hour, espRTCTime.Minute, espRTCTime.Second, updateRTCms());
 }
