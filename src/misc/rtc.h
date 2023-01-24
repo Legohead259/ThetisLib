@@ -9,6 +9,7 @@ extern tmElements_t espRTCTime;
 
 void syncInternalClockGPS();
 void updateTimestamp();
+long updateRTCms();
 void getISO8601Time_GPS(char *buf);
 void getISO8601Time_RTC(char *buf);
 
