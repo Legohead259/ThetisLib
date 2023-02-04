@@ -36,7 +36,7 @@ private:
 // Function declarations
 
 public:
-	Mahony(float sampleFreq=512.0f, float Kp=1.0f, float Ki=0.3f);
+	Mahony(float sampleFreq=512.0f, float Kp=2.0f, float Ki=0.3f);
 	void update(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz);
 	void updateIMU(float gx, float gy, float gz, float ax, float ay, float az);
 	float getRoll() {
