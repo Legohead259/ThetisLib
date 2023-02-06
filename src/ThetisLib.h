@@ -21,6 +21,7 @@
 
 // Sensor functions
 #include "AHRS/fusion.h"
+#include "sensors/max1704.h"
 
 // Radio functions
 #include "radios/gps.h"
