@@ -18,9 +18,16 @@ Release sections
 
 ### Added
 - Added functions to change and log the system state
+- Added minimally viable product for integrating the magnetometer ([#29](https://github.com/Legohead259/ThetisLib/issues/29))
+- Added WiFi compile flags ([#28](https://github.com/Legohead259/ThetisLib/issues/28)) 
+- Added minimally viable product for integrating the LiPo battery gauge ([#31]https://github.com/Legohead259/ThetisLib/issues/31)
 
 ### Fixed
 - Fixed NeoPixel functionality ([#25](https://github.com/Legohead259/ThetisLib/issues/25))
+- Fixed RTC timestamp issue ([#21]https://github.com/Legohead259/ThetisLib/issues/21)
+
+### Changed
+- Updated Git issue templates to include F5 and G2 ([#23](https://github.com/Legohead259/ThetisLib/issues/23))
 
 ---
 

@@ -29,7 +29,8 @@
         "me-no-dev/ESP Async WebServer": "^1.2.3",
         "me-no-dev/AsyncTCP": "^1.1.1",
         "jrowberg/I2Cdevlib-Core":"^1.0.0",
-        "adafruit/Adafruit LIS3MDL":"^1.2.1"
+        "adafruit/Adafruit LIS3MDL":"^1.2.1",
+        "adafruit/Adafruit MAX1704X":"^1.0.0"
     },
     "frameworks": "Arduino",
     "platforms": "Thetis"
