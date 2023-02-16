@@ -18,5 +18,5 @@ bool initMAX17048() {
 
 void updateVoltage() {
     data.voltage = battGauge.cellVoltage();
-    diagLogger->verbose("Battery Voltage: %f V", data.voltage);
+    diagLogger->trace("Battery Voltage: %f V", data.voltage);
 }

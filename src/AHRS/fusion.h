@@ -211,7 +211,7 @@ void updateFusion() {
     data.pitch = mahony.getPitch();
     data.yaw = mahony.getYaw();
 
-    diagLogger->info("Attitude   R: %0.3f \t P: %0.3f \t Y: %0.3f", data.roll, data.pitch, data.yaw);
+    diagLogger->trace("Attitude   R: %0.3f \t P: %0.3f \t Y: %0.3f", data.roll, data.pitch, data.yaw);
     
     float _quat[4];
     mahony.getQuaternionComps(_quat);

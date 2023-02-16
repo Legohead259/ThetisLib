@@ -10,6 +10,7 @@
 // Miscellaneous functions
 #include "misc/neopixel.h"
 #include "misc/rtc.h"
+#include "misc/timer.h"
 
 // Filesystem functions
 #include "filesystem/files.h"
