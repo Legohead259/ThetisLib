@@ -12,7 +12,7 @@ bool initDSO32( lsm6dso32_accel_range_t accelRange,
                 lsm6ds_gyro_range_t gyroRange,
                 lsm6ds_data_rate_t dataRate) {
     diagLogger->info("Starting LSM6DSO32 IMU...");
-    if (!dso32.begin_I2C(0x6B)) {
+    if (!dso32.begin_I2C(0x6A) && !dso32.begin_I2C(0x6B)) {
         diagLogger->fatal("Failed to start LSM6DSO32 IMU!");
         return false;
     }

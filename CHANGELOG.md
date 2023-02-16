@@ -30,6 +30,7 @@ Release sections
 ### Changed
 - Updated Git issue templates to include F5 and G2 ([#23](https://github.com/Legohead259/ThetisLib/issues/23))
 - Changed how logging is handled. Now it is coordinated with a hardware timer to log at a user-configurable rate ([#41]https://github.com/Legohead259/ThetisLib/issues/41)
+- Changed LSM6DSO32 initialization to check both I2C addresses at startup ([#43](https://github.com/Legohead259/ThetisLib/issues/43))
 
 ---
 
