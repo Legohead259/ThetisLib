@@ -1,6 +1,6 @@
 #ifndef THETISLIB_H
 #define THETISLIB_H
-#define THETISLIB_VERSION "1.2.0"
+#define THETISLIB_VERSION "1.5.2"
 
 #include <Arduino.h>
 
@@ -22,7 +22,6 @@
 
 // Sensor functions
 #include "AHRS/fusion.h"
-#include "sensors/max1704.h"
 
 // Radio functions
 #include "radios/gps.h"
@@ -31,5 +30,10 @@
 #ifdef WIFI_ENABLE
 #include "radios/wifi.h"
 #endif
+
+// Revision-specific functions
+#if defined(REV_F5) || defined(REV_G2)
+#include "sensors/max1704.h"
+#endif // defined(REV_F5) || defined(REV_G2)
 
 #endif // THETISLIB_H
