@@ -14,7 +14,7 @@ Release sections
 ### Removed
 ### Security 
 -->
-## [UNRELEASED] 1.5.2 - 2022-12-29
+## [UNRELEASED] 1.5.2 - 2023-02-17
 
 ### Added
 - Added functions to change and log the system state
@@ -28,6 +28,7 @@ Release sections
 
 ### Changed
 - Updated Git issue templates to include F5 and G2 ([#23](https://github.com/Legohead259/ThetisLib/issues/23))
+- Changed how logging is handled. Now it is coordinated with a hardware timer to log at a user-configurable rate ([#32]https://github.com/Legohead259/ThetisLib/issues/32)
 
 ---
 
