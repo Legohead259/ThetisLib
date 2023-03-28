@@ -40,6 +40,7 @@ extern volatile bool ppsTriggered;
 bool initGPS();
 void pollGPS();
 
-void getISO8601Time(char *buf);
+void printUnknownSentence(MicroNMEA &nmea);
+
 
 #endif // ndef THETIS_GPS_H
