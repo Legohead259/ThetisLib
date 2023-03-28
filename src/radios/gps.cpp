@@ -20,14 +20,14 @@ bool initGPS() {
         return false;
     }
     delay(10);
-    diagLogger->verbose("Setting GPS baud rate to 9600 BPS");
+    diagLogger->trace("Setting GPS baud rate to 9600 BPS");
     nmea.setUnknownSentenceHandler(printUnknownSentence);
     MicroNMEA::sendSentence(GPS, "$PMTK251,9600");         // Set GPS baudrate to 38400
     delay(10);
     GPS.begin(9600);
-    diagLogger->verbose("Enabling NMEA RMC and GGA strings");
+    diagLogger->trace("Enabling NMEA RMC and GGA strings");
     MicroNMEA::sendSentence(GPS, "$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0"); // Enable NMEA RMC and GGA sentences
-    diagLogger->verbose("Setting GPS update rate to 1 Hz");
+    diagLogger->trace("Setting GPS update rate to 1 Hz");
     MicroNMEA::sendSentence(GPS, "$PMTK220,1000");           // Set GPS update rate to 100 ms (10 Hz)
     diagLogger->info("done!");
 
@@ -39,7 +39,7 @@ void pollGPS() {
         char c = GPS.read();
         nmea.process(c);
     }
-    diagLogger->verbose("GPS Sentence: %s", nmea.getSentence());
+    diagLogger->trace("GPS Sentence: %s", nmea.getSentence());
 
     // Parse timestamp
     data.GPSYear = nmea.getYear();
@@ -62,9 +62,9 @@ void pollGPS() {
 
     char _buf[64];
     getISO8601Time_GPS(_buf);
-    diagLogger->verbose("GPS Date: %s", _buf);
-    diagLogger->verbose("GPS Fix:  %s \t Sats: %d \t HDOP: %d", data.GPSFix ? "true" : "false", data.numSats, data.HDOP);
-    diagLogger->verbose("GPS Lat:  %0.3f \t Lon: %0.3f \t Speed: %0.3f \t Course %0.3f", (float) data.latitude/1E6, (float) data.longitude/1E6, (float) data.GPSSpeed/1E3, (float) data.GPSCourse/1E3);
+    diagLogger->trace("GPS Date: %s", _buf);
+    diagLogger->trace("GPS Fix:  %s \t Sats: %d \t HDOP: %d", data.GPSFix ? "true" : "false", data.numSats, data.HDOP);
+    diagLogger->trace("GPS Lat:  %0.3f \t Lon: %0.3f \t Speed: %0.3f \t Course %0.3f", (float) data.latitude/1E6, (float) data.longitude/1E6, (float) data.GPSSpeed/1E3, (float) data.GPSCourse/1E3);
 }
 
 // =========================
