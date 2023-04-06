@@ -56,6 +56,7 @@ bool Logger::begin(fs::SDFS &fs, uint8_t cs) {
 			return false; // If no unique log could be created, return an error
 		} 
     }
+	diagLogger->info("Writing data to %s", dataLogFilename);
     dataLogFile = fs.open(dataLogFilename, FILE_APPEND);
     if (!dataLogFile) {
 		diagLogger->fatal("Unable to open data log file!");

@@ -4,6 +4,7 @@
 #include <TimeLib.h>
 #include "../data.h"
 #include "../filesystem/logger.h"
+#include "../radios/gps.h"
 
 extern tmElements_t espRTCTime;
 

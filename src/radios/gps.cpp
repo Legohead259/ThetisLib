@@ -41,15 +41,6 @@ void pollGPS() {
     }
     diagLogger->trace("GPS Sentence: %s", nmea.getSentence());
 
-    // Parse timestamp
-    data.GPSYear = nmea.getYear();
-    data.GPSMonth = nmea.getMonth();
-    data.GPSDay = nmea.getDay();
-    data.GPSHour = nmea.getHour();
-    data.GPSMinute = nmea.getMinute();
-    data.GPSSecond = nmea.getSecond();
-    data.GPSHundredth = nmea.getHundredths();
-
     // Update NMEA string based on PPS pulse from GPS. By default refresh rate is 1Hz
     data.GPSFix = nmea.isValid();
     data.numSats = nmea.getNumSatellites();
