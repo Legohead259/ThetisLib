@@ -5,7 +5,8 @@
 #ifdef MAG_ENABLE
 #include "../sensors/lis3mdl.h"
 #endif // REV_F5 || REV_G2
-#include "MahonyAHRS.h"
+// #include "MahonyAHRS.h"
+#include "MadgwickAHRS.h"
 #include "../utility/imumaths.h"
 #include "../data.h"
 #include "../filesystem/logger.h"
@@ -13,7 +14,7 @@
 uint8_t fusionUpdateRate = 200; // Hz - Default: 200
 unsigned long fusionUpdateInterval = 1000/fusionUpdateRate; // time between IMU polls [ms]
 
-Mahony mahony(fusionUpdateRate);
+// Mahony mahony(fusionUpdateRate);
 
 sensors_event_t accel;
 sensors_event_t gyro;
@@ -30,7 +31,8 @@ void initFusion() {
 void calcLinAccel() {
     // Gravitational acceleration in NED coordinate system
     imu::Vector<3> gravGlobal = {0, 0, 9.81};
-    imu::Quaternion Qb = mahony.getQuaternion();
+    // imu::Quaternion Qb = mahony.getQuaternion();
+    imu::Quaternion Qb = getQuaternion();
     imu::Quaternion gravBody = Qb.invert() * imu::Quaternion(0, gravGlobal) * Qb;
 
     data.linAccelX = data.accelX - gravBody.x();
@@ -75,22 +77,26 @@ void updateFusion() {
     // --------------------------
 
     #ifdef MAG_ENABLE
-    mahony.update(  data.gyroX, data.gyroY, data.gyroZ,
-                    data.accelX, data.accelY, data.accelZ,
-                    data.magX, data.magY, data.magZ);
+    // mahony.update(  data.gyroX, data.gyroY, data.gyroZ,
+    //                 data.accelX, data.accelY, data.accelZ,
+    //                 data.magX, data.magY, data.magZ);
+    MadgwickAHRSupdate(   data.gyroX, data.gyroY, data.gyroZ,
+                                    data.accelX, data.accelY, data.accelZ,
+                                    data.magX, data.magY, data.magZ);
     #else
     mahony.updateIMU(   data.gyroX, data.gyroY, data.gyroZ,
                         data.accelX, data.accelY, data.accelZ);
     #endif
     
     float _quat[4];
-    mahony.getQuaternionComps(_quat);
+    getQuaternionComps(_quat);
     data.quatW = _quat[0];
     data.quatX = _quat[1];
     data.quatY = _quat[2];
     data.quatZ = _quat[3];
 
     diagLogger->trace("Quaternion W: %0.3f \t X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.quatW, data.quatX, data.quatY, data.quatZ);
+    diagLogger->debug("Euler      R: %0.3f \t P: %0.3f \t Y: %0.3f", getRoll(), getPitch(), getYaw());
 
     // ------------------------------------
     // -- Calculate linear accelerations --

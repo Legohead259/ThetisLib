@@ -43,7 +43,7 @@ long updateRTCms() {
     return curMSecond;
 }
 
-void getISO8601Time_GPS(char *buf, MicroNMEA &nmea) {
+void getISO8601Time_GPS(char *buf) {
     sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", nmea.getYear(), nmea.getMonth(), nmea.getDay(), nmea.getHour(), nmea.getMinute(), nmea.getSecond(), nmea.getHundredths());
 }
 
