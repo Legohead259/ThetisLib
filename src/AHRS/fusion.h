@@ -14,7 +14,6 @@
 uint8_t fusionUpdateRate = 200; // Hz - Default: 200
 unsigned long fusionUpdateInterval = 1000/fusionUpdateRate; // time between IMU polls [ms]
 
-// Mahony mahony(fusionUpdateRate);
 
 sensors_event_t accel;
 sensors_event_t gyro;
@@ -72,20 +71,17 @@ void updateFusion() {
     diagLogger->trace("Mag     X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.magX, data.magY, data.magZ);
     #endif
 
-    // --------------------------
-    // -- Update Mahony Filter --
-    // --------------------------
+    // ----------------------------
+    // -- Update Madgwick Filter --
+    // ----------------------------
 
     #ifdef MAG_ENABLE
-    // mahony.update(  data.gyroX, data.gyroY, data.gyroZ,
-    //                 data.accelX, data.accelY, data.accelZ,
-    //                 data.magX, data.magY, data.magZ);
-    MadgwickAHRSupdate(   data.gyroX, data.gyroY, data.gyroZ,
-                                    data.accelX, data.accelY, data.accelZ,
-                                    data.magX, data.magY, data.magZ);
+    MadgwickAHRSupdate(data.gyroX, data.gyroY, data.gyroZ,
+                        data.accelX, data.accelY, data.accelZ,
+                        data.magX, data.magY, data.magZ);
     #else
-    mahony.updateIMU(   data.gyroX, data.gyroY, data.gyroZ,
-                        data.accelX, data.accelY, data.accelZ);
+    MadgwickAHRSupdateIMU(data.gyroX, data.gyroY, data.gyroZ,
+                            data.accelX, data.accelY, data.accelZ);
     #endif
     
     float _quat[4];
@@ -96,7 +92,7 @@ void updateFusion() {
     data.quatZ = _quat[3];
 
     diagLogger->trace("Quaternion W: %0.3f \t X: %0.3f \t Y: %0.3f \t Z: %0.3f", data.quatW, data.quatX, data.quatY, data.quatZ);
-    diagLogger->debug("Euler      R: %0.3f \t P: %0.3f \t Y: %0.3f", getRoll(), getPitch(), getYaw());
+    diagLogger->trace("Euler      R: %0.3f \t P: %0.3f \t Y: %0.3f", getRoll(), getPitch(), getYaw());
 
     // ------------------------------------
     // -- Calculate linear accelerations --

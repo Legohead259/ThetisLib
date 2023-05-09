@@ -43,7 +43,6 @@ bool Logger::begin(fs::SDFS &fs, uint8_t cs, LogLevel logLevel) {
 
 bool Logger::begin(fs::SDFS &fs, uint8_t cs) {
 	diagLogger->info("Initializing data logger...");
-	fs = fs;
     if (!fs.begin(cs)) {
 		diagLogger->fatal("Failed to initialize filesystem!");
         return false;
