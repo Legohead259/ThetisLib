@@ -1,0 +1,7 @@
+[submodule "src/fusion"]
+	path = src/fusion
+	url = https://github.com/xioTechnologies/Fusion.git
+
+[submodule "src/MadgwickAHRS"]
+	path = src/MadgwickAHRS
+	url = https://github.com/arduino-libraries/MadgwickAHRS.git
