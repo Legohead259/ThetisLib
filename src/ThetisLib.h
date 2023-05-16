@@ -25,8 +25,8 @@
 #ifdef MAG_ENABLE
 #include "sensors/LIS3MDL.h"
 #endif // MAG_ENABLE
-// #include "fusion/Fusion/fusion.h"
-#include "MadgwickAHRS/src/MadgwickAHRS.h"
+#include "fusion/fusion.h"
+// #include "MadgwickAHRS/src/MadgwickAHRS.h"
 // #include "AHRS/fusion.h"
 
 // Radio functions
