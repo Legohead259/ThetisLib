@@ -1,0 +1,7 @@
+[submodule "src/fusion"]
+	path = src/fusion
+	url = https://github.com/xioTechnologies/Fusion.git
+
+[submodule "src/ThetisAPI"]
+	path = src/ThetisAPI
+	url = https://github.com/Legohead259/ThetisAPI.git

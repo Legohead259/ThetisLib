@@ -7,6 +7,9 @@
 
 
 Adafruit_LSM6DSO32 dso32;
+sensors_event_t accel;
+sensors_event_t gyro;
+sensors_event_t temp;
 
 bool initDSO32( lsm6dso32_accel_range_t accelRange, 
                 lsm6ds_gyro_range_t gyroRange,
@@ -36,6 +39,14 @@ void pollDSO32() {
     gyro.gyro.x *= RAD_TO_DEG;
     gyro.gyro.y *= RAD_TO_DEG;
     gyro.gyro.z *= RAD_TO_DEG;
+
+    data.accelX = accel.acceleration.x;
+    data.accelY = accel.acceleration.y;
+    data.accelZ = accel.acceleration.z;
+
+    data.gyroX = gyro.gyro.x;
+    data.gyroY = gyro.gyro.y;
+    data.gyroZ = gyro.gyro.z;
 }
 
 // =========================

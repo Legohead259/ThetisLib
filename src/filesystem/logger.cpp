@@ -43,7 +43,6 @@ bool Logger::begin(fs::SDFS &fs, uint8_t cs, LogLevel logLevel) {
 
 bool Logger::begin(fs::SDFS &fs, uint8_t cs) {
 	diagLogger->info("Initializing data logger...");
-	fs = fs;
     if (!fs.begin(cs)) {
 		diagLogger->fatal("Failed to initialize filesystem!");
         return false;
@@ -56,6 +55,7 @@ bool Logger::begin(fs::SDFS &fs, uint8_t cs) {
 			return false; // If no unique log could be created, return an error
 		} 
     }
+	diagLogger->info("Writing data to %s", dataLogFilename);
     dataLogFile = fs.open(dataLogFilename, FILE_APPEND);
     if (!dataLogFile) {
 		diagLogger->fatal("Unable to open data log file!");

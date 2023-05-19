@@ -19,18 +19,15 @@
     "dependencies": {
         "adafruit/Adafruit BusIO": "^1.11.6",
         "adafruit/Adafruit Unified Sensor": "^1.1.5",
-        "adafruit/Adafruit BNO055": "^1.5.3",
         "adafruit/Adafruit LSM6DS": "^4.7.0",
         "adafruit/Adafruit NeoPixel": "^1.10.5",
         "ayushsharma82/AsyncElegantOTA": "^2.2.5",
-        "rfetick/Kalman": "^1.1.0",
-        "tomstewart89/BasicLinearAlgebra": "^3.6",
         "stevemarple/MicroNMEA": "^2.0.6",
         "me-no-dev/ESP Async WebServer": "^1.2.3",
         "me-no-dev/AsyncTCP": "^1.1.1",
-        "jrowberg/I2Cdevlib-Core":"^1.0.0",
         "adafruit/Adafruit LIS3MDL":"^1.2.1",
-        "adafruit/Adafruit MAX1704X":"^1.0.0"
+        "adafruit/Adafruit MAX1704X":"^1.0.0",
+        "bblanchon/ArduinoJson":"^6.21.2"
     },
     "frameworks": "Arduino",
     "platforms": "Thetis"

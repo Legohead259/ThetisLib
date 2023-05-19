@@ -3,6 +3,7 @@
 
 Adafruit_LIS3MDL lis3mdl;
 
+sensors_event_t mag;
 
 // ===========================
 // === LIS3MDL FUNCTIONS ===
@@ -34,4 +35,8 @@ bool initLIS3MDL(   lis3mdl_performancemode_t perfMode,
 
 void pollLIS3MDL() {
     lis3mdl.getEvent(&mag); // Update 
+
+    data.magX = mag.magnetic.x;
+    data.magY = mag.magnetic.y;
+    data.magZ = mag.magnetic.z;
 }

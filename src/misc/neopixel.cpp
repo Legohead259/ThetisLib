@@ -102,3 +102,15 @@ void blinkCode(ErrorCode_t code, uint32_t color) {
     }
     delay(MESSAGE_INTERVAL);
 }
+
+void blink(uint8_t duration, uint32_t color) {
+    pixel.setPixelColor(0, color); pixel.show();
+    delay(duration);
+    pixel.setPixelColor(0, OFF); pixel.show();
+    delay(duration);
+}
+
+void setLEDColor(uint32_t color) {
+    pixel.setPixelColor(0, color);
+    pixel.show();
+}

@@ -102,6 +102,7 @@ public:
 
 	void log(LogLevel logLevel, bool isPart, bool writeLinefeed, const char* message, ...);
 	void log(LogLevel logLevel, bool isPart, bool writeLinefeed, const __FlashStringHelper* message, ...);
+	void print(const char *logLine);
 
 private:
 	LogLevel _logLevel = LogLevel::INFO;
@@ -121,7 +122,6 @@ private:
     bool initDataLogFile(fs::SDFS &fs, char* filename);
     void getLogLevelStr(char* outStr, LogLevel loglevel);
 	void printPrefix(LogLevel logLevel);
-	void print(const char *logLine);
 };
 
 extern Logger dataLogger;

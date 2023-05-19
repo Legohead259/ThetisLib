@@ -21,7 +21,13 @@
 #include "states.h"
 
 // Sensor functions
-#include "AHRS/fusion.h"
+#include "sensors/lsm6dso32.h"
+#ifdef MAG_ENABLE
+#include "sensors/LIS3MDL.h"
+#endif // MAG_ENABLE
+#include "fusion/Fusion/fusion.h"
+// #include "MadgwickAHRS/src/MadgwickAHRS.h"
+// #include "AHRS/fusion.h"
 
 // Radio functions
 #include "radios/gps.h"
@@ -35,5 +41,7 @@
 #if defined(REV_F5) || defined(REV_G2)
 #include "sensors/max1704.h"
 #endif // defined(REV_F5) || defined(REV_G2)
+
+#include "ThetisAPI/src/ThetisAPI.h"
 
 #endif // THETISLIB_H

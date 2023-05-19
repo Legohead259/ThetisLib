@@ -64,5 +64,38 @@ void pulseLED(uint32_t color);
 void rainbow();
 uint32_t Wheel(byte wheelPos);
 void blinkCode(ErrorCode_t code, uint32_t color=RED);
+void blink(uint8_t duration, uint32_t color=WHITE);
+void setLEDColor(uint32_t color=OFF);
+
+inline unsigned long hexStringToUnsignedLong(const char* hexString) {
+    unsigned long result = 0;
+    int length = strlen(hexString);
+    
+    for (int i = 0; i < length; i++) {
+        char c = hexString[i];
+        unsigned long digitValue = 0;
+
+        if (isdigit(c)) {
+            digitValue = c - '0';
+        } 
+        else if (isxdigit(c)) {
+            if (isupper(c)) {
+                digitValue = c - 'A' + 10;
+            } 
+            else {
+                digitValue = c - 'a' + 10;
+            }
+        } 
+        else {
+            // Invalid character in the string
+            // Handle the error or return an appropriate value
+        }
+
+        result = (result << 4) | digitValue;
+    }
+
+    return result;
+}
+
 
 #endif // ndef THETIS_NEOPIXEL_H
