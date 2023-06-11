@@ -20,8 +20,6 @@
 #include "ThetisAPI.h"
 #include <math.h>
 
-ThetisAPI api;
-
 
 // ==========================
 // === OVERRIDE FUNCTIONS ===

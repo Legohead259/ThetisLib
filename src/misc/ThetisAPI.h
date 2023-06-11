@@ -27,9 +27,9 @@
 #include <Arduino.h>
 #include <stdarg.h>
 
-#include "xioAPI.h"
+#include "../xioAPI/src/xioAPI.h"
 
-#include "../../misc/neopixel.h"
+#include "../misc/neopixel.h"
 
 
 // =============================
@@ -45,5 +45,4 @@ private:
     
 };
 
-extern ThetisAPI api;
 #endif // ThetisAPI_h

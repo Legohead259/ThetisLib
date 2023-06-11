@@ -42,4 +42,6 @@
 #include "sensors/max1704.h"
 #endif // defined(REV_F5) || defined(REV_G2)
 
+#include "xioAPI/src/xioAPI.h"
+
 #endif // THETISLIB_H
