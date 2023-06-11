@@ -17,7 +17,7 @@ bool Logger::begin(Print *logPort, LogLevel logLevel) {
 	return true;
 }
 
-bool Logger::begin(USBCDC *logPort, LogLevel logLevel) {
+bool Logger::begin(Stream *logPort, LogLevel logLevel) {
 	_serialLog = logPort;
 	_logLevel = logLevel;
 	_isActive = true;
