@@ -1,6 +1,6 @@
 [submodule "src/fusion"]
 	path = src/fusion
-	url = https://github.com/xioTechnologies/Fusion.git
+	url = https://github.com/Legohead259/Fusion-Arduino.git
 
 [submodule "src/xioAPI"]
 	path = src/xioAPI
