@@ -42,6 +42,4 @@
 #include "sensors/max1704.h"
 #endif // defined(REV_F5) || defined(REV_G2)
 
-#include "ThetisAPI/src/ThetisAPI.h"
-
 #endif // THETISLIB_H

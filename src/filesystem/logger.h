@@ -37,7 +37,7 @@ enum class LogLevel: uint8_t {
 class Logger {
 public:
     bool begin(Print* logger, LogLevel logLevel);
-    bool begin(USBCDC *logPort, LogLevel logLevel);
+    bool begin(Stream* logPort, LogLevel logLevel);
     bool begin(fs::SDFS &fs, uint8_t cs, LogLevel logLevel);
     bool begin(fs::SDFS &fs, uint8_t cs);
 	void end();
