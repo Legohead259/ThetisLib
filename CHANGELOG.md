@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- 
 Release sections
+## [TAG] A.B.C - YYYY-MM-DD
 ### Known Bugs
 ### Added
 ### Changed
@@ -14,6 +15,13 @@ Release sections
 ### Removed
 ### Security 
 -->
+
+## 1.5.3 - 2023-06-11
+
+### Added
+- Support for the [xioAPI](https://github.com/Legohead259/xioAPI-Arduino.git)
+- New sensor fusion engine from [xio-Technologies](https://github.com/Legohead259/Fusion-Arduino.git)
+
 ## [UNRELEASED] 1.5.2 - 2023-02-17
 
 ### Added

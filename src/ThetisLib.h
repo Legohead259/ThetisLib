@@ -26,8 +26,6 @@
 #include "sensors/LIS3MDL.h"
 #endif // MAG_ENABLE
 #include "fusion/Fusion/fusion.h"
-// #include "MadgwickAHRS/src/MadgwickAHRS.h"
-// #include "AHRS/fusion.h"
 
 // Radio functions
 #include "radios/gps.h"
@@ -43,5 +41,7 @@
 #endif // defined(REV_F5) || defined(REV_G2)
 
 #include "xioAPI/src/xioAPI.h"
+
+
 
 #endif // THETISLIB_H
