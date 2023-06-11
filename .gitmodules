@@ -2,6 +2,6 @@
 	path = src/fusion
 	url = https://github.com/xioTechnologies/Fusion.git
 
-[submodule "src/ThetisAPI"]
-	path = src/ThetisAPI
-	url = https://github.com/Legohead259/ThetisAPI.git
+[submodule "src/xioAPI"]
+	path = src/xioAPI
+	url = https://github.com/Legohead259/xioAPI-Arduino.git
