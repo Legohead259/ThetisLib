@@ -40,7 +40,11 @@
 #include "sensors/max1704.h"
 #endif // defined(REV_F5) || defined(REV_G2)
 
+#include "timing/TimerEvents.h"
+
 #include "xioAPI/src/xioAPI.h"
+
+#include "Thetis_Settings.h"
 
 
 
