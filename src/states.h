@@ -27,7 +27,7 @@ typedef enum Status {
 
 static int8_t _lastState = -2;
 
-static void getStateString(char* buf, int8_t s) {
+inline void getStateString(char* buf, int8_t s) {
     switch (s) {
         case ERROR:
             strcpy(buf, "ERROR");
@@ -56,7 +56,7 @@ static void getStateString(char* buf, int8_t s) {
     }
 }
 
-static void setSystemState(int8_t s) {
+inline void setSystemState(int8_t s) {
     if (data.state == s) return; // Do not change system state if there is no difference
     
     char stateStr[20];
@@ -68,11 +68,11 @@ static void setSystemState(int8_t s) {
     data.state = s;
 }
 
-static void getSystemState(char* buf) {
+inline void getSystemState(char* buf) {
     getStateString(buf, data.state);
 }
 
-static void updateSystemState() {
+inline void updateSystemState() {
     // TODO: Determine better method for IMU calibration
     // bool _isIMUCalibrated = data.sysCal == 3 && data.accelCal == 3 && data.gyroCal == 3 && data.magCal == 3;
     bool _isIMUCalibrated = true; // Override since we are not calculating calibration, yet
@@ -84,7 +84,7 @@ static void updateSystemState() {
     else if (_isIMUCalibrated && data.GPSFix  && isLogging)     setSystemState(LOGGING_GPS);
 }
 
-static void updateSystemLED() {
+inline void updateSystemLED() {
     switch (data.state) {
         case LOGGING_NO_GPS:
             pixel.setPixelColor(0, BLUE); pixel.show(); // Glow solid blue
