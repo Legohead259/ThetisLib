@@ -21,6 +21,12 @@ Release sections
 ### Added
 - Support for the [xioAPI](https://github.com/Legohead259/xioAPI-Arduino.git)
 - New sensor fusion engine from [xio-Technologies](https://github.com/Legohead259/Fusion-Arduino.git)
+- Added a TimerEvents class to handle non-critical timing events more elegantly
+- Added custom Thetis-specific settings that are compatible with the xioAPI
+
+### Deprecated
+- Deprecated the previous iteration of the configuration management class
+---
 
 ## [UNRELEASED] 1.5.2 - 2023-02-17
 
