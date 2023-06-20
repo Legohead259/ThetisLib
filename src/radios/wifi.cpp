@@ -7,16 +7,16 @@ FtpServer ftpServer;
 
 bool initWIFIAP() {
     diagLogger->info("Starting WiFi access point...");
-    if (!WiFi.softAP(configData.ssid, "")) { // Start the access point with the config SSID and password
+    // if (!WiFi.softAP(getSetting<const char*>("wiFiAPSsid"), getSetting<const char*>("wiFiAPKey"))) { // Start the access point with the config SSID and password
+    if (!WiFi.softAP("Thetis-003", "")) {
         diagLogger->error("Failed to start access point!");
         return false;
     }
     diagLogger->info("done!");
 
     IPAddress IP = WiFi.softAPIP();
-    char _buf[32];
-    sprintf(_buf, "AP IP address: %s", IP.toString());
-    diagLogger->info(_buf);
+    updateSetting<const char*>((unsigned long) WIFI_IP_ADDRESS, IP.toString().c_str());
+    diagLogger->info("AP IP address: %s", getSetting("wiFiIPAddress")->value);
 
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -82,11 +82,8 @@ bool initWIFIClient() {
 }
 
 bool connectToWIFI() {
-    char _buf[64];
-    sprintf(_buf, "Connecting to SSID: %s", configData.ssid);
-    diagLogger->info(_buf);
-    sprintf(_buf, "Using password: %s", configData.password);
-    diagLogger->info(_buf);
+    diagLogger->info("Connecting to SSID: %s", getSetting<const char*>("wiFiClientSsid"));
+    diagLogger->info("Using password: %s", getSetting<const char*>("wiFiClientKey"));
     unsigned long _startMillis = millis();
     while (WiFi.status() != WL_CONNECTED && millis()-_startMillis < WIFI_CONNECT_TIMEOUT*1000) { // Wait for TIMEOUT seconds while connection is tested
         delay(125);
@@ -98,8 +95,7 @@ bool connectToWIFI() {
     }
     else {
         diagLogger->info("Connected!");
-        sprintf(_buf, "Client IP Address: %s", WiFi.localIP().toString());
-        diagLogger->verbose(_buf);
+        diagLogger->verbose("Client IP Address: %s", WiFi.localIP().toString());
         return true;
     }
 }

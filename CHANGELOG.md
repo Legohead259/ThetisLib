@@ -16,7 +16,25 @@ Release sections
 ### Security 
 -->
 
-## 1.5.4 - 2023-06-
+## [UNRELEASED] 1.6.0 - 2023-06-
+### Known Bugs
+- Current implementation of xioAPI settings for the WiFi AP cause initialization to fail. [#54](https://github.com/Legohead259/ThetisLib/issues/54)
+  
+### Added
+- Added a new setting `gpsRtcSyncEnabled` to `ThetisSettings` the controls whether the GPS is allowed to be used to sync the internal RTC
+- Added implementations for the xioAPI user-defined command callback functions
+- Added a new function `syncInternalClock()` that can sync the internal clock based on a timestamp string like "YYYY-MM-DD HH:mm:SS"
+- Added a new function `getTime_RTC()` that returns a string timestamp like "YYYY-MM-DD HH:mm:SS"
+- Added xioAPI settings integration to WiFi functions
+
+### Changed
+- Changed the `setSystemState()` function to use the diagnostic logger properly
+- Changed the `initNeoPixel()` function to use the diagnostic logger properly [#46](https://github.com/Legohead259/ThetisLib/issues/46)
+  
+
+---
+
+## 1.5.4 - 2023-06-16
 
 ### Added
 - Added a TimerEvents class to handle non-critical timing events more elegantly

@@ -61,9 +61,7 @@ inline void setSystemState(int8_t s) {
     
     char stateStr[20];
     getStateString(stateStr, s);
-    char _buf[64];
-    sprintf(_buf, "Setting system state to: %s", stateStr);
-    diagLogger->info(_buf);
+    diagLogger->info("Setting system state to: %s", stateStr);
     _lastState = data.state;
     data.state = s;
 }

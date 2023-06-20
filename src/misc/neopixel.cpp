@@ -9,16 +9,12 @@ Adafruit_NeoPixel pixel(1, NEOPIXEL_DATA, NEO_RGB + NEO_KHZ800);
 
 bool initNeoPixel() {
     // TODO: Create a check that the NeoPixel gate is open
-    #ifdef NEOPIXEL_DEBUG
-    DEBUG_SERIAL_PORT.print("Initializing NeoPixel...");
-    #endif
+    diagLogger->info("Initializing NeoPixel...");
     digitalWrite(NEOPIXEL_EN, LOW); // Enable NeoPixel
     pixel.begin(); // Initialize pins for output
     pixel.setBrightness(50);
     pixel.show();  // Turn all LEDs off ASAP
-    #ifdef NEOPIXEL_DEBUG
-    DEBUG_SERIAL_PORT.println("done!");
-    #endif
+    diagLogger->info("done!");
     return true;
 }
 

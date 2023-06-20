@@ -1,9 +1,13 @@
 #ifndef THETIS_NEOPIXEL_H
 #define THETIS_NEOPIXEL_H
 
+
 // ==========================
 // === NEOPIXEL FUNCTIONS ===
 // ==========================
+
+
+#include "../filesystem/logger.h"
 
 // Neopixel instantiation
 #include <Adafruit_NeoPixel.h>

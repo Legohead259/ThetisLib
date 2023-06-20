@@ -6,7 +6,7 @@
 #include <SPIFFS.h>
 // #include <AsyncElegantOTA.h>
 #include "FtpServer.h"
-#include "../filesystem/config.h"
+#include "../xioAPI/src/xioAPI_Settings.h"
 #include "../filesystem/logger.h"
 
 #define ST(A) #A

@@ -2,6 +2,16 @@
 
 tmElements_t espRTCTime;
 
+void syncInternalClock(const char* timeStr) {
+    tm timeStruct;
+    sscanf(timeStr, "%d-%d-%d %d:%d:%d",    &timeStruct.tm_year, &timeStruct.tm_mon, &timeStruct.tm_mday, 
+                                            &timeStruct.tm_hour, &timeStruct.tm_min, &timeStruct.tm_sec);
+    timeStruct.tm_year -= 1900;
+    timeStruct.tm_mon -= 1;
+
+    setTime(mktime(&timeStruct));
+}
+
 void syncInternalClockGPS() {
     diagLogger->info("Attempting to sync internal RTC to GPS...");
 
@@ -50,4 +60,8 @@ void getISO8601Time_GPS(char *buf) {
 void getISO8601Time_RTC(char *buf) {
     // Format timestamp into ISO8601 format
     sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", espRTCTime.Year+1970, espRTCTime.Month, espRTCTime.Day, espRTCTime.Hour, espRTCTime.Minute, espRTCTime.Second, updateRTCms());
+}
+
+void getTime_RTC(char* buf) {
+    sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d", espRTCTime.Year+1970, espRTCTime.Month, espRTCTime.Day, espRTCTime.Hour, espRTCTime.Minute, espRTCTime.Second);
 }
