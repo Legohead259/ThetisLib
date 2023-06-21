@@ -1,4 +1,4 @@
-#include "Thetis_Settings.h"
+#include "settings.h"
 
 thetis_device_settings_t thetisSettings;
 

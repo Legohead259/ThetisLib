@@ -1,6 +1,6 @@
 #ifndef THETISLIB_H
 #define THETISLIB_H
-#define __THETISLIB_VERSION__ "1.5.3"
+#define __THETISLIB_VERSION__ "1.6.0"
 
 #include <Arduino.h>
 
@@ -10,11 +10,9 @@
 // Miscellaneous functions
 #include "misc/neopixel.h"
 #include "misc/rtc.h"
-#include "misc/timer.h"
 
 // Filesystem functions
-#include "filesystem/files.h"
-#include "filesystem/config.h"
+#include "filesystem/filesystem.h"
 #include "filesystem/logger.h"
 
 // Status functions
@@ -44,7 +42,7 @@
 
 #include "xioAPI/src/xioAPI.h"
 
-#include "Thetis_Settings.h"
+#include "settings.h"
 
 
 

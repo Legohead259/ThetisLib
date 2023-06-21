@@ -25,6 +25,7 @@
 #define LOG_BTN_HOLD_TIME 500 // ms
 
 enum class LogLevel: uint8_t {
+	BYPASS,			// Indicates a message should just be passed along - only used for bypassing the typical log functions
     FATAL = 1,      // Indicates a fatal event
     ERROR,          // Indicates a major error, but not fatal
     WARN,           // Indicates a substantial event that is not an error or fatal
