@@ -1,17 +1,17 @@
 #include "filesystem.h"
 
-bool Filesystem::begin(fs::SPIFFSFS& fs) {
+bool Filesystem::begin(fs::SPIFFSFS* fs) {
     setFS(fs);
     _logger->info("Initializing SPIFFS filesystem...");
-    bool _success = fs.begin();
+    bool _success = fs->begin();
     _logger->info(_success ? "done!" : "Failed to initialize filesystem!");
     return _success;
 }
 
-bool Filesystem::begin(fs::SDFS& fs) {
+bool Filesystem::begin(fs::SDFS* fs) {
     setFS(fs);
     _logger->info("Initializing SD filesystem...");
-    bool _success = fs.begin();
+    bool _success = fs->begin();
     _logger->info(_success ? "done!" : "Failed to initialize filesystem!");
     return _success;
 }
@@ -24,7 +24,7 @@ bool Filesystem::begin(fs::SDFS& fs) {
 
 void Filesystem::listDir(const char * dirname, uint8_t levels) {
     _logger->info("Listing directory: %s", dirname);
-    File root = _fs.open(dirname);
+    File root = _fs->open(dirname);
     if (!root) {
         _logger->error("Failed to open directory");
         return;
@@ -51,14 +51,14 @@ void Filesystem::listDir(const char * dirname, uint8_t levels) {
 
 bool Filesystem::createDir(const char * path) {
     _logger->info("Creating directory: %s", path);
-    bool _success = _fs.mkdir(path);
+    bool _success = _fs->mkdir(path);
     _success ? _logger->info("done!") : _logger->warn("Unable to create directory");
     return _success;
 }
 
 bool Filesystem::removeDir(const char * path) {
     _logger->info("Removing Dir: %s", path);
-    bool _success = _fs.rmdir(path);
+    bool _success = _fs->rmdir(path);
     _success ? _logger->info("done!") : _logger->warn("Unable to remove directory");
     return _success;
 }
@@ -66,7 +66,7 @@ bool Filesystem::removeDir(const char * path) {
 bool Filesystem::readFile(const char * path) {
     _logger->info("Reading file: %s", path);
 
-    File file = _fs.open(path);
+    File file = _fs->open(path);
     if (!file) {
         _logger->error("Failed to open file for reading");
         return false;
@@ -83,7 +83,7 @@ bool Filesystem::readFile(const char * path) {
 bool Filesystem::writeFile(const char * path, const char * message) {
     _logger->info("Writing file: %s", path);
 
-    File file = _fs.open(path, FILE_WRITE);
+    File file = _fs->open(path, FILE_WRITE);
     if (!file) {
         _logger->error("Failed to open file for writing");
         return false;
@@ -98,7 +98,7 @@ bool Filesystem::writeFile(const char * path, const char * message) {
 bool Filesystem::appendFile(const char * path, const char * message) {
     _logger->info("Appending file: %s", path);
 
-    File file = _fs.open(path, FILE_APPEND);
+    File file = _fs->open(path, FILE_APPEND);
     if (!file) {
         _logger->error("Failed to open file for appending");
         return false;
@@ -112,20 +112,20 @@ bool Filesystem::appendFile(const char * path, const char * message) {
 
 bool Filesystem::renameFile(const char * path1, const char * path2) {
     _logger->info("Renaming file %s to %s\n\r", path1, path2);
-    bool _success = _fs.rename(path1, path2);
+    bool _success = _fs->rename(path1, path2);
     _success ? _logger->info("done!") : _logger->warn("Failed to rename file");
     return _success;
 }
 
 bool Filesystem::deleteFile(const char * path) {
     _logger->info("Deleting file: %s", path);
-    bool _success = _fs.remove(path);
+    bool _success = _fs->remove(path);
     _success ? _logger->info("File deleted") : _logger->warn("Failed to delete file");
     return _success;
 }
 
 void Filesystem::testFileIO(const char * path) {
-    File file = _fs.open(path);
+    File file = _fs->open(path);
     static uint8_t buf[512];
     size_t len = 0;
     uint32_t start = millis();
@@ -151,7 +151,7 @@ void Filesystem::testFileIO(const char * path) {
         return;
     }
 
-    file = _fs.open(path, FILE_WRITE);
+    file = _fs->open(path, FILE_WRITE);
     if (!file) {
         _logger->error("Failed to open file for writing");
         return;
@@ -171,14 +171,14 @@ void Filesystem::testFileIO(const char * path) {
 bool Filesystem::format() {
     if (_fsType != FilesystemType::SPIFFS_FS) return false; // Check for correct filesystem type. Only SPIFFS supported as of now
     _logger->info("Formatting internal SPIFFS storage");
-    bool _success = _spiffs.format();
+    bool _success = _spiffs->format();
     _success ? _logger->info("done!") : _logger->error("Unable to format SPIFFS");
     return _success;
 }
 
 bool Filesystem::eraseAll() {
     _logger->warn("Erasing all files on %s storage", _fsType ? "SD card" : "SPIFFS");
-    File root = _fs.open("/");
+    File root = _fs->open("/");
     if (!root) {
         _logger->error("Failed to open root directory");
         return false;

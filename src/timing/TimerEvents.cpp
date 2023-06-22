@@ -1,27 +1,34 @@
 #include "TimerEvents.h"
 
+TimerEvent::TimerEvent(unsigned long p, TimerEventHandler cbPtr, bool e) {
+    period = p;
+    callbackPtr = cbPtr;
+    isEnabled = e;
+}
+
 TimerEventsClass::TimerEventsClass() {
     numberOfEvents = 0;
 }
 
-void TimerEventsClass::add(unsigned long period, void (*event)()) {
+void TimerEventsClass::add(TimerEvent* event) {
     if (numberOfEvents >= maxNumberOfEvents) {
         return;
     }
-    periods[numberOfEvents] = period;
-    timeouts[numberOfEvents] = millis();
     events[numberOfEvents] = event;
+    timeouts[numberOfEvents] = millis();
     numberOfEvents++;
 }
 
 void TimerEventsClass::tasks() {
     const unsigned long time = millis();
-    for (int index; index < numberOfEvents; index++) {
-        if (time >= timeouts[index]) {
-            timeouts[index] = time + periods[index];
-            events[index]();
+    for (int i=0; i<numberOfEvents; i++) {
+        if (!events[i]->isEnabled) continue; // Check if the event is enabled, skip if not
+
+        if (time >= timeouts[i]) {
+            timeouts[i] = time + events[i]->period;
+            events[i]->execute();
         }
     }
 }
 
-TimerEventsClass TimerEvents;
+TimerEventsClass timerEvents;

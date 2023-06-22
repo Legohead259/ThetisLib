@@ -14,8 +14,8 @@ enum FilesystemType {
 
 class Filesystem {
 public:
-    bool begin(fs::SPIFFSFS& fs);
-    bool begin(fs::SDFS& fs);
+    bool begin(fs::SPIFFSFS* fs);
+    bool begin(fs::SDFS* fs);
 
     // Filesystem Functions
     void listDir(const char * dirname, uint8_t levels);
@@ -31,27 +31,27 @@ public:
     bool eraseAll();
 
     // Getters and Setters
-    fs::FS& getFS() { return _fs; }
+    fs::FS* getFS() { return _fs; }
 
-    void setFS(fs::SPIFFSFS& fs) { 
+    void setFS(fs::SPIFFSFS* fs) { 
         _fsType = FilesystemType::SPIFFS_FS;
         _spiffs = fs;
         _fs = fs;
     }
 
-    void setFS(fs::SDFS& fs) {
+    void setFS(fs::SDFS* fs) {
         _fsType = FilesystemType::SD_FS;
         _sd = fs;
         _fs = fs;
     }
 
-    void setFS(fs::FS& fs) { _fs = fs; }
+    void setFS(fs::FS* fs) { _fs = fs; }
 
 private:
     Logger* _logger;
-    fs::SPIFFSFS& _spiffs;
-    fs::SDFS& _sd;
-    fs::FS& _fs;
+    fs::SPIFFSFS* _spiffs;
+    fs::SDFS* _sd;
+    fs::FS* _fs;
     uint8_t _fsType;
 };
 
