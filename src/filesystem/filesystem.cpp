@@ -1,18 +1,18 @@
 #include "filesystem.h"
 
-bool Filesystem::begin(fs::SPIFFSFS* fs) {
+bool ThetisFS::begin(fs::SPIFFSFS* fs) {
+    diagLogger->info("Initializing SPIFFS filesystem...");
     setFS(fs);
-    _logger->info("Initializing SPIFFS filesystem...");
     bool _success = fs->begin();
-    _logger->info(_success ? "done!" : "Failed to initialize filesystem!");
+    diagLogger->info(_success ? "done!" : "Failed to initialize filesystem!");
     return _success;
 }
 
-bool Filesystem::begin(fs::SDFS* fs) {
+bool ThetisFS::begin(fs::SDFS* fs) {
     setFS(fs);
-    _logger->info("Initializing SD filesystem...");
-    bool _success = fs->begin();
-    _logger->info(_success ? "done!" : "Failed to initialize filesystem!");
+    diagLogger->info("Initializing SD filesystem...");
+    bool _success = fs->begin(SD_CS);
+    diagLogger->info(_success ? "done!" : "Failed to initialize filesystem!");
     return _success;
 }
 
@@ -22,109 +22,109 @@ bool Filesystem::begin(fs::SDFS* fs) {
 // ============================
 
 
-void Filesystem::listDir(const char * dirname, uint8_t levels) {
-    _logger->info("Listing directory: %s", dirname);
+void ThetisFS::listDir(const char * dirname, uint8_t levels) {
+    diagLogger->info("Listing directory: %s", dirname);
     File root = _fs->open(dirname);
     if (!root) {
-        _logger->error("Failed to open directory");
+        diagLogger->error("Failed to open directory");
         return;
     }
     if (!root.isDirectory()) {
-        _logger->warn("Not a directory");
+        diagLogger->warn("Not a directory");
         return;
     }
 
     File file = root.openNextFile();
     while (file) {
         if (file.isDirectory()) {
-            _logger->log(LogLevel::BYPASS, true, true, "  DIR : %s", file.name());
+            diagLogger->log(LogLevel::BYPASS, true, true, "  DIR : %s", file.name());
             if (levels){
                 listDir(file.path(), levels--);
             }
         } 
         else {
-            _logger->log(LogLevel::BYPASS, true, true, "  FILE: %s  SIZE: %d", file.name(), file.size());
+            diagLogger->log(LogLevel::BYPASS, true, true, "  FILE: %s  SIZE: %d", file.name(), file.size());
         }
         file = root.openNextFile();
     }
 }
 
-bool Filesystem::createDir(const char * path) {
-    _logger->info("Creating directory: %s", path);
+bool ThetisFS::createDir(const char * path) {
+    diagLogger->info("Creating directory: %s", path);
     bool _success = _fs->mkdir(path);
-    _success ? _logger->info("done!") : _logger->warn("Unable to create directory");
+    _success ? diagLogger->info("done!") : diagLogger->warn("Unable to create directory");
     return _success;
 }
 
-bool Filesystem::removeDir(const char * path) {
-    _logger->info("Removing Dir: %s", path);
+bool ThetisFS::removeDir(const char * path) {
+    diagLogger->info("Removing Dir: %s", path);
     bool _success = _fs->rmdir(path);
-    _success ? _logger->info("done!") : _logger->warn("Unable to remove directory");
+    _success ? diagLogger->info("done!") : diagLogger->warn("Unable to remove directory");
     return _success;
 }
 
-bool Filesystem::readFile(const char * path) {
-    _logger->info("Reading file: %s", path);
+bool ThetisFS::readFile(const char * path) {
+    diagLogger->info("Reading file: %s", path);
 
     File file = _fs->open(path);
     if (!file) {
-        _logger->error("Failed to open file for reading");
+        diagLogger->error("Failed to open file for reading");
         return false;
     }
 
-    _logger->info("Read from file: ");
+    diagLogger->info("Read from file: ");
     while (file.available()) {
-        _logger->log(LogLevel::BYPASS, true, false, "%c", file.read());
+        diagLogger->log(LogLevel::BYPASS, true, false, "%c", file.read());
     }
     file.close();
     return true;
 }
 
-bool Filesystem::writeFile(const char * path, const char * message) {
-    _logger->info("Writing file: %s", path);
+bool ThetisFS::writeFile(const char * path, const char * message) {
+    diagLogger->info("Writing file: %s", path);
 
     File file = _fs->open(path, FILE_WRITE);
     if (!file) {
-        _logger->error("Failed to open file for writing");
+        diagLogger->error("Failed to open file for writing");
         return false;
     }
 
     bool _success = file.print(message);
-    _success ? _logger->info("done!") : _logger->warn("Failed to write message to file");
+    _success ? diagLogger->info("done!") : diagLogger->warn("Failed to write message to file");
     file.close();
     return _success;
 }
 
-bool Filesystem::appendFile(const char * path, const char * message) {
-    _logger->info("Appending file: %s", path);
+bool ThetisFS::appendFile(const char * path, const char * message) {
+    diagLogger->info("Appending file: %s", path);
 
     File file = _fs->open(path, FILE_APPEND);
     if (!file) {
-        _logger->error("Failed to open file for appending");
+        diagLogger->error("Failed to open file for appending");
         return false;
     }
 
     bool _success = file.print(message);
-    _success ? _logger->info("done!") : _logger->warn("Failed to append message to file");
+    _success ? diagLogger->info("done!") : diagLogger->warn("Failed to append message to file");
     file.close();
     return _success;
 }
 
-bool Filesystem::renameFile(const char * path1, const char * path2) {
-    _logger->info("Renaming file %s to %s\n\r", path1, path2);
+bool ThetisFS::renameFile(const char * path1, const char * path2) {
+    diagLogger->info("Renaming file %s to %s\n\r", path1, path2);
     bool _success = _fs->rename(path1, path2);
-    _success ? _logger->info("done!") : _logger->warn("Failed to rename file");
+    _success ? diagLogger->info("done!") : diagLogger->warn("Failed to rename file");
     return _success;
 }
 
-bool Filesystem::deleteFile(const char * path) {
-    _logger->info("Deleting file: %s", path);
+bool ThetisFS::deleteFile(const char * path) {
+    diagLogger->info("Deleting file: %s", path);
     bool _success = _fs->remove(path);
-    _success ? _logger->info("File deleted") : _logger->warn("Failed to delete file");
+    _success ? diagLogger->info("File deleted") : diagLogger->warn("Failed to delete file");
     return _success;
 }
 
-void Filesystem::testFileIO(const char * path) {
+void ThetisFS::testFileIO(const char * path) {
     File file = _fs->open(path);
     static uint8_t buf[512];
     size_t len = 0;
@@ -143,17 +143,17 @@ void Filesystem::testFileIO(const char * path) {
             len -= toRead;
         }
         end = millis() - start;
-        _logger->info("%u bytes read for %u ms", flen, end);
+        diagLogger->info("%u bytes read for %u ms", flen, end);
         file.close();
     } 
     else {
-        _logger->error("Failed to open file for reading");
+        diagLogger->error("Failed to open file for reading");
         return;
     }
 
     file = _fs->open(path, FILE_WRITE);
     if (!file) {
-        _logger->error("Failed to open file for writing");
+        diagLogger->error("Failed to open file for writing");
         return;
     }
 
@@ -163,28 +163,28 @@ void Filesystem::testFileIO(const char * path) {
         file.write(buf, 512);
     }
     end = millis() - start;
-    _logger->info("%u bytes written for %u ms", 2048 * 512, end);
+    diagLogger->info("%u bytes written for %u ms", 2048 * 512, end);
     file.close();
     deleteFile(path); // Clear out test file
 }
 
-bool Filesystem::format() {
+bool ThetisFS::format() {
     if (_fsType != FilesystemType::SPIFFS_FS) return false; // Check for correct filesystem type. Only SPIFFS supported as of now
-    _logger->info("Formatting internal SPIFFS storage");
+    diagLogger->info("Formatting internal SPIFFS storage");
     bool _success = _spiffs->format();
-    _success ? _logger->info("done!") : _logger->error("Unable to format SPIFFS");
+    _success ? diagLogger->info("done!") : diagLogger->error("Unable to format SPIFFS");
     return _success;
 }
 
-bool Filesystem::eraseAll() {
-    _logger->warn("Erasing all files on %s storage", _fsType ? "SD card" : "SPIFFS");
+bool ThetisFS::eraseAll() {
+    diagLogger->warn("Erasing all files on %s storage", _fsType ? "SD card" : "SPIFFS");
     File root = _fs->open("/");
     if (!root) {
-        _logger->error("Failed to open root directory");
+        diagLogger->error("Failed to open root directory");
         return false;
     }
     if (!root.isDirectory()) { // TODO: Determine if necessary
-        _logger->error("Not a directory");
+        diagLogger->error("Not a directory");
         return false;
     }
 
@@ -198,8 +198,8 @@ bool Filesystem::eraseAll() {
         }
         file = root.openNextFile();
     }
-    _logger->info("done!");
+    diagLogger->info("done!");
     return true;
 }
 
-Filesystem filesystem;
+ThetisFS filesystem;

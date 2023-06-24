@@ -8,11 +8,13 @@ typedef std::function<void()> TimerEventHandler;
 class TimerEvent {
 
 public:
-    TimerEvent(unsigned long p, TimerEventHandler cbPtr, bool e);
+    TimerEvent(const char* n, unsigned long p, TimerEventHandler cbPtr, bool e);
 
+    const char* name;
     unsigned long period;
     TimerEventHandler callbackPtr = nullptr;
     bool isEnabled;
+    int index = -1;
 
     void execute() { if (callbackPtr != nullptr) callbackPtr(); }
     void setEventCallback(TimerEventHandler cbPtr) { callbackPtr = cbPtr; }
@@ -25,7 +27,12 @@ class TimerEventsClass {
 public:
     TimerEventsClass();
     void add(TimerEvent* event);
+    void update(TimerEvent* event);
     void tasks();
+
+    void printTasking(Stream* out);
+
+    int getNumberOfEvents() { return numberOfEvents; }
 
 private:
     static const int maxNumberOfEvents = 32;

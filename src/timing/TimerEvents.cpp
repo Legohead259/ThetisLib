@@ -1,6 +1,7 @@
 #include "TimerEvents.h"
 
-TimerEvent::TimerEvent(unsigned long p, TimerEventHandler cbPtr, bool e) {
+TimerEvent::TimerEvent(const char* n, unsigned long p, TimerEventHandler cbPtr, bool e) {
+    name = n;
     period = p;
     callbackPtr = cbPtr;
     isEnabled = e;
@@ -16,7 +17,13 @@ void TimerEventsClass::add(TimerEvent* event) {
     }
     events[numberOfEvents] = event;
     timeouts[numberOfEvents] = millis();
+    event->index = numberOfEvents;
     numberOfEvents++;
+}
+
+void TimerEventsClass::update(TimerEvent* event) {
+    if (event->index == -1) return; // Check if the event has been assigned to the task list
+    events[event->index] = event;
 }
 
 void TimerEventsClass::tasks() {
@@ -28,6 +35,14 @@ void TimerEventsClass::tasks() {
             timeouts[i] = time + events[i]->period;
             events[i]->execute();
         }
+    }
+}
+
+void TimerEventsClass::printTasking(Stream* out) {
+    for (int i=0; i<numberOfEvents; i++) {
+        out->printf("Task name: %s \t| Period: %d ms \t| Enabled: %s \t \r\n",  events[i]->name, 
+                                                                                events[i]->period, 
+                                                                                events[i]->isEnabled ? "TRUE" :  "FALSE");
     }
 }
 

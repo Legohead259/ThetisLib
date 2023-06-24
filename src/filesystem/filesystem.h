@@ -12,7 +12,7 @@ enum FilesystemType {
     SD_FS
 };
 
-class Filesystem {
+class ThetisFS {
 public:
     bool begin(fs::SPIFFSFS* fs);
     bool begin(fs::SDFS* fs);
@@ -48,12 +48,11 @@ public:
     void setFS(fs::FS* fs) { _fs = fs; }
 
 private:
-    Logger* _logger;
     fs::SPIFFSFS* _spiffs;
     fs::SDFS* _sd;
     fs::FS* _fs;
     uint8_t _fsType;
 };
 
-extern Filesystem filesystem;
+extern ThetisFS filesystem;
 #endif // FILESYSTEM_H

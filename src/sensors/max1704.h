@@ -2,9 +2,9 @@
 #include "../filesystem/logger.h"
 #include "../data.h"
 
-Adafruit_MAX17048 battGauge;
+extern Adafruit_MAX17048 battGauge;
 
-bool initMAX17048() {
+inline bool initMAX17048() {
     diagLogger->info("Initializing MAX17048 monitor...");
     if (!battGauge.begin()) {
         diagLogger->fatal("Failed to start MAX17048 monitor!");
@@ -16,7 +16,7 @@ bool initMAX17048() {
     }
 }
 
-void updateVoltage() {
+inline void updateVoltage() {
     data.voltage = battGauge.cellVoltage();
     diagLogger->trace("Battery Voltage: %f V", data.voltage);
 }

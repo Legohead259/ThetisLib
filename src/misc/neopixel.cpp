@@ -1,7 +1,5 @@
 #include "neopixel.h"
 
-//     Adafruit_NeoPixel pixel(1, NEOPIXEL_DATA, NEO_RGB + NEO_KHZ800);
-
 bool ThetisPixel::begin() {
     // TODO: Create a check that the NeoPixel gate is open
     diagLogger->info("Initializing NeoPixel...");
@@ -11,23 +9,17 @@ bool ThetisPixel::begin() {
     setPixelColor(1, OFF);
     show();  // Turn all LEDs off ASAP
 
-    timerEvents.add(&blinkLEDEvent);
-    timerEvents.add(&pulseLEDEvent);
-    timerEvents.add(&rainbowLEDEvent);
-
     diagLogger->info("done!");
     return true;
 }
 
-//NEOPIXEL_CYCLE_TIME/(NUM_STEPS*2)
-
-void ThetisPixel::pulse() {
+void ThetisPixel::pulseCallback(uint32_t c) {
     static uint8_t _pixelBrightness = 0; // Initialize the pixel brightness value
-    static bool _isBrightnessInc = true; // Initialize the brightness increasing flag
     static uint8_t _i = 0;
 
     // Change pixel brightness
     setBrightness(_pixelBrightness);
+    setColor(c);
 
     // Calculate next brightness (sinusoidal)
     float _iRad = _i * PI / 180;

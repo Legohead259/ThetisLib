@@ -34,9 +34,9 @@
 #endif
 
 // Revision-specific functions
-#if defined(REV_F5) || defined(REV_G2)
+#ifdef BATT_MON_ENABLE
 #include "sensors/max1704.h"
-#endif // defined(REV_F5) || defined(REV_G2)
+#endif // BATT_MON_ENABLE
 
 #include "timing/TimerEvents.h"
 
