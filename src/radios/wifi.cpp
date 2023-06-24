@@ -39,27 +39,27 @@ bool initWIFIAP() {
             sprintf(inputMessage, "Got log state as: %s", request->getParam("state")->value());
             diagLogger->debug(inputMessage);
             inputParam = "state";
-            isLogging = !isLogging;
-            digitalWrite(LED_BUILTIN, isLogging);
+            // isLogging = !isLogging;
+            // digitalWrite(LED_BUILTIN, isLogging);
         }
         else {
             diagLogger->warn("Invalid log state update request received!");
             inputParam = "none";
         }
 
-        if (isLogging) {
-            dataLogger.start(SD);
-        }
-        else {
-            dataLogger.stop();
-        }
+        // if (isLogging) {
+        //     dataLogger.start(SD);
+        // }
+        // else {
+        //     dataLogger.stop();
+        // }
 
         request->send(200, "text/plain", "OK");
   });
 
     // Send a GET request to <ESP_IP>/state
     server.on("/state", HTTP_GET, [] (AsyncWebServerRequest *request) {
-        request->send(200, "text/plain", String(isLogging));
+        // request->send(200, "text/plain", String(isLogging));
     });
 
     // Start server

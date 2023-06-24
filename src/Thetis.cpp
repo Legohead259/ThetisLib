@@ -1,6 +1,6 @@
 #include "Thetis.h"
 
-bool Thetis::initialize() {
+void Thetis::initialize() {
     // Initialize I2C bus
     Wire.begin((int) SDA, (int) SCL); // Casting to int is important as just uint8_t types will invoke the "slave" begin, not the master
 
@@ -27,7 +27,10 @@ bool Thetis::initialize() {
 
     // Initialize NeoPixel
     if (!pixel.begin()) {
-        while(true);
+        while(true) {
+            currentState.setState(ERROR);
+            errorState.setState(GENERAL_ERROR);
+        }
     }
 
     // Initialize SPIFFS
@@ -38,7 +41,7 @@ bool Thetis::initialize() {
         }
     }
 
-    // Initialize system status
+    // Initialize system status functions
     diagLogger->info("Setting status callbacks");
     currentState.setStateChangeCallback([this](){ systemStatusChangeCallback(); });
     diagLogger->info("done!");
@@ -54,7 +57,131 @@ bool Thetis::initialize() {
     // timerEvents.add(errorStatusEvent);
     diagLogger->debug("done!");
 
-    return true;
+    // Initialize xioAPI integration
+    diagLogger->info("Initializing xioAPI integration");
+    if (!api.begin(&Serial)) {
+        while(true) {
+            currentState.setState(ERROR);
+            errorState.setState(GENERAL_ERROR);
+        }
+    }
+    thetisSettingsInitialize();
+
+    // Load settings
+    if (!loadConfigurationsFromJSON(true, "/config.json")) {
+        while(true) {
+            currentState.setState(ERROR);
+            errorState.setState(FILE_OPERATION_ERROR);
+        }
+    }
+
+    // Initialize GPS
+    if (!initGPS()) { // Initialize GPS and check if good
+        while(true) {
+            currentState.setState(ERROR);
+            errorState.setState(GPS_ERROR);
+        }
+    }
+    pollGPS();
+    syncInternalClockGPS(); // Attempt to sync internal clock to GPS, if it has a fix already
+
+    // Initialize datalogger
+    if (!dataLogger.begin(SD, SD_CS)) { // Initialize SD card filesystem and check if good
+        while(true) {
+            currentState.setState(ERROR);
+            errorState.setState(FILESYSTEM_MOUNT_ERROR);
+        }
+    }
+
+    // Initialize IMU
+    if (!initDSO32()) { // Check IMU initialization
+        while(true) {
+            currentState.setState(ERROR);
+            errorState.setState(IMU_ERROR);
+        }
+    }
+
+    // Initialize magnetometer
+    #ifdef MAG_ENABLE
+    if (!initLIS3MDL()) { // Check magnetometer initialization
+        while(true) {
+            currentState.setState(ERROR);
+            errorState.setState(IMU_ERROR);
+        }
+    }
+    #endif // MAG_ENABLE
+
+    // Initialize battery gauge
+    #ifdef BATT_MON_ENABLED
+    if (!initMAX17048()) {
+        while(true) {
+            currentState.setState(ERROR);
+            errorState.setState(BATTERY_MONITOR_ERROR);
+        }
+    }
+    #endif // BATT_MON_ENABLED
+
+    // Initialize WiFi
+    #ifdef WIFI_ENABLE
+    if (getSetting<uint8_t>("wirelessMode") == WIRELESS_AP) { // Start WiFi in Access Point mode
+        if (!initWIFIAP()) while (true) blinkCode(RADIO_ERROR_CODE); // Block further code execution
+    }
+
+    if (getSetting<uint8_t>("wirelessMode") == WIRELESS_CLIENT) { // Start WiFi in client mode
+        if (!initWIFIClient()) while (true) blinkCode(RADIO_ERROR_CODE); // Block further code execution
+    }
+
+    if (getSetting<uint8_t>("wirelessMode") && getSetting<bool>("ftpEnabled")) { // Start FTP server
+        if (!initFTPServer()) while (true) blinkCode(RADIO_ERROR_CODE);
+    }
+    #endif
+
+    // Attach the log enable button interrupt
+    diagLogger->info("Attaching log enable interrupt...");
+    attachInterrupt(LOG_EN, logButtonISR, FALLING);
+    diagLogger->info("done!");
+
+    timerEvents.add(&gpsPollEvent);
+    timerEvents.add(&gpsSyncEvent);
+    timerEvents.add(&fusionUpdateEvent);
+    timerEvents.add(&logWriteEvent);
+
+    setSystemState(STANDBY);
+}
+
+void Thetis::run() {
+    timerEvents.tasks();
+    
+    api.checkForCommand();
+
+    // WiFi handling
+    #ifdef WIFI_ENABLE
+    if (getSetting<uint8_t>("wirelessMode") && getSetting<bool>("ftpEnabled")) { // Only run the FTP server when the proper configs are set and the device is not logging (efficiency)
+        ftpServer.handleFTP();
+    }
+    #endif
+    
+    // State updates
+    updateSystemState();
+
+    // Log Enabling handler
+    static uint8_t _oldButtonPresses = 0;
+    if (logButtonPresses != _oldButtonPresses && !digitalRead(LOG_EN) && millis() >= logButtonStartTime+LOG_BTN_HOLD_TIME) { // Check if BTN0 has been pressed and has been held for sufficient time
+        statusChecks.isLogging = !statusChecks.isLogging;
+        if (statusChecks.isLogging) {
+            logWriteEvent.enable();
+            dataLogger.start(SD);
+            digitalWrite(SD_CS, LOW);
+        }
+        else {
+            logWriteEvent.disable();
+            dataLogger.stop();
+        }
+        digitalWrite(LED_BUILTIN, statusChecks.isLogging);
+        _oldButtonPresses = logButtonPresses;
+    }
+
+    updateRTCms();
 }
 
 void Thetis::updateSystemState() {
@@ -92,30 +219,9 @@ void Thetis::systemStatusChangeCallback() {
     timerEvents.update(systemStatusEvent);
 }
 
-// inline void updateSystemLED() {
-//     switch (currentState) {
-//         case LOGGING_NO_GPS:
-//             pixel.setPixelColor(0, BLUE); pixel.show(); // Glow solid blue
-//             break;
-//         case LOGGING_GPS:
-//             pixel.setPixelColor(0, GREEN); pixel.show(); // Glow solid green
-//             break;
-//         case READY_NO_GPS:
-//             // pulse(BLUE); // Pulse blue
-//             break;
-//         case READY_GPS:
-//             // pulse(GREEN); // Pulse green
-//             break;
-//         case STANDBY:
-//             pixel.setPixelColor(0, 255, 191, 0); pixel.show(); // Glow solid amber
-//             break;
-//         case BOOTING:
-//             // pulse(PURPLE); // Pulse purple
-//             break;
-//         default:
-//             pixel.setPixelColor(0, RED); pixel.show(); // Turn off LED
-//             break;
-//     }
-// }
+void IRAM_ATTR logButtonISR() {
+    board.logButtonPresses++;
+    board.logButtonStartTime = millis();
+}
 
 Thetis board(&Serial);

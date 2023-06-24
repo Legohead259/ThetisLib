@@ -20,6 +20,8 @@ typedef struct status_check_t {
     bool isLogging = false;
 } status_check_t;
 
+void IRAM_ATTR logButtonISR();
+
 class Thetis {
 public:
     Thetis(USBCDC* s) :
@@ -28,10 +30,18 @@ public:
     readyNoGPS_Event("Ready, No GPS Event", BLINK_INTERVAL, readyNoGPSEventCallback, true),
     readyGPS_Event("Ready, GPS Event", BLINK_INTERVAL, readyGPSEventCallback, true),
     standby_Event("Standby Event", BLINK_INTERVAL, standbyEventCallback, true),
-    booting_Event("Booting Event", 500, bootingEventCallback, true) 
+    booting_Event("Booting Event", 500, bootingEventCallback, true),
+    gpsPollEvent("GPS Poll Event", GPS_POLL_INTERVAL, pollGPS, true),
+    gpsSyncEvent("GPS Sync Event", GPS_SYNC_INTERVAL*60000, syncInternalClockGPS, true),
+    fusionUpdateEvent("Fusion Update Event", 20, fusionUpdateEventCallback, true),
+    logWriteEvent("Log Write Event", 20, logWriteEventCallback, true)
     { debugSerial = s; }
 
-    bool initialize();
+    unsigned long logButtonPresses;
+    unsigned long logButtonStartTime;
+
+    void initialize();
+    void run();
         
     void updateSystemState();
     
@@ -46,15 +56,19 @@ private:
     status_check_t statusChecks;
     SystemStatus currentState;
     SystemError errorState;
+
     TimerEvent* systemStatusEvent = &booting_Event;
     TimerEvent* errorStatusEvent;
-
     TimerEvent loggingNoGPS_Event;
     TimerEvent loggingGPS_Event;
     TimerEvent readyNoGPS_Event;
     TimerEvent readyGPS_Event;
     TimerEvent standby_Event;
     TimerEvent booting_Event;
+    TimerEvent gpsPollEvent;
+    TimerEvent gpsSyncEvent;
+    TimerEvent fusionUpdateEvent;
+    TimerEvent logWriteEvent;
 
     void systemStatusChangeCallback();
     void errorStatusChangeCallback();
@@ -82,6 +96,23 @@ private:
     static void bootingEventCallback() {
         pixel.on();
         pixel.setColor(PURPLE); 
+    }
+
+    static void fusionUpdateEventCallback() {
+        unsigned long _fusionStartTime = micros();
+        pollDSO32();
+        pollLIS3MDL();
+        #if defined(REV_F5) || defined(REV_G2)
+        updateVoltage();
+        #endif // defined(REV_F5) || defined(REV_G2)
+        api.sendInertial({data.accelX, data.accelY, data.accelZ, data.gyroX, data.gyroY, data.gyroZ, micros()});
+        diagLogger->trace("Time to process sensor fusion: %d ms", millis() - _fusionStartTime);
+    }
+
+    static void logWriteEventCallback() {
+        unsigned long _logStartTime = micros();
+        dataLogger.writeTelemetryData();
+        diagLogger->trace("Time to log data: %d us", micros() - _logStartTime);
     }
 };
 
