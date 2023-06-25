@@ -32,7 +32,7 @@ void thetisSettingsInitialize() {
     api.setCmdReadTimeCallback([]() {
         char _buf[64];
         getTime_RTC(_buf);
-        api.send(true, "{time:%s}", _buf);
+        api.send(true, "{\"time\":\"%s\"}", _buf);
     });
 
     api.setCmdWriteTimeCallback([]() {

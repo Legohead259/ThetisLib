@@ -64,5 +64,7 @@ void getISO8601Time_RTC(char *buf) {
 }
 
 void getTime_RTC(char* buf) {
+    tm timeStruct;
+    breakTime(now(), espRTCTime);
     sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d", espRTCTime.Year+1970, espRTCTime.Month, espRTCTime.Day, espRTCTime.Hour, espRTCTime.Minute, espRTCTime.Second);
 }
