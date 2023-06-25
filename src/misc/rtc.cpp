@@ -15,7 +15,7 @@ void syncInternalClock(const char* timeStr) {
 void syncInternalClockGPS() {
     diagLogger->info("Attempting to sync internal RTC to GPS...");
 
-    if (data.GPSFix) { // If the GPS has a good fix, reset the internal clock to the GPS time
+    if (nmea.isValid()) { // If the GPS has a good fix, reset the internal clock to the GPS time
         espRTCTime.Year = nmea.getYear()-1970;
         espRTCTime.Month = nmea.getMonth();
         espRTCTime.Day = nmea.getDay();
@@ -32,8 +32,9 @@ void syncInternalClockGPS() {
 }
 
 void updateTimestamp() {
-    data.epoch = now();
-    data.mSecond = updateRTCms();
+    // data.epoch = now();
+    // data.mSecond = updateRTCms();
+    // TODO: Reimplement somehow?
 }
 
 long updateRTCms() {

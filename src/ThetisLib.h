@@ -4,9 +4,6 @@
 
 #include <Arduino.h>
 
-// Shared data functions
-#include "data.h"
-
 // Miscellaneous functions
 #include "misc/neopixel.h"
 #include "misc/rtc.h"

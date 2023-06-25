@@ -16,7 +16,6 @@
 #include "Arduino.h"
 #include <stdarg.h>
 #include <FS.h>
-#include "../data.h"
 #include "../misc/rtc.h"
 #include <TimeLib.h>
 #include <SD.h>
@@ -43,7 +42,6 @@ public:
     bool begin(fs::SDFS &fs, uint8_t cs);
 	void end();
 
-    void writeTelemetryData();
     void start(fs::SDFS &fs);
     void stop();
 

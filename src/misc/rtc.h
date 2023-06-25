@@ -2,7 +2,6 @@
 #define RTC_H
 
 #include <TimeLib.h>
-#include "../data.h"
 #include "../filesystem/logger.h"
 #include "../radios/gps.h"
 

@@ -72,11 +72,6 @@ void Logger::end() {
 	_isActive = false;
 }
 
-void Logger::writeTelemetryData() {
-    updateTimestamp();
-    dataLogFile.write((uint8_t*) &data, sizeof(data));
-}
-
 void Logger::start(fs::SDFS &fs) {
 	dataLogFile = fs.open(dataLogFilename, FILE_APPEND);
 }

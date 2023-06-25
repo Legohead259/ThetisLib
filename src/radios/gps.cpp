@@ -41,21 +41,11 @@ void pollGPS() {
     }
     diagLogger->trace("GPS Sentence: %s", nmea.getSentence());
 
-    // Update NMEA string based on PPS pulse from GPS. By default refresh rate is 1Hz
-    data.GPSFix = nmea.isValid();
-    data.numSats = nmea.getNumSatellites();
-    data.HDOP = nmea.getHDOP();
-    data.latitude = nmea.getLatitude();
-    data.longitude = nmea.getLongitude();
-    // nmea.getAltitude(data.altitudeMSL);
-    data.GPSSpeed = nmea.getSpeed();
-    data.GPSCourse = nmea.getCourse();
-
     char _buf[64];
     getISO8601Time_GPS(_buf);
     diagLogger->trace("GPS Date: %s", _buf);
-    diagLogger->trace("GPS Fix:  %s \t Sats: %d \t HDOP: %d", data.GPSFix ? "true" : "false", data.numSats, data.HDOP);
-    diagLogger->trace("GPS Lat:  %0.3f \t Lon: %0.3f \t Speed: %0.3f \t Course %0.3f", (float) data.latitude/1E6, (float) data.longitude/1E6, (float) data.GPSSpeed/1E3, (float) data.GPSCourse/1E3);
+    diagLogger->trace("GPS Fix:  %s \t Sats: %d \t HDOP: %d", nmea.isValid() ? "true" : "false", nmea.getNumSatellites(), nmea.getHDOP());
+    diagLogger->trace("GPS Lat:  %0.3f \t Lon: %0.3f \t Speed: %0.3f \t Course %0.3f", (float) nmea.getLatitude()/1E6, (float) nmea.getLongitude()/1E6, (float) nmea.getSpeed()/1E3, (float) nmea.getCourse()/1E3);
 }
 
 // =========================

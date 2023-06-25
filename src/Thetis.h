@@ -113,9 +113,8 @@ private:
     }
 
     static void logWriteEventCallback() {
-        unsigned long _logStartTime = micros();
-        dataLogger.writeTelemetryData();
-        diagLogger->trace("Time to log data: %d us", micros() - _logStartTime);
+        // TODO: Implement log writing
+        // TODO: Enable callback based on DataLoggerMessagesEnabled setting
     }
 };
 
