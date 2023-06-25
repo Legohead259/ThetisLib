@@ -7,6 +7,7 @@ bool ThetisIMU::begin() {
         return false;
     }
     updateSettings();
+    diagLogger->info("done!");
     return true;
 }
 
@@ -31,7 +32,6 @@ void ThetisIMU::updateSettings() {
     diagLogger->verbose("Setting DSO32 data rate to : %d Hz", dataRate);
     setAccelDataRate(dataRate);
     setGyroDataRate(dataRate);
-    diagLogger->info("done!");
 }
 
 lsm6dso32_accel_range_t ThetisIMU::getAccelRange(uint8_t range) {

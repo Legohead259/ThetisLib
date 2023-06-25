@@ -112,8 +112,8 @@ void Thetis::initialize() {
     #endif // MAG_ENABLE
 
     // Initialize battery gauge
-    #ifdef BATT_MON_ENABLED
-    if (!initMAX17048()) {
+    #ifdef BATT_MON_ENABLE
+    if (!gauge.begin()) {
         while(true) {
             currentState.setState(ERROR);
             errorState.setState(BATTERY_MONITOR_ERROR);

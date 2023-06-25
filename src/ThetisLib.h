@@ -21,7 +21,7 @@
 // Sensor functions
 #include "sensors/lsm6dso32.h"
 #ifdef MAG_ENABLE
-#include "sensors/LIS3MDL.h"
+#include "sensors/lis3mdl.h"
 #endif // MAG_ENABLE
 #include "fusion/Fusion/fusion.h"
 
@@ -35,7 +35,7 @@
 
 // Revision-specific functions
 #ifdef BATT_MON_ENABLE
-#include "sensors/max1704.h"
+#include "sensors/max17048.h"
 #endif // BATT_MON_ENABLE
 
 #include "timing/TimerEvents.h"

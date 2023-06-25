@@ -15,7 +15,12 @@ settingTableEntry newEntries[numNewEntries] = {
     {"magnetometerPerformanceMode", MAGNETOMETER_PERFORMANCE_MODE, &thetisSettings.magnetometerPerformanceMode, CHAR},
     {"magnetometerOperationMode", MAGNETOMETER_OPERATION_MODE, &thetisSettings.magnetometerOperationMode, CHAR},
     {"magnetometerDataRate", MAGNETOMETER_DATA_RATE, &thetisSettings.magnetometerDataRate, CHAR},
-    {"magnetometerRange", MAGNETOMETER_RANGE, &thetisSettings.magnetometerRange, CHAR}
+    {"magnetometerRange", MAGNETOMETER_RANGE, &thetisSettings.magnetometerRange, CHAR},
+    {"gaugeResetVoltage", GAUGE_RESET_VOLTAGE, &thetisSettings.gaugeResetVoltage, FLOAT},
+    {"gaugeActivityThreshold", GAUGE_ACTIVITY_THRESHOLD, &thetisSettings.gaugeActivityThreshold, FLOAT},
+    {"gaugeHibernationThreshold", GAUGE_HIBERNATION_THRESHOLD, &thetisSettings.gaugeHibernationThreshold, FLOAT},
+    {"gaugeAlertMinVoltage", GAUGE_ALERT_MIN_VOLTAGE, &thetisSettings.gaugeAlertMinVoltage, FLOAT},
+    {"gaugeAlertMaxVoltage", GAUGE_ALERT_MAX_VOLTAGE, &thetisSettings.gaugeAlertMaxVoltage, FLOAT}
 };
 
 void thetisSettingsInitialize() {
