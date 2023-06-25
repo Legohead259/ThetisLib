@@ -70,6 +70,7 @@ private:
     TimerEvent fusionUpdateEvent;
     TimerEvent logWriteEvent;
 
+    ThetisIMU imu;
     ThetisMag mag;
 
     void systemStatusChangeCallback();

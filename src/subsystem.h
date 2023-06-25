@@ -5,6 +5,7 @@ class ThetisSubsystem {
 public:
     virtual bool begin();
     virtual void poll();
+    virtual void updateSettings();
 
 protected:
 

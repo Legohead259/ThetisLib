@@ -94,7 +94,7 @@ void Thetis::initialize() {
     }
 
     // Initialize IMU
-    if (!initDSO32()) { // Check IMU initialization
+    if (!imu.begin()) { // Check IMU initialization
         while(true) {
             currentState.setState(ERROR);
             errorState.setState(IMU_ERROR);

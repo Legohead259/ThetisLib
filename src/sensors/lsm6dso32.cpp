@@ -1,59 +1,40 @@
 #include "lsm6dso32.h"
-#include "../filesystem/logger.h"
 
-// ===========================
-// === LSM6DSO32 FUNCTIONS ===
-// ===========================
-
-
-Adafruit_LSM6DSO32 dso32;
-sensors_event_t accel;
-sensors_event_t gyro;
-sensors_event_t temp;
-
-bool initDSO32( lsm6dso32_accel_range_t accelRange, 
-                lsm6ds_gyro_range_t gyroRange,
-                lsm6ds_data_rate_t dataRate) {
+bool ThetisIMU::begin() {
     diagLogger->info("Starting LSM6DSO32 IMU...");
-    if (!dso32.begin_I2C(0x6A) && !dso32.begin_I2C(0x6B)) {
+    if (!begin_I2C(0x6A) && !begin_I2C(0x6B)) {
         diagLogger->fatal("Failed to start LSM6DSO32 IMU!");
         return false;
     }
-    else {
-        diagLogger->verbose("Setting DSO32 accelerometer range to : ±%d m/s/s", accelRange);
-        dso32.setAccelRange(accelRange);
-        diagLogger->verbose("Setting DSO32 gyroscope range to : ±%d rad/sec", gyroRange);
-        dso32.setGyroRange(gyroRange);
-        diagLogger->verbose("Setting DSO32 data rate to : %d Hz", dataRate);
-        dso32.setAccelDataRate(dataRate);
-        dso32.setGyroDataRate(dataRate);
-        diagLogger->info("done!");
-        return true;
-    }
+    updateSettings();
+    return true;
 }
 
-void pollDSO32() {
-    dso32.getEvent(&accel, &gyro, &temp);
+void ThetisIMU::poll() {
+    getEvent(&accel, &gyro, &temp);
 
     // Convert gyro to deg/s from rad/s
     gyro.gyro.x *= RAD_TO_DEG;
     gyro.gyro.y *= RAD_TO_DEG;
     gyro.gyro.z *= RAD_TO_DEG;
-
-    data.accelX = accel.acceleration.x;
-    data.accelY = accel.acceleration.y;
-    data.accelZ = accel.acceleration.z;
-
-    data.gyroX = gyro.gyro.x;
-    data.gyroY = gyro.gyro.y;
-    data.gyroZ = gyro.gyro.z;
 }
 
-// =========================
-// === UTILITY FUNCTIONS === 
-// =========================
+void ThetisIMU::updateSettings() {
+    accelRange = (lsm6dso32_accel_range_t) thetisSettings.accelerometerRange;
+    gyroRange = (lsm6ds_gyro_range_t) thetisSettings.gyroscopeRange;
+    dataRate = (lsm6ds_data_rate_t) thetisSettings.imuDataRate;
 
-lsm6dso32_accel_range_t getAccelRange(uint8_t range) {
+    diagLogger->verbose("Setting DSO32 accelerometer range to : ±%d m/s/s", accelRange);
+    setAccelRange(accelRange);
+    diagLogger->verbose("Setting DSO32 gyroscope range to : ±%d rad/sec", gyroRange);
+    setGyroRange(gyroRange);
+    diagLogger->verbose("Setting DSO32 data rate to : %d Hz", dataRate);
+    setAccelDataRate(dataRate);
+    setGyroDataRate(dataRate);
+    diagLogger->info("done!");
+}
+
+lsm6dso32_accel_range_t ThetisIMU::getAccelRange(uint8_t range) {
     switch (range) {
         case 4:
             return LSM6DSO32_ACCEL_RANGE_4_G;
@@ -66,7 +47,7 @@ lsm6dso32_accel_range_t getAccelRange(uint8_t range) {
     }
 }
 
-lsm6ds_gyro_range_t getGyroRange(uint16_t range) {
+lsm6ds_gyro_range_t ThetisIMU::getGyroRange(uint16_t range) {
     switch (range) {
         case 125:
             return LSM6DS_GYRO_RANGE_125_DPS;
@@ -83,7 +64,7 @@ lsm6ds_gyro_range_t getGyroRange(uint16_t range) {
     }
 }
 
-lsm6ds_data_rate_t getDataRate(double rate) {
+lsm6ds_data_rate_t ThetisIMU::getDataRate(double rate) {
     switch ((int) rate*10) {
         case 0:
             return LSM6DS_RATE_SHUTDOWN;
@@ -112,7 +93,7 @@ lsm6ds_data_rate_t getDataRate(double rate) {
     }
 }
 
-double getDataRate(lsm6ds_data_rate_t rate) {
+double ThetisIMU::getDataRate(lsm6ds_data_rate_t rate) {
     switch (rate) {
         case LSM6DS_RATE_SHUTDOWN:
             return 0;
