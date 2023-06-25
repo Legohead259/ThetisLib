@@ -123,16 +123,9 @@ void Thetis::initialize() {
 
     // Initialize WiFi
     #ifdef WIFI_ENABLE
-    if (getSetting<uint8_t>("wirelessMode") == WIRELESS_AP) { // Start WiFi in Access Point mode
-        if (!initWIFIAP()) while (true) blinkCode(RADIO_ERROR_CODE); // Block further code execution
-    }
-
-    if (getSetting<uint8_t>("wirelessMode") == WIRELESS_CLIENT) { // Start WiFi in client mode
-        if (!initWIFIClient()) while (true) blinkCode(RADIO_ERROR_CODE); // Block further code execution
-    }
-
-    if (getSetting<uint8_t>("wirelessMode") && getSetting<bool>("ftpEnabled")) { // Start FTP server
-        if (!initFTPServer()) while (true) blinkCode(RADIO_ERROR_CODE);
+    if (!wireless.begin()) {
+        currentState.setState(ERROR);
+        errorState.setState(WIFI_RADIO_ERROR);
     }
     #endif
 
@@ -156,8 +149,8 @@ void Thetis::run() {
 
     // WiFi handling
     #ifdef WIFI_ENABLE
-    if (getSetting<uint8_t>("wirelessMode") && getSetting<bool>("ftpEnabled")) { // Only run the FTP server when the proper configs are set and the device is not logging (efficiency)
-        ftpServer.handleFTP();
+    if (settings.wirelessMode && thetisSettings.ftpEnabled) { // Only run the FTP server when the proper configs are set and the device is not logging (efficiency)
+        wireless.ftpServer.handleFTP();
     }
     #endif
     

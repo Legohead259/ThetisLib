@@ -1,29 +1,32 @@
 #include "wifi.h"
 
-const char* PARAM_INPUT_1 = "state";
-
 AsyncWebServer server(80); // Create AsyncWebServer object on port 80
 FtpServer ftpServer;
 
-bool initWIFIAP() {
-    diagLogger->info("Starting WiFi access point...");
-    // if (!WiFi.softAP(getSetting<const char*>("wiFiAPSsid"), getSetting<const char*>("wiFiAPKey"))) { // Start the access point with the config SSID and password
-    if (!WiFi.softAP("Thetis-003", "")) {
-        diagLogger->error("Failed to start access point!");
-        return false;
-    }
-    diagLogger->info("done!");
+bool ThetisWiFi::begin() {
+    diagLogger->info("Starting WiFi service");
+    updateSettings();
+    bool _success = false;
 
-    IPAddress IP = WiFi.softAPIP();
-    updateSetting<const char*>((unsigned long) WIFI_IP_ADDRESS, IP.toString().c_str());
-    diagLogger->info("AP IP address: %s", getSetting("wiFiIPAddress")->value);
+    switch(settings.wirelessMode) {
+        case WIRELESS_DISABLED:
+            return true;
+        case WIRELESS_AP:
+            _success = beginWiFiAP();
+            break;
+        case WIRELESS_CLIENT:
+            _success = beginWiFiClient();
+            break;
+        default:
+            return false;
+    }
 
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         request->send(SPIFFS, "/index.html", String(), false, processor);
         diagLogger->verbose("Client requesting index!");
     });
-    
+
     // Route to load style.css file
     server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
         request->send(SPIFFS, "/style.css", "text/css");
@@ -55,7 +58,7 @@ bool initWIFIAP() {
         // }
 
         request->send(200, "text/plain", "OK");
-  });
+    });
 
     // Send a GET request to <ESP_IP>/state
     server.on("/state", HTTP_GET, [] (AsyncWebServerRequest *request) {
@@ -64,26 +67,45 @@ bool initWIFIAP() {
 
     // Start server
     server.begin();
+
+    return _success;
+}
+
+void ThetisWiFi::updateSettings() {
+
+}
+
+bool ThetisWiFi::beginWiFiAP() {
+    diagLogger->info("Starting WiFi access point...");
+    if (!WiFi.softAP(settings.wiFiAPSsid, settings.wiFiAPKey)) {
+        diagLogger->error("Failed to start access point!");
+        return false;
+    }
+    diagLogger->info("done!");
+
+    IPAddress IP = WiFi.softAPIP();
+    updateSetting<const char*>((unsigned long) WIFI_IP_ADDRESS, IP.toString().c_str());
+    diagLogger->info("AP IP address: %s", settings.wiFiIPAddress);
+
     diagLogger->info("done!");
     return true;
 }
 
-bool initWIFIClient() {
+bool ThetisWiFi::beginWiFiClient() {
     diagLogger->info("Starting WiFi Client...");
-    // TODO: Check if SSID and password fields are available, if not return error
-    if (!WiFi.begin("adafruit", "ffffffff")) {
+    if (!connectToWiFi()) { // Attempt to connect to WiFi network
+        return false;
+    }
+    return true;
+}
+
+bool ThetisWiFi::connectToWiFi() {
+    diagLogger->info("Connecting to SSID: %s", getSetting<const char*>("wiFiClientSsid"));
+    diagLogger->info("Using password: %s", getSetting<const char*>("wiFiClientKey"));
+    if (!WiFi.begin(getSetting<const char*>("wiFiClientSsid"), getSetting<const char*>("wiFiClientKey"))) {
         diagLogger->error("Failed to start WiFi client!");
         return false;
     }
-    else {
-        connectToWIFI(); // Attempt to connect to WiFi network
-        return true;
-    }
-}
-
-bool connectToWIFI() {
-    diagLogger->info("Connecting to SSID: %s", getSetting<const char*>("wiFiClientSsid"));
-    diagLogger->info("Using password: %s", getSetting<const char*>("wiFiClientKey"));
     unsigned long _startMillis = millis();
     while (WiFi.status() != WL_CONNECTED && millis()-_startMillis < WIFI_CONNECT_TIMEOUT*1000) { // Wait for TIMEOUT seconds while connection is tested
         delay(125);
@@ -95,12 +117,13 @@ bool connectToWIFI() {
     }
     else {
         diagLogger->info("Connected!");
-        diagLogger->verbose("Client IP Address: %s", WiFi.localIP().toString());
+        updateSetting<const char*>((unsigned long) WIFI_CLIENT_IP_ADDRESS, WiFi.localIP().toString().c_str());
+        diagLogger->info("Client IP Address: %s", WiFi.localIP().toString().c_str());
         return true;
     }
 }
 
-bool initFTPServer() {
+bool ThetisWiFi::initFTPServer() {
     diagLogger->info("Starting FTP server...");
     diagLogger->verbose("Setting callback interrupt function");
     ftpServer.setCallback(_callback);
@@ -117,7 +140,7 @@ bool initFTPServer() {
 // =====================
 
 
-void _callback(FtpOperation ftpOperation, unsigned int freeSpace, unsigned int totalSpace) {
+static void _callback(FtpOperation ftpOperation, unsigned int freeSpace, unsigned int totalSpace) {
     switch (ftpOperation) {
         case FTP_CONNECT:
             diagLogger->info("FTP client connected!");
@@ -135,7 +158,7 @@ void _callback(FtpOperation ftpOperation, unsigned int freeSpace, unsigned int t
     }
 }
 
-void _transferCallback(FtpTransferOperation ftpOperation, const char* name, unsigned int transferredSize){
+static void _transferCallback(FtpTransferOperation ftpOperation, const char* name, unsigned int transferredSize) {
     switch (ftpOperation) {
         case FTP_UPLOAD_START:
             diagLogger->info("FTP upload start!");
@@ -191,3 +214,5 @@ String processor(const String& var) {
 String outputState() {
     return "";
 }
+
+ThetisWiFi wireless;
