@@ -31,7 +31,7 @@ public:
     readyGPS_Event("Ready, GPS Event", BLINK_INTERVAL, readyGPSEventCallback, true),
     standby_Event("Standby Event", BLINK_INTERVAL, standbyEventCallback, true),
     booting_Event("Booting Event", 500, bootingEventCallback, true),
-    gpsPollEvent("GPS Poll Event", GPS_POLL_INTERVAL, pollGPS, true),
+    gpsPollEvent("GPS Poll Event", GPS_POLL_INTERVAL, gpsPollCallback, true),
     gpsSyncEvent("GPS Sync Event", GPS_SYNC_INTERVAL*60000, syncInternalClockGPS, true),
     fusionUpdateEvent("Fusion Update Event", 20, fusionUpdateEventCallback, true),
     logWriteEvent("Log Write Event", 20, logWriteEventCallback, true)
@@ -115,6 +115,10 @@ private:
     static void logWriteEventCallback() {
         // TODO: Implement log writing
         // TODO: Enable callback based on DataLoggerMessagesEnabled setting
+    }
+
+    static void gpsPollCallback() {
+        gps.poll();
     }
 };
 

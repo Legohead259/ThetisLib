@@ -76,13 +76,13 @@ void Thetis::initialize() {
     }
 
     // Initialize GPS
-    if (!initGPS()) { // Initialize GPS and check if good
+    if (!gps.begin()) { // Initialize GPS and check if good
         while(true) {
             currentState.setState(ERROR);
             errorState.setState(GPS_ERROR);
         }
     }
-    pollGPS();
+    gps.poll();
     syncInternalClockGPS(); // Attempt to sync internal clock to GPS, if it has a fix already
 
     // Initialize datalogger

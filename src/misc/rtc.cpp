@@ -15,13 +15,13 @@ void syncInternalClock(const char* timeStr) {
 void syncInternalClockGPS() {
     diagLogger->info("Attempting to sync internal RTC to GPS...");
 
-    if (nmea.isValid()) { // If the GPS has a good fix, reset the internal clock to the GPS time
-        espRTCTime.Year = nmea.getYear()-1970;
-        espRTCTime.Month = nmea.getMonth();
-        espRTCTime.Day = nmea.getDay();
-        espRTCTime.Hour = nmea.getHour();
-        espRTCTime.Minute = nmea.getMinute();
-        espRTCTime.Second = nmea.getSecond();
+    if (gps.isValid()) { // If the GPS has a good fix, reset the internal clock to the GPS time
+        espRTCTime.Year = gps.getYear()-1970;
+        espRTCTime.Month = gps.getMonth();
+        espRTCTime.Day = gps.getDay();
+        espRTCTime.Hour = gps.getHour();
+        espRTCTime.Minute = gps.getMinute();
+        espRTCTime.Second = gps.getSecond();
 
         setTime(makeTime(espRTCTime)); // Reset internal clock
         diagLogger->info("Done!");
@@ -34,7 +34,7 @@ void syncInternalClockGPS() {
 void updateTimestamp() {
     // data.epoch = now();
     // data.mSecond = updateRTCms();
-    // TODO: Reimplement somehow?
+    // TODO: Reimplement somehow ?
 }
 
 long updateRTCms() {
@@ -55,7 +55,7 @@ long updateRTCms() {
 }
 
 void getISO8601Time_GPS(char *buf) {
-    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", nmea.getYear(), nmea.getMonth(), nmea.getDay(), nmea.getHour(), nmea.getMinute(), nmea.getSecond(), nmea.getHundredths());
+    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", gps.getYear(), gps.getMonth(), gps.getDay(), gps.getHour(), gps.getMinute(), gps.getSecond(), gps.getHundredths());
 }
 
 void getISO8601Time_RTC(char *buf) {
