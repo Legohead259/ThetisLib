@@ -8,10 +8,13 @@ settingTableEntry newEntries[numNewEntries] = {
     {"ftpPassword", FTP_PASSWORD, &thetisSettings.ftpPassword, CHAR_ARRAY, 64},
     {"accelerometerRange", ACCELEROMETER_RANGE, &thetisSettings.accelerometerRange, CHAR},
     {"gyroscopeRange", GYROSCOPE_RANGE, &thetisSettings.gyroscopeRange, CHAR},
-    {"magnetometerRange", MAGNETOMETER_RANGE, &thetisSettings.magnetometerRange, CHAR},
     {"logPrintLevel", LOG_PRINT_LEVEL, &thetisSettings.logPrintLevel, CHAR},
     {"logFileLevel", LOG_FILE_LEVEL, &thetisSettings.logFileLevel, CHAR},
-    {"gpsRtcSyncEnabled", GPS_RTC_SYNC_ENABLED, &thetisSettings.gpsRtcSyncEnabled, BOOL}
+    {"gpsRtcSyncEnabled", GPS_RTC_SYNC_ENABLED, &thetisSettings.gpsRtcSyncEnabled, BOOL},
+    {"magnetometerPerformanceMode", MAGNETOMETER_PERFORMANCE_MODE, &thetisSettings.magnetometerPerformanceMode, CHAR},
+    {"magnetometerOperationMode", MAGNETOMETER_OPERATION_MODE, &thetisSettings.magnetometerOperationMode, CHAR},
+    {"magnetometerDataRate", MAGNETOMETER_DATA_RATE, &thetisSettings.magnetometerDataRate, CHAR},
+    {"magnetometerRange", MAGNETOMETER_RANGE, &thetisSettings.magnetometerRange, CHAR}
 };
 
 void thetisSettingsInitialize() {

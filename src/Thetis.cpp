@@ -103,7 +103,7 @@ void Thetis::initialize() {
 
     // Initialize magnetometer
     #ifdef MAG_ENABLE
-    if (!initLIS3MDL()) { // Check magnetometer initialization
+    if (!mag.begin()) { // Check magnetometer initialization
         while(true) {
             currentState.setState(ERROR);
             errorState.setState(IMU_ERROR);

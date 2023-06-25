@@ -37,9 +37,6 @@ public:
     logWriteEvent("Log Write Event", 20, logWriteEventCallback, true)
     { debugSerial = s; }
 
-    unsigned long logButtonPresses;
-    unsigned long logButtonStartTime;
-
     void initialize();
     void run();
         
@@ -47,6 +44,9 @@ public:
     
     int8_t getSystemState() { return currentState.getState(); }
     void setSystemState(int8_t s) { currentState.setState(s); }
+
+    unsigned long logButtonPresses;
+    unsigned long logButtonStartTime;
 
     self_test_report_t selfTest();
 
@@ -69,6 +69,8 @@ private:
     TimerEvent gpsSyncEvent;
     TimerEvent fusionUpdateEvent;
     TimerEvent logWriteEvent;
+
+    ThetisMag mag;
 
     void systemStatusChangeCallback();
     void errorStatusChangeCallback();
@@ -99,14 +101,14 @@ private:
     }
 
     static void fusionUpdateEventCallback() {
-        unsigned long _fusionStartTime = micros();
-        pollDSO32();
-        pollLIS3MDL();
-        #if defined(REV_F5) || defined(REV_G2)
-        updateVoltage();
-        #endif // defined(REV_F5) || defined(REV_G2)
-        api.sendInertial({data.accelX, data.accelY, data.accelZ, data.gyroX, data.gyroY, data.gyroZ, micros()});
-        diagLogger->trace("Time to process sensor fusion: %d ms", millis() - _fusionStartTime);
+        // unsigned long _fusionStartTime = micros();
+        // pollDSO32();
+        // mag.poll();
+        // #if defined(REV_F5) || defined(REV_G2)
+        // updateVoltage();
+        // #endif // defined(REV_F5) || defined(REV_G2)
+        // api.sendInertial({data.accelX, data.accelY, data.accelZ, data.gyroX, data.gyroY, data.gyroZ, micros()});
+        // diagLogger->trace("Time to process sensor fusion: %d ms", millis() - _fusionStartTime);
     }
 
     static void logWriteEventCallback() {

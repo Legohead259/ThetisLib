@@ -3,15 +3,16 @@
 
 #include <Adafruit_LIS3MDL.h>
 #include <Adafruit_Sensor.h>
+#include "../settings.h"
+#include "../subsystem.h"
+#include "../filesystem/logger.h"
 
-extern Adafruit_LIS3MDL lis3mdl;
+class ThetisMag : Adafruit_LIS3MDL, ThetisSubsystem {
+public:
+    sensors_event_t readings;
 
-extern sensors_event_t mag;
-
-bool initLIS3MDL(   lis3mdl_performancemode_t perfMode=LIS3MDL_MEDIUMMODE,
-                    lis3mdl_operationmode_t opMode=LIS3MDL_CONTINUOUSMODE,
-                    lis3mdl_dataRate_t dataRate=LIS3MDL_DATARATE_155_HZ,
-                    lis3mdl_range_t range=LIS3MDL_RANGE_4_GAUSS);
-void pollLIS3MDL();
+    bool begin() override;
+    void poll() override;
+};
 
 #endif // LIS3MDL_H
