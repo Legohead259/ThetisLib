@@ -32,9 +32,9 @@ public:
     standby_Event("Standby Event", BLINK_INTERVAL, standbyEventCallback, true),
     booting_Event("Booting Event", 500, bootingEventCallback, true),
     gpsPollEvent("GPS Poll Event", GPS_POLL_INTERVAL, gpsPollCallback, true),
-    gpsSyncEvent("GPS Sync Event", GPS_SYNC_INTERVAL*60000, syncInternalClockGPS, true),
     fusionUpdateEvent("Fusion Update Event", 20, fusionUpdateEventCallback, true),
-    logWriteEvent("Log Write Event", 20, logWriteEventCallback, true)
+    logWriteEvent("Log Write Event", 20, logWriteEventCallback, true),
+    strobeEvent("Strobe Event", BLINK_INTERVAL/2, strobeEventCallback, false, 5000, [this](){ systemStatusEvent->enable(); })
     { debugSerial = s; }
 
     void initialize();
@@ -66,15 +66,16 @@ private:
     TimerEvent standby_Event;
     TimerEvent booting_Event;
     TimerEvent gpsPollEvent;
-    TimerEvent gpsSyncEvent;
     TimerEvent fusionUpdateEvent;
     TimerEvent logWriteEvent;
+    TimerEvent strobeEvent;
 
     ThetisIMU imu;
     ThetisMag mag;
 
     void systemStatusChangeCallback();
     void errorStatusChangeCallback();
+    void thetisSettingsInitialize();
 
     static void loggingNoGPSEventCallback() { 
         pixel.on();
@@ -99,6 +100,11 @@ private:
     static void bootingEventCallback() {
         pixel.on();
         pixel.setColor(PURPLE); 
+    }
+
+    static void strobeEventCallback() {
+        pixel.setColor(WHITE);
+        pixel.blinkCallback();
     }
 
     static void fusionUpdateEventCallback() {

@@ -15,11 +15,11 @@ void Thetis::initialize() {
     }
 
     #ifdef SERIAL_LOGGER
-    if (!diagPrintLogger.begin(&Serial, LogLevel::VERBOSE)) {
+    if (!diagPrintLogger.begin(&Serial, LogLevel::VERBOSE, [](char* buf){ rtc.getISO8601Time_RTC(buf); })) {
         while(true);
     }
     #else
-    if (!diagFileLogger.begin(SD, SD_CS, LogLevel::INFO)) {
+    if (!diagFileLogger.begin(SD, SD_CS, LogLevel::INFO), [](char* buf){ rtc.getISO8601Time_RTC(buf); })) {
         while(true);
     }
     #endif // SERIAL_LOGGER
@@ -83,7 +83,14 @@ void Thetis::initialize() {
         }
     }
     gps.poll();
-    syncInternalClockGPS(); // Attempt to sync internal clock to GPS, if it has a fix already
+
+    // Initialize RTC
+    if (!rtc.begin()) {
+        while(true) {
+            currentState.setState(ERROR);
+            errorState.setState(GENERAL_ERROR);
+        }
+    }
 
     // Initialize datalogger
     if (!dataLogger.begin(SD, SD_CS)) { // Initialize SD card filesystem and check if good
@@ -135,9 +142,9 @@ void Thetis::initialize() {
     diagLogger->info("done!");
 
     timerEvents.add(&gpsPollEvent);
-    timerEvents.add(&gpsSyncEvent);
     timerEvents.add(&fusionUpdateEvent);
     timerEvents.add(&logWriteEvent);
+    timerEvents.add(&strobeEvent);
 
     setSystemState(STANDBY);
 }
@@ -173,8 +180,6 @@ void Thetis::run() {
         digitalWrite(LED_BUILTIN, statusChecks.isLogging);
         _oldButtonPresses = logButtonPresses;
     }
-
-    updateRTCms();
 }
 
 void Thetis::updateSystemState() {
@@ -210,6 +215,78 @@ void Thetis::systemStatusChangeCallback() {
             return;
     }
     timerEvents.update(systemStatusEvent);
+}
+
+void Thetis::thetisSettingsInitialize() {
+    // Assign the new entries to the array
+    for (int i=0; i<numNewEntries; i++) {
+        settingTable[NUM_BASE_SETTINGS+1+i] = newEntries[i];
+    }
+
+    api.setCmdReadTimeCallback([]() {
+        char _buf[64];
+        ThetisClock::getTime_RTC(_buf);
+        api.send(true, "{\"time\":\"%s\"}", _buf);
+    });
+
+    api.setCmdWriteTimeCallback([]() {
+        rtc.synchronizeClock(api.getValue<const char*>());
+        api.cmdReadTime();
+    });
+
+    api.setCmdResetCallback([]() { 
+        api.send(true, "{\"reset\":null}");
+        ESP.restart(); 
+    });
+
+    api.setCmdShutdownCallback([]() {
+        api.send(true, "{\"shutdown\":null}");
+        ESP.restart();
+        // TODO: Add an auto-latching shutoff circuit to hardware
+    });
+
+    api.setCmdStrobeCallback([this]() {
+        systemStatusEvent->disable();
+        strobeEvent.enable();
+    });
+
+    api.setCmdColourCallback([]() {
+        // TODO: Call neopixel color change function
+    });
+
+    api.setCmdHeadingCallback([]() {
+        // TODO: Reset AHRS heading to specified value IF `magnetometerIgnoreEnabled` is TRUE
+    });
+
+    api.setCmdSerialAccessoryCallback([]() { 
+        // Ignore this command for Thetis
+        return; 
+    });
+
+    api.setCmdFormatCallback([]() {
+        // TODO: Call filesystem `format()` function
+        // TODOTODO: Create a filesystem `format()` function
+    });
+
+    api.setCmdSelfTestCallback([]() {
+        // TODO: Call self-test function
+        // TODOTODO: Create a self-test initialization function
+    });
+
+    api.setCmdBootloaderCallback([]() {
+        // This is not possible on the ESP32 platform
+        return;
+    });
+
+    api.setCmdFactoryCallback([]() {
+        // TODO: Put the device into a factory mode state for writing to READ-ONLY settings
+        // TODOTODO: Make it so only some values can be written to whilst in factory mode
+    });
+
+    api.setCmdEraseCallback([]() {
+        // TODO: Call filesystem (SPIFFS) `erase()` function
+        // TODOTODO: Create filesystem (SPIFFS) `erase()` function
+    });
 }
 
 void IRAM_ATTR logButtonISR() {

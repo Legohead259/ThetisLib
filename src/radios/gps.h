@@ -27,14 +27,12 @@ typedef enum {
 class ThetisGPS : public MicroNMEA, ThetisSubsystem {
 public:
     ThetisGPS() : MicroNMEA(nmeaBuffer, sizeof(nmeaBuffer)) {}
-    ThetisGPS(bool test) : nmea(nmeaBuffer, sizeof(nmeaBuffer)) {}
 
     bool begin() override;
     void poll() override;
     void updateSettings() override;
     
-    MicroNMEA nmea;
-
+    void getISO8601Time_GPS(char* buf);
 private:
     HardwareSerial& serialPort = GPS_SERIAL_PORT;
     bool ppsTriggered = false;

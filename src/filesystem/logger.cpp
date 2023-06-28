@@ -68,6 +68,16 @@ bool Logger::begin(fs::SDFS &fs, uint8_t cs) {
     return true;
 }
 
+bool Logger::begin(Stream* logPort, LogLevel logLevel, LogTimeHandler cbPtr) {
+	setLogTimeCallback(cbPtr);
+	return begin(logPort, logLevel);
+}
+
+bool Logger::begin(fs::SDFS& fs, uint8_t cs, LogLevel logLevel, LogTimeHandler cbPtr) {
+	setLogTimeCallback(cbPtr);
+	return begin(fs, cs, logLevel);
+}
+
 void Logger::end() {
 	_isActive = false;
 }
@@ -294,7 +304,7 @@ void Logger::getLogLevelStr(char* outStr, LogLevel logLevel) {
 void Logger::printPrefix(LogLevel logLevel) {
 	if (_includeTimestamp) {
 		char buffer[32];
-		getISO8601Time_RTC(buffer);
+		getSystemTime(buffer);
 		print("["); print(buffer); print("] ");
 	}
 	if (_includeLogLevel) {

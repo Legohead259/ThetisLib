@@ -54,12 +54,5 @@ const size_t numNewEntries = 18;
 
 extern settingTableEntry newEntries[numNewEntries];
 
-void thetisSettingsInitialize();
-
-
-// =========================
-// === COMMAND CALLBACKS ===
-// =========================
-
 
 #endif // THETIS_SETTINGS_H
