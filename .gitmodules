@@ -1,7 +1,9 @@
 [submodule "src/fusion"]
 	path = src/fusion
 	url = https://github.com/Legohead259/Fusion-Arduino.git
-
 [submodule "src/xioAPI"]
 	path = src/xioAPI
 	url = https://github.com/Legohead259/xioAPI-Arduino.git
+[submodule "timing"]
+	path = src/timing
+	url = https://github.com/Legohead259/Timer-Events-Arduino.git
