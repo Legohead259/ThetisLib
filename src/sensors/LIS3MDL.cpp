@@ -11,10 +11,15 @@ bool ThetisMag::begin() {
 }
 
 void ThetisMag::poll() {
-    getEvent(&readings); // Update 
+    sensors_event_t readings;
+    getEvent(&readings); // Update readings
+    magnetometerData = { readings.magnetic.x, readings.magnetic.y, readings.magnetic.z };
+    magnetometerData = FusionCalibrationMagnetic(magnetometerData, softIronMatrix, hardIronOffset);
 }
 
 void ThetisMag::updateSettings() {
+    memcpy(softIronMatrix.array, settings.softIronMatrix, sizeof(float) * 3 * 3);
+    memcpy(hardIronOffset.array, settings.hardIronOffset, sizeof(float) * 3);
     performanceMode = (lis3mdl_performancemode_t) thetisSettings.magnetometerPerformanceMode;
     operationMode = (lis3mdl_operationmode_t) thetisSettings.magnetometerOperationMode;
     dataRate = (lis3mdl_dataRate_t) thetisSettings.magnetometerDataRate;
@@ -30,3 +35,5 @@ void ThetisMag::updateSettings() {
     setRange(range);
     diagLogger->info("done!");
 }
+
+ThetisMag mag;

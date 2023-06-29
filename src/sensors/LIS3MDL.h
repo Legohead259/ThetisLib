@@ -6,10 +6,13 @@
 #include "../settings.h"
 #include "../subsystem.h"
 #include "../filesystem/logger.h"
+#include "../fusion/Fusion/Fusion.h"
 
 class ThetisMag : Adafruit_LIS3MDL, ThetisSubsystem {
 public:
-    sensors_event_t readings;
+    FusionMatrix softIronMatrix = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+    FusionVector hardIronOffset = {0.0f, 0.0f, 0.0f};
+    FusionVector magnetometerData;
 
     bool begin() override;
     void poll() override;
@@ -21,5 +24,7 @@ private:
     lis3mdl_dataRate_t dataRate;
     lis3mdl_range_t range;
 };
+
+extern ThetisMag mag;
 
 #endif // LIS3MDL_H

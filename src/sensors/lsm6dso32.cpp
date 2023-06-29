@@ -12,15 +12,46 @@ bool ThetisIMU::begin() {
 }
 
 void ThetisIMU::poll() {
+    sensors_event_t accel;
+    sensors_event_t gyro;
+    sensors_event_t temp;
     getEvent(&accel, &gyro, &temp);
 
     // Convert gyro to deg/s from rad/s
     gyro.gyro.x *= RAD_TO_DEG;
     gyro.gyro.y *= RAD_TO_DEG;
     gyro.gyro.z *= RAD_TO_DEG;
+
+    // Convert accelerometer to G's from m/s/s
+    accel.acceleration.x /= 9.81;
+    accel.acceleration.y /= 9.81;
+    accel.acceleration.z /= 9.81;
+
+    // Convert measurements to fusion AHRS-compatible structure
+    gyroscopeData = {gyro.gyro.x, gyro.gyro.y, gyro.gyro.z};
+    accelerometerData = {accel.acceleration.x, accel.acceleration.y, accel.acceleration.z};
+
+    // Apply calibrations
+    gyroscopeData = FusionCalibrationInertial(gyroscopeData, gyroscopeMisalignment, gyroscopeSensitivity, gyroscopeOffset);
+    accelerometerData = FusionCalibrationInertial(accelerometerData, accelerometerMisalignment, accelerometerSensitivity, accelerometerOffset);
+
+    if (settings.gyroscopeOffsetCorrectionEnabled) gyroscopeData = FusionOffsetUpdate(&gyroOffset, gyroscopeData);
+
+    // diagLogger->debug("Rotation Rate: %0.3f | %0.3f | %0.3f deg/s", gyro.gyro.x, gyro.gyro.y, gyro.gyro.z);
+    // diagLogger->debug("Acceleration: %0.3f | %0.3f | %0.3f g", accel.acceleration.x, accel.acceleration.y, accel.acceleration.z);
+    // diagLogger->debug("------------------------------------------");
+    // diagLogger->debug("Rotation Rate: %0.3f | %0.3f | %0.3f deg/s", gyroscopeData.axis.x, gyroscopeData.axis.y, gyroscopeData.axis.z);
+    // diagLogger->debug("Acceleration: %0.3f | %0.3f | %0.3f g", accelerometerData.axis.x, accelerometerData.axis.y, accelerometerData.axis.z);
 }
 
 void ThetisIMU::updateSettings() {
+    FusionOffsetInitialise(&gyroOffset, thetisSettings.fusionUpdateRate);
+    memcpy(gyroscopeMisalignment.array, settings.gyroscopeMisalignment, sizeof(float) * 3 * 3);
+    memcpy(gyroscopeSensitivity.array, settings.gyroscopeSensitivity, sizeof(float) * 3);
+    memcpy(gyroscopeOffset.array, settings.gyroscopeOffset, sizeof(float) * 3);
+    memcpy(accelerometerMisalignment.array, settings.gyroscopeMisalignment, sizeof(float) * 3 * 3);
+    memcpy(accelerometerSensitivity.array, settings.gyroscopeSensitivity, sizeof(float) * 3);
+    memcpy(accelerometerOffset.array, settings.gyroscopeOffset, sizeof(float) * 3);
     accelRange = (lsm6dso32_accel_range_t) thetisSettings.accelerometerRange;
     gyroRange = (lsm6ds_gyro_range_t) thetisSettings.gyroscopeRange;
     dataRate = (lsm6ds_data_rate_t) thetisSettings.imuDataRate;
@@ -121,3 +152,5 @@ double ThetisIMU::getDataRate(lsm6ds_data_rate_t rate) {
             return 208;
     }
 }
+
+ThetisIMU imu;

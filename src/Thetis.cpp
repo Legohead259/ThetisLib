@@ -1,5 +1,7 @@
 #include "Thetis.h"
 
+FusionAhrs ahrs;
+
 void Thetis::initialize() {
     // Initialize I2C bus
     Wire.begin((int) SDA, (int) SCL); // Casting to int is important as just uint8_t types will invoke the "slave" begin, not the master
@@ -117,6 +119,13 @@ void Thetis::initialize() {
         }
     }
     #endif // MAG_ENABLE
+
+    if (!fusionInitialize()) {
+        while (true) {
+            currentState.setState(ERROR);
+            errorState.setState(IMU_ERROR);
+        }
+    }
 
     // Initialize battery gauge
     #ifdef BATT_MON_ENABLE
@@ -246,6 +255,7 @@ void Thetis::thetisSettingsInitialize() {
     });
 
     api.setCmdStrobeCallback([this]() {
+        api.send(true, "{\"strobe\":null}");
         systemStatusEvent->disable();
         strobeEvent.enable();
     });
@@ -287,6 +297,30 @@ void Thetis::thetisSettingsInitialize() {
         // TODO: Call filesystem (SPIFFS) `erase()` function
         // TODOTODO: Create filesystem (SPIFFS) `erase()` function
     });
+}
+
+bool Thetis::fusionInitialize() {
+    diagLogger->info("Initializing fusion algorithm");
+    FusionAhrsInitialise(&ahrs);
+
+    // Set AHRS algorithm settings
+    const FusionAhrsSettings fusionSettings = {
+            .convention = (FusionConvention) settings.ahrsAxesConvention,
+            .gain = settings.ahrsGain,
+            .accelerationRejection = 10.0f,
+            .magneticRejection = 20.0f,
+            .rejectionTimeout = 5 * (unsigned) thetisSettings.fusionUpdateRate,
+    };
+    FusionAhrsSetSettings(&ahrs, &fusionSettings);
+
+    diagLogger->verbose("Setting ahrs axes convention to: %d", fusionSettings.convention);
+    diagLogger->verbose("Setting AHRS gain to: %0.1f", fusionSettings.gain);
+    diagLogger->verbose("Setting acceleration rejection threshold to: %0.1f", fusionSettings.accelerationRejection);
+    diagLogger->verbose("Setting magnetic rejection threshold to: %0.1f", fusionSettings.magneticRejection);
+    diagLogger->verbose("Setting rejection timeout to: %0.1f", fusionSettings.rejectionTimeout);
+
+    diagLogger->info("done!");
+    return true;
 }
 
 void IRAM_ATTR logButtonISR() {

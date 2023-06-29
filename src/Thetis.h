@@ -20,6 +20,8 @@ typedef struct status_check_t {
     bool isLogging = false;
 } status_check_t;
 
+extern FusionAhrs ahrs;
+
 void IRAM_ATTR logButtonISR();
 
 class Thetis {
@@ -70,12 +72,20 @@ private:
     TimerEvent logWriteEvent;
     TimerEvent strobeEvent;
 
-    ThetisIMU imu;
-    ThetisMag mag;
+    FusionMatrix gyroscopeMisalignment;
+    FusionVector gyroscopeSensitivity;
+    FusionVector gyroscopeOffset;
+    FusionMatrix accelerometerMisalignment;
+    FusionVector accelerometerSensitivity;
+    FusionVector accelerometerOffset;
+    FusionMatrix softIronMatrix;
+    FusionVector hardIronOffset;
 
     void systemStatusChangeCallback();
     void errorStatusChangeCallback();
     void thetisSettingsInitialize();
+    bool fusionInitialize();
+    void fusionUpdateSettings();
 
     static void loggingNoGPSEventCallback() { 
         pixel.on();
@@ -108,14 +118,29 @@ private:
     }
 
     static void fusionUpdateEventCallback() {
-        // unsigned long _fusionStartTime = micros();
-        // pollDSO32();
-        // mag.poll();
-        // #if defined(REV_F5) || defined(REV_G2)
-        // updateVoltage();
-        // #endif // defined(REV_F5) || defined(REV_G2)
-        // api.sendInertial({data.accelX, data.accelY, data.accelZ, data.gyroX, data.gyroY, data.gyroZ, micros()});
-        // diagLogger->trace("Time to process sensor fusion: %d ms", millis() - _fusionStartTime);
+        uint32_t timestamp = micros();
+        imu.poll();
+        mag.poll();
+
+        // Calculate delta time (in seconds) to account for gyroscope sample clock error
+        static uint32_t previousTimestamp;
+        const float deltaTime = (float) (timestamp - previousTimestamp) / (float) CLOCKS_PER_SEC;
+        previousTimestamp = timestamp;
+
+        // Update AHRS algorithm
+        FusionAhrsUpdate(&ahrs, imu.gyroscopeData, imu.accelerometerData, mag.magnetometerData, deltaTime);
+
+        // Send IMU data messages
+        api.sendInertial(InertialMessage{imu.accelerometerData.array[0], imu.accelerometerData.array[1], imu.accelerometerData.array[2],
+                                        imu.gyroscopeData.array[0], imu.gyroscopeData.array[1], imu.gyroscopeData.array[2], timestamp});
+        api.sendMag(MagnetoMessage{mag.magnetometerData.array[0], mag.magnetometerData.array[1], mag.magnetometerData.array[2], timestamp});
+        
+        // Send orientation data messages
+        FusionQuaternion quat = FusionAhrsGetQuaternion(&ahrs);
+        FusionEuler euler = FusionQuaternionToEuler(quat);
+
+        api.sendQuaternion(QuaternionMessage{quat.array[0], quat.array[1], quat.array[2], quat.array[3], timestamp});
+        api.sendEulerAngles(EulerMessage{euler.array[0], euler.array[1], euler.array[2], timestamp});
     }
 
     static void logWriteEventCallback() {

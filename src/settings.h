@@ -24,6 +24,7 @@ enum ThetisAPIKeyHash {
     GAUGE_HIBERNATION_THRESHOLD     = 0x24E146EE,
     GAUGE_ALERT_MIN_VOLTAGE         = 0xEB8F1B3C,
     GAUGE_ALERT_MAX_VOLTAGE         = 0x823DE3FE,
+    FUSION_UPDATE_RATE              = 0xC6326C68,
 };
 
 typedef struct thetis_device_settings_t {
@@ -46,11 +47,11 @@ typedef struct thetis_device_settings_t {
     float gaugeHibernationThreshold;
     float gaugeAlertMinVoltage;
     float gaugeAlertMaxVoltage;
-
+    int fusionUpdateRate;
 } thetis_device_settings_t;
 
 extern thetis_device_settings_t thetisSettings;
-const size_t numNewEntries = 18;
+const size_t numNewEntries = 19;
 
 extern settingTableEntry newEntries[numNewEntries];
 

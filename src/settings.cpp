@@ -20,5 +20,6 @@ settingTableEntry newEntries[numNewEntries] = {
     {"gaugeActivityThreshold", GAUGE_ACTIVITY_THRESHOLD, &thetisSettings.gaugeActivityThreshold, FLOAT},
     {"gaugeHibernationThreshold", GAUGE_HIBERNATION_THRESHOLD, &thetisSettings.gaugeHibernationThreshold, FLOAT},
     {"gaugeAlertMinVoltage", GAUGE_ALERT_MIN_VOLTAGE, &thetisSettings.gaugeAlertMinVoltage, FLOAT},
-    {"gaugeAlertMaxVoltage", GAUGE_ALERT_MAX_VOLTAGE, &thetisSettings.gaugeAlertMaxVoltage, FLOAT}
+    {"gaugeAlertMaxVoltage", GAUGE_ALERT_MAX_VOLTAGE, &thetisSettings.gaugeAlertMaxVoltage, FLOAT},
+    {"fusionUpdateRate", FUSION_UPDATE_RATE, &thetisSettings.fusionUpdateRate, INT}
 };
