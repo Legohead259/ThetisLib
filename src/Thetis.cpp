@@ -260,8 +260,15 @@ void Thetis::thetisSettingsInitialize() {
         strobeEvent.enable();
     });
 
-    api.setCmdColourCallback([]() {
-        // TODO: Call neopixel color change function
+    api.setCmdColourCallback([this](const char* colourStr) {
+        if (colourStr == nullptr) {
+            systemStatusEvent->enable();
+        }
+        else {
+            SystemStatusEvent->disble();
+            uint32_t color = hexStringToUnsignedLong(colourStr);
+            pixel.setColor(color);
+        }
     });
 
     api.setCmdHeadingCallback([]() {
