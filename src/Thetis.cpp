@@ -260,13 +260,14 @@ void Thetis::thetisSettingsInitialize() {
         strobeEvent.enable();
     });
 
-    api.setCmdColourCallback([this](const char* colourStr) {
-        if (colourStr == nullptr) {
+    api.setCmdColourCallback([this]() {
+        const char* colorStr = api.getValue<const char*>();
+        if (colorStr == nullptr) {
             systemStatusEvent->enable();
         }
         else {
-            SystemStatusEvent->disble();
-            uint32_t color = hexStringToUnsignedLong(colourStr);
+            systemStatusEvent->disable();
+            uint32_t color = hexStringToUnsignedLong(colorStr);
             pixel.setColor(color);
         }
     });

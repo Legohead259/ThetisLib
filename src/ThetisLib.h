@@ -35,7 +35,7 @@
 #include "sensors/max17048.h"
 #endif // BATT_MON_ENABLE
 
-#include "timing/TimerEvents.h"
+#include "timing/src/TimerEvents.h"
 
 #include "xioAPI/src/xioAPI.h"
 

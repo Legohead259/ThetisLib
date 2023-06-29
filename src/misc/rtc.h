@@ -6,7 +6,7 @@
 #include "../radios/gps.h"
 #include "../subsystem.h"
 #include "../settings.h"
-#include "../timing/TimerEvents.h"
+#include "../timing/src/TimerEvents.h"
 
 class ThetisClock : public ThetisSubsystem {
 
