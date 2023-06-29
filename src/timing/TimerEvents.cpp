@@ -14,7 +14,7 @@ TimerEventsClass::TimerEventsClass() {
 }
 
 void TimerEventsClass::add(TimerEvent* event) {
-    if (numberOfEvents >= maxNumberOfEvents) {
+    if (numberOfEvents >= MAX_NUMBER_OF_EVENTS) {
         return;
     }
     events[numberOfEvents] = event;

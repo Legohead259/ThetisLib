@@ -1,7 +1,9 @@
 #ifndef TIMER_EVENTS_H
 #define TIMER_EVENTS_H
 
-#include "Arduino.h"
+#include <Arduino.h>
+
+#define MAX_NUMBER_OF_EVENTS 32
 
 typedef std::function<void()> TimerEventHandler;
 
@@ -41,11 +43,10 @@ public:
     int getNumberOfEvents() { return numberOfEvents; }
 
 private:
-    static const int maxNumberOfEvents = 32;
     int numberOfEvents;
-    unsigned long timeouts[maxNumberOfEvents];
-    unsigned long durations[maxNumberOfEvents];
-    TimerEvent* events[maxNumberOfEvents];
+    TimerEvent* events[MAX_NUMBER_OF_EVENTS];
+    unsigned long timeouts[MAX_NUMBER_OF_EVENTS];
+    unsigned long durations[MAX_NUMBER_OF_EVENTS];
 };
 
 extern TimerEventsClass timerEvents;
