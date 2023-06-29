@@ -16,7 +16,7 @@ Release sections
 ### Security 
 -->
 
-## [UNRELEASED] 1.6.0 - 2023-06-
+## 2.0.0-beta1 - 2023-06-29
 ### Known Bugs
 - Current implementation of xioAPI settings for the WiFi AP cause initialization to fail. [#54](https://github.com/Legohead259/ThetisLib/issues/54)
   
@@ -26,11 +26,44 @@ Release sections
 - Added a new function `syncInternalClock()` that can sync the internal clock based on a timestamp string like "YYYY-MM-DD HH:mm:SS"
 - Added a new function `getTime_RTC()` that returns a string timestamp like "YYYY-MM-DD HH:mm:SS"
 - Added xioAPI settings integration to WiFi functions
+- Added a new log level for bypassing the `LogLevel` check during logging
+- Added a designated object for the Thetis board itself
+- Added TimerEvents for the different board LED statuses
+- Added a `ThetisFS` class for the filesystem
+- Added header protections for `max17048.h`
+- Added a `ThetisSubsystem` base class for different objects
+- Added LIS3MDL-specific settings to the settings table
+- Added MAX17048-specific settings to the settings table
+- Integrated sensor fusion algorithm into the fusion update event
 
 ### Changed
 - Changed the `setSystemState()` function to use the diagnostic logger properly
 - Changed the `initNeoPixel()` function to use the diagnostic logger properly [#46](https://github.com/Legohead259/ThetisLib/issues/46)
-  
+- Renamed `files` to `filesystem` for consistency
+- Renamed `Thetis_Settings` to `settings` for consistency
+- `TimerEvents` to be more OOP-compliant
+- Migrated `TimerEvents` to a separate Arduino library and added it as a submodule
+- Changed `neopixel.h` to be more OOP-compliant (`ThetisPixel`)
+- Changed `states.h` to be more OOP-compliant
+- Changed `max17048.h` to use the `BATT_MON_ENABLE` compile flag
+- Migrated `LIS3MDL` to `ThetisSubsystem` implementation
+- Migrated `MAX17048` to `ThetisSubsystem` implementation
+- Migrated `GPS` to be OOP-compliant
+- Migrated `WiFi` to be OOP-compliant
+- Updated `RTC` to be OOP-compliant
+- Migrated the `colour` command to `Thetis`
+
+### Fixed
+- Fixed some reference issues within `filesystem`
+- Fixed syncing and reporting issues with the xioAPI time command
+- Fixed include errors from the `TimerEvent` migration
+
+### Removed
+- Removed the Config library
+- Removed `timer.h`
+- Removed `ThetisLib.cpp`
+- Removed the central `data` structure
+- removed `ThetisAPI` remnants
 
 ---
 
