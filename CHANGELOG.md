@@ -56,6 +56,7 @@ Release sections
 ### Fixed
 - Fixed some reference issues within `filesystem`
 - Fixed syncing and reporting issues with the xioAPI time command
+- Fixed key update error with settings that are of `FLOAT_ARRAY` type
 - Fixed include errors from the `TimerEvent` migration
 
 ### Removed
