@@ -22,6 +22,7 @@ public:
     bool begin() override;
     void poll() override;
     void updateSettings() override;
+    void test() override {}
 
     lsm6dso32_accel_range_t getAccelRange(uint8_t range);
     lsm6ds_gyro_range_t getGyroRange(uint16_t range);

@@ -17,6 +17,7 @@ public:
     bool begin() override;
     void poll() override;
     void updateSettings() override;
+    void test() override {}
 
 private:
     lis3mdl_performancemode_t performanceMode;

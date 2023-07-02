@@ -46,12 +46,12 @@ void ThetisIMU::poll() {
 
 void ThetisIMU::updateSettings() {
     FusionOffsetInitialise(&gyroOffset, thetisSettings.fusionUpdateRate);
-    memcpy(gyroscopeMisalignment.array, settings.gyroscopeMisalignment, sizeof(float) * 3 * 3);
-    memcpy(gyroscopeSensitivity.array, settings.gyroscopeSensitivity, sizeof(float) * 3);
-    memcpy(gyroscopeOffset.array, settings.gyroscopeOffset, sizeof(float) * 3);
-    memcpy(accelerometerMisalignment.array, settings.gyroscopeMisalignment, sizeof(float) * 3 * 3);
-    memcpy(accelerometerSensitivity.array, settings.gyroscopeSensitivity, sizeof(float) * 3);
-    memcpy(accelerometerOffset.array, settings.gyroscopeOffset, sizeof(float) * 3);
+    memcpy(&gyroscopeMisalignment, &settings.gyroscopeMisalignment, sizeof(xioMatrix));
+    memcpy(&gyroscopeSensitivity, &settings.gyroscopeSensitivity, sizeof(xioVector));
+    memcpy(&gyroscopeOffset, &settings.gyroscopeOffset, sizeof(xioVector));
+    memcpy(&accelerometerMisalignment, &settings.gyroscopeMisalignment, sizeof(xioMatrix));
+    memcpy(&accelerometerSensitivity, &settings.gyroscopeSensitivity, sizeof(xioVector));
+    memcpy(&accelerometerOffset, &settings.gyroscopeOffset, sizeof(xioVector));
     accelRange = (lsm6dso32_accel_range_t) thetisSettings.accelerometerRange;
     gyroRange = (lsm6ds_gyro_range_t) thetisSettings.gyroscopeRange;
     dataRate = (lsm6ds_data_rate_t) thetisSettings.imuDataRate;

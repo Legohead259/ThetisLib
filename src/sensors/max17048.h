@@ -3,11 +3,12 @@
 #include "../settings.h"
 #include "../subsystem.h"
 
-class ThetisBatteryGauge : Adafruit_MAX17048, ThetisSubsystem {
+class ThetisBatteryGauge : public Adafruit_MAX17048, ThetisSubsystem {
 public:
     bool begin() override;
     void poll() override { return; }
     void updateSettings() override;
+    void test() override {}
 
 private:
     float resetVoltage;

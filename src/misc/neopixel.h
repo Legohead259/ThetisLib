@@ -3,6 +3,7 @@
 
 #include <Adafruit_NeoPixel.h>
 #include "../filesystem/logger.h"
+#include "../subsystem.h"
 
 #define BLINK_INTERVAL 250 // ms
 #define MESSAGE_INTERVAL 1000 // ms
@@ -30,13 +31,16 @@ enum PixelStates {
     LED_BLINKING
 };
 
-class ThetisPixel : public Adafruit_NeoPixel {
+class ThetisPixel : public Adafruit_NeoPixel, public ThetisSubsystem {
 public:
     // Constructor: number of LEDs, pin number, LED type. Note: Rely on superclass constructor
     ThetisPixel(uint16_t n=1, int16_t dataPin=NEOPIXEL_DATA, uint8_t enPin=NEOPIXEL_EN, neoPixelType type=NEO_GRB+NEO_KHZ800) : 
         Adafruit_NeoPixel(n, dataPin, type) { neopixelEnPin = enPin; };
     
-    bool begin();
+    bool begin() override;
+    void poll() override {}
+    void updateSettings() override {}
+    void test() override {}
 
     void pulseCallback(uint32_t c);
     void rainbow();

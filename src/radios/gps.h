@@ -31,6 +31,7 @@ public:
     bool begin() override;
     void poll() override;
     void updateSettings() override;
+    void test() override {}
     
     void getISO8601Time_GPS(char* buf);
 private:

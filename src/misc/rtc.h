@@ -19,6 +19,7 @@ public:
     bool begin() override;
     void poll() override {}
     void updateSettings() override {}
+    void test() override {}
 
     static void synchronizeClock(const char* timeStr);
     static void synchronizeGPS();

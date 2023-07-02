@@ -6,6 +6,7 @@ public:
     virtual bool begin();
     virtual void poll();
     virtual void updateSettings();
+    virtual void test();
 
 protected:
 
