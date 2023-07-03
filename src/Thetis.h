@@ -36,7 +36,8 @@ public:
     gpsPollEvent("GPS Poll Event", GPS_POLL_INTERVAL, gpsPollCallback, true),
     fusionUpdateEvent("Fusion Update Event", 20, fusionUpdateEventCallback, true),
     logWriteEvent("Log Write Event", 20, logWriteEventCallback, true),
-    strobeEvent("Strobe Event", BLINK_INTERVAL/2, strobeEventCallback, false, 5000, [this](){ systemStatusEvent->enable(); })
+    strobeEvent("Strobe Event", BLINK_INTERVAL/2, strobeEventCallback, false, 5000, [this](){ systemStatusEvent->enable(); }),
+    networkDiscoveryEvent("Network Discovery Event", 1000, networkDiscoveryEventCallback, true)
     { debugSerial = s; }
 
     void initialize();
@@ -71,6 +72,7 @@ private:
     TimerEvent fusionUpdateEvent;
     TimerEvent logWriteEvent;
     TimerEvent strobeEvent;
+    TimerEvent networkDiscoveryEvent;
 
     FusionMatrix gyroscopeMisalignment;
     FusionVector gyroscopeSensitivity;
@@ -117,6 +119,24 @@ private:
         pixel.blinkCallback();
     }
 
+    static void networkDiscoveryEventCallback() {
+        NetworkAnnouncement message = {
+            .sync               = 1, // TODO: Determine how to better incorporate sync words
+            .tcpPort            = settings.tcpPort,
+            .udpSendPort        = settings.udpSendPort,
+            .udpReceivePort     = settings.udpReceivePort,
+            .rssiPercentage     = 100, // TODO: Create a wireless.getRSSI() function. 0-100% or -1% for AP mode
+            .batteryPercentage  = (uint8_t) gauge.cellPercent(),
+            .chargingStatus     = 1, // TODO: Create gauge.getChargingStatus() function. 0 = NC, 1 = Charging, 2 = Charging complete
+        };
+        memcpy(message.displayName, settings.deviceName, 32);
+        memcpy(message.serialNumber, settings.serialNumber, 20);
+        memcpy(message.ipAddress, settings.wiFiIPAddress, 16);
+        api.sendNetworkAnnouncement(message);
+
+        diagLogger->debug("Sent network discovery event");
+    }
+
     static void fusionUpdateEventCallback() {
         uint32_t timestamp = micros();
         imu.poll();
@@ -131,16 +151,39 @@ private:
         FusionAhrsUpdate(&ahrs, imu.gyroscopeData, imu.accelerometerData, mag.magnetometerData, deltaTime);
 
         // Send IMU data messages
-        api.sendInertial(InertialMessage{imu.accelerometerData.array[0], imu.accelerometerData.array[1], imu.accelerometerData.array[2],
-                                        imu.gyroscopeData.array[0], imu.gyroscopeData.array[1], imu.gyroscopeData.array[2], timestamp});
-        api.sendMag(MagnetoMessage{mag.magnetometerData.array[0], mag.magnetometerData.array[1], mag.magnetometerData.array[2], timestamp});
+        api.sendInertialMessage(InertialMessage{ 
+            imu.accelerometerData.array[0], 
+            imu.accelerometerData.array[1], 
+            imu.accelerometerData.array[2],
+            imu.gyroscopeData.array[0], 
+            imu.gyroscopeData.array[1], 
+            imu.gyroscopeData.array[2], 
+            timestamp 
+        });
+        api.sendMagnetometerMessage(MagnetometerMessage{
+            mag.magnetometerData.array[0], 
+            mag.magnetometerData.array[1], 
+            mag.magnetometerData.array[2], 
+            timestamp
+        });
         
         // Send orientation data messages
         FusionQuaternion quat = FusionAhrsGetQuaternion(&ahrs);
         FusionEuler euler = FusionQuaternionToEuler(quat);
 
-        api.sendQuaternion(QuaternionMessage{quat.array[0], quat.array[1], quat.array[2], quat.array[3], timestamp});
-        api.sendEulerAngles(EulerMessage{euler.array[0], euler.array[1], euler.array[2], timestamp});
+        api.sendQuaternionMessage(QuaternionMessage{
+            quat.array[0], 
+            quat.array[1], 
+            quat.array[2], 
+            quat.array[3], 
+            timestamp
+        });
+        api.sendEulerMessage(EulerMessage{
+            euler.array[0], 
+            euler.array[1], 
+            euler.array[2], 
+            timestamp
+        });
     }
 
     static void logWriteEventCallback() {

@@ -1,8 +1,5 @@
 #include "wifi.h"
 
-AsyncWebServer server(80); // Create AsyncWebServer object on port 80
-FtpServer ftpServer;
-
 bool ThetisWiFi::begin() {
     diagLogger->info("Starting WiFi service");
     updateSettings();
@@ -21,70 +18,73 @@ bool ThetisWiFi::begin() {
             return false;
     }
 
-    // Route for root / web page
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-        request->send(SPIFFS, "/index.html", String(), false, processor);
-        diagLogger->verbose("Client requesting index!");
-    });
+    udpServer.begin(udpIPAddress, getSetting<uint16_t>("udpReceivePort"));
 
-    // Route to load style.css file
-    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
-        request->send(SPIFFS, "/style.css", "text/css");
-        diagLogger->verbose("Client requesting styling!");
-    });
+    // // Route for root / web page
+    // server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    //     request->send(SPIFFS, "/index.html", String(), false, processor);
+    //     diagLogger->verbose("Client requesting index!");
+    // });
 
-    // Send a GET request to <ESP_IP>/update?state=<inputMessage>
-    server.on("/update", HTTP_GET, [] (AsyncWebServerRequest *request) {
-        char inputMessage[32];
-        String inputParam;
-        // GET input1 value on <ESP_IP>/update?state=<inputMessage>
-        if (request->hasParam("state")) {
-            sprintf(inputMessage, "Got log state as: %s", request->getParam("state")->value());
-            diagLogger->debug(inputMessage);
-            inputParam = "state";
-            // isLogging = !isLogging;
-            // digitalWrite(LED_BUILTIN, isLogging);
-        }
-        else {
-            diagLogger->warn("Invalid log state update request received!");
-            inputParam = "none";
-        }
+    // // Route to load style.css file
+    // server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    //     request->send(SPIFFS, "/style.css", "text/css");
+    //     diagLogger->verbose("Client requesting styling!");
+    // });
 
-        // if (isLogging) {
-        //     dataLogger.start(SD);
-        // }
-        // else {
-        //     dataLogger.stop();
-        // }
+    // // Send a GET request to <ESP_IP>/update?state=<inputMessage>
+    // server.on("/update", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    //     char inputMessage[32];
+    //     String inputParam;
+    //     // GET input1 value on <ESP_IP>/update?state=<inputMessage>
+    //     if (request->hasParam("state")) {
+    //         sprintf(inputMessage, "Got log state as: %s", request->getParam("state")->value());
+    //         diagLogger->debug(inputMessage);
+    //         inputParam = "state";
+    //         // isLogging = !isLogging;
+    //         // digitalWrite(LED_BUILTIN, isLogging);
+    //     }
+    //     else {
+    //         diagLogger->warn("Invalid log state update request received!");
+    //         inputParam = "none";
+    //     }
 
-        request->send(200, "text/plain", "OK");
-    });
+    //     // if (isLogging) {
+    //     //     dataLogger.start(SD);
+    //     // }
+    //     // else {
+    //     //     dataLogger.stop();
+    //     // }
 
-    // Send a GET request to <ESP_IP>/state
-    server.on("/state", HTTP_GET, [] (AsyncWebServerRequest *request) {
-        // request->send(200, "text/plain", String(isLogging));
-    });
+    //     request->send(200, "text/plain", "OK");
+    // });
 
-    // Start server
-    server.begin();
+    // // Send a GET request to <ESP_IP>/state
+    // server.on("/state", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    //     // request->send(200, "text/plain", String(isLogging));
+    // });
+
+    // // Start server
+    // server.begin();
 
     return _success;
 }
 
 void ThetisWiFi::updateSettings() {
-
+    udpIPAddress = udpIPAddress.fromString(getSetting<const char*>("udpIPAddress"));
+    clientIPAddress = clientIPAddress.fromString(getSetting<const char*>("wiFiClientIPAddress"));
 }
 
 bool ThetisWiFi::beginWiFiAP() {
     diagLogger->info("Starting WiFi access point...");
-    if (!WiFi.softAP(settings.wiFiAPSsid, settings.wiFiAPKey)) {
+    if (!WiFi.softAP(getSetting<const char*>("wiFiAPSsid"), getSetting<const char*>("wiFiAPKey"))) {
         diagLogger->error("Failed to start access point!");
         return false;
     }
     diagLogger->info("done!");
 
-    IPAddress IP = WiFi.softAPIP();
-    updateSetting<const char*>((unsigned long) WIFI_IP_ADDRESS, IP.toString().c_str());
+    ipAddress = WiFi.softAPIP();
+    updateSetting<const char*>((unsigned long) WIFI_IP_ADDRESS, ipAddress.toString().c_str());
     diagLogger->info("AP IP address: %s", settings.wiFiIPAddress);
 
     diagLogger->info("done!");

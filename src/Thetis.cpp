@@ -60,21 +60,30 @@ void Thetis::initialize() {
     diagLogger->debug("done!");
 
     // Initialize xioAPI integration
-    diagLogger->info("Initializing xioAPI integration");
-    if (!api.begin(&Serial)) {
+    diagLogger->info("Initializing xioAPI integration...");
+    if (!api.begin(&Serial, &wireless.udpServer)) {
         while(true) {
             currentState.setState(ERROR);
             errorState.setState(GENERAL_ERROR);
         }
     }
     thetisSettingsInitialize();
+    diagLogger->info("done!");
 
     // Load settings
+    diagLogger->info("Loading settings from configuration file...");
     if (!loadConfigurationsFromJSON(true, "/config.json")) {
         while(true) {
             currentState.setState(ERROR);
             errorState.setState(FILE_OPERATION_ERROR);
         }
+    }
+    diagLogger->info("done!");
+
+    // Initialize WiFi
+    if (!wireless.begin()) {
+        currentState.setState(ERROR);
+        errorState.setState(WIFI_RADIO_ERROR);
     }
 
     // Initialize GPS
@@ -137,14 +146,6 @@ void Thetis::initialize() {
     }
     #endif // BATT_MON_ENABLED
 
-    // Initialize WiFi
-    #ifdef WIFI_ENABLE
-    if (!wireless.begin()) {
-        currentState.setState(ERROR);
-        errorState.setState(WIFI_RADIO_ERROR);
-    }
-    #endif
-
     // Attach the log enable button interrupt
     diagLogger->info("Attaching log enable interrupt...");
     attachInterrupt(LOG_EN, logButtonISR, FALLING);
@@ -154,8 +155,17 @@ void Thetis::initialize() {
     timerEvents.add(&fusionUpdateEvent);
     timerEvents.add(&logWriteEvent);
     timerEvents.add(&strobeEvent);
+    timerEvents.add(&networkDiscoveryEvent);
 
     setSystemState(STANDBY);
+}
+
+self_test_report_t Thetis::selfTest() {
+    // TODO: Implement a self-test feature
+    self_test_report_t results = {
+        .batteryMonitorPass = false,
+    };
+    return results;
 }
 
 void Thetis::run() {
@@ -164,11 +174,9 @@ void Thetis::run() {
     api.checkForCommand();
 
     // WiFi handling
-    #ifdef WIFI_ENABLE
     if (settings.wirelessMode && thetisSettings.ftpEnabled) { // Only run the FTP server when the proper configs are set and the device is not logging (efficiency)
         wireless.ftpServer.handleFTP();
     }
-    #endif
     
     // State updates
     updateSystemState();
@@ -234,8 +242,8 @@ void Thetis::thetisSettingsInitialize() {
 
     api.setCmdReadTimeCallback([]() {
         char _buf[64];
-        ThetisClock::getTime_RTC(_buf);
-        api.send(true, "{\"time\":\"%s\"}", _buf);
+        size_t outLen = ThetisClock::getTime_RTC(_buf);
+        api.send("{\"time\":\"%s\"}", _buf);
     });
 
     api.setCmdWriteTimeCallback([]() {
@@ -244,18 +252,18 @@ void Thetis::thetisSettingsInitialize() {
     });
 
     api.setCmdResetCallback([]() { 
-        api.send(true, "{\"reset\":null}");
+        api.send("{\"reset\":null}");
         ESP.restart(); 
     });
 
     api.setCmdShutdownCallback([]() {
-        api.send(true, "{\"shutdown\":null}");
+        api.send("{\"shutdown\":null}");
         ESP.restart();
         // TODO: Add an auto-latching shutoff circuit to hardware
     });
 
     api.setCmdStrobeCallback([this]() {
-        api.send(true, "{\"strobe\":null}");
+        api.send("{\"strobe\":null}");
         systemStatusEvent->disable();
         strobeEvent.enable();
     });
@@ -273,7 +281,7 @@ void Thetis::thetisSettingsInitialize() {
     });
 
     api.setCmdHeadingCallback([]() {
-        // TODO: Reset AHRS heading to specified value IF `magnetometerIgnoreEnabled` is TRUE
+        FusionAhrsSetHeading(&ahrs, api.getValue<float>());
     });
 
     api.setCmdSerialAccessoryCallback([]() { 
@@ -286,9 +294,10 @@ void Thetis::thetisSettingsInitialize() {
         // TODOTODO: Create a filesystem `format()` function
     });
 
-    api.setCmdSelfTestCallback([]() {
+    api.setCmdSelfTestCallback([this]() {
         // TODO: Call self-test function
         // TODOTODO: Create a self-test initialization function
+        self_test_report_t result = selfTest();
     });
 
     api.setCmdBootloaderCallback([]() {
@@ -313,11 +322,11 @@ bool Thetis::fusionInitialize() {
 
     // Set AHRS algorithm settings
     const FusionAhrsSettings fusionSettings = {
-            .convention = (FusionConvention) settings.ahrsAxesConvention,
-            .gain = settings.ahrsGain,
-            .accelerationRejection = 10.0f,
-            .magneticRejection = 20.0f,
-            .rejectionTimeout = 5 * (unsigned) thetisSettings.fusionUpdateRate,
+        .convention = (FusionConvention) settings.ahrsAxesConvention,
+        .gain = settings.ahrsGain,
+        .accelerationRejection = 10.0f,
+        .magneticRejection = 20.0f,
+        .rejectionTimeout = 5 * (unsigned) thetisSettings.fusionUpdateRate,
     };
     FusionAhrsSetSettings(&ahrs, &fusionSettings);
 
