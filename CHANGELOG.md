@@ -16,6 +16,23 @@ Release sections
 ### Security 
 -->
 
+## 2.0.0-beta2 - 2023
+### Known Bugs
+- Current implementation of xioAPI settings for the WiFi AP cause initialization to fail. [#54](https://github.com/Legohead259/ThetisLib/issues/54)
+- xioAPI WiFi not working as intended. []
+
+### Added
+- Added a new `test()` function to the ThetisSubsystem base class
+
+### Changed
+- Added return value to`getTime_RTC()` and `getISO8601_RTC()` for how many bytes are written to the buffer
+- Removed redundant check for `magnetometerIgnoreEnabled` in `cmdHeadingCallback`
+  
+### Deprecated
+- Deprecated support for `AsyncWebServer`
+
+---
+
 ## 2.0.0-beta1 - 2023-06-29
 ### Known Bugs
 - Current implementation of xioAPI settings for the WiFi AP cause initialization to fail. [#54](https://github.com/Legohead259/ThetisLib/issues/54)
