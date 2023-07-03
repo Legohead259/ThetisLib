@@ -18,7 +18,10 @@ bool ThetisWiFi::begin() {
             return false;
     }
 
-    udpServer.begin(udpIPAddress, getSetting<uint16_t>("udpReceivePort"));
+    udpServer.begin(udpIPAddress, 9000);
+    diagLogger->verbose("UDP IP Address: %s", udpIPAddress.toString());
+    diagLogger->verbose("UDP Receive port: %d", settings.udpReceivePort);
+    diagLogger->verbose("UDP Send port: %d", settings.udpSendPort);
 
     // // Route for root / web page
     // server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){

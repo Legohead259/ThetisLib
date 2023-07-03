@@ -133,8 +133,6 @@ private:
         memcpy(message.serialNumber, settings.serialNumber, 20);
         memcpy(message.ipAddress, settings.wiFiIPAddress, 16);
         api.sendNetworkAnnouncement(message);
-
-        diagLogger->debug("Sent network discovery event");
     }
 
     static void fusionUpdateEventCallback() {
