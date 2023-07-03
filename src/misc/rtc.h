@@ -26,8 +26,8 @@ public:
     void updateTimestamp();
     static long updateRTCms();
     static void getISO8601Time_GPS(char *buf, MicroNMEA& gps);
-    void getISO8601Time_RTC(char *buf);
-    static void getTime_RTC(char *buf);
+    static size_t getISO8601Time_RTC(char *buf);
+    static size_t getTime_RTC(char *buf);
 
 private:
     tmElements_t espRTCTime;

@@ -52,17 +52,17 @@ long ThetisClock::updateRTCms() {
     return curMSecond;
 }
 
-void ThetisClock::getISO8601Time_RTC(char *buf) {
+size_t ThetisClock::getISO8601Time_RTC(char *buf) {
     // Format timestamp into ISO8601 format
     tmElements_t timeStruct;
     breakTime(now(), timeStruct);
-    sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", espRTCTime.Year+1970, espRTCTime.Month, espRTCTime.Day, espRTCTime.Hour, espRTCTime.Minute, espRTCTime.Second, updateRTCms());
+    return sprintf(buf, "%04d-%02d-%02dT%02d:%02d:%02d.%03d", timeStruct.Year+1970, timeStruct.Month, timeStruct.Day, timeStruct.Hour, timeStruct.Minute, timeStruct.Second, updateRTCms());
 }
 
-void ThetisClock::getTime_RTC(char* buf) {
+size_t ThetisClock::getTime_RTC(char* buf) {
     tmElements_t timeStruct;
     breakTime(now(), timeStruct);
-    sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d", timeStruct.Year+1970, timeStruct.Month, timeStruct.Day, timeStruct.Hour, timeStruct.Minute, timeStruct.Second);
+    return sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d", timeStruct.Year+1970, timeStruct.Month, timeStruct.Day, timeStruct.Hour, timeStruct.Minute, timeStruct.Second);
 }
 
 void ThetisClock::synchronizeClock(const char* timeStr) {
