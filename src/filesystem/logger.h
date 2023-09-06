@@ -38,6 +38,9 @@ enum class LogLevel: uint8_t {
 
 class Logger {
 public:
+	File dataLogFile;
+    File diagLogFile;
+	
     bool begin(Print* logger, LogLevel logLevel);
     bool begin(Stream* logPort, LogLevel logLevel);
     bool begin(fs::SDFS &fs, uint8_t cs, LogLevel logLevel);
@@ -121,8 +124,6 @@ private:
 	unsigned _flushTimeout = SD_FLUSH_TIMEOUT;
     char diagnosticLogFilename[32];
     char dataLogFilename[32];
-    File dataLogFile;
-    File diagLogFile;
 	LogTimeHandler timeCallbackPtr = nullptr;
 
     bool initDataLogFile(fs::SDFS &fs, char* filename);

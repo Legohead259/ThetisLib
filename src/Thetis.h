@@ -35,7 +35,7 @@ public:
     booting_Event("Booting Event", 500, bootingEventCallback, true),
     gpsPollEvent("GPS Poll Event", GPS_POLL_INTERVAL, gpsPollCallback, true),
     fusionUpdateEvent("Fusion Update Event", 20, fusionUpdateEventCallback, true),
-    logWriteEvent("Log Write Event", 20, logWriteEventCallback, true),
+    logWriteEvent("Log Write Event", 20, logWriteEventCallback, false),
     strobeEvent("Strobe Event", BLINK_INTERVAL/2, strobeEventCallback, false, 5000, [this](){ systemStatusEvent->enable(); }),
     networkDiscoveryEvent("Network Discovery Event", 1000, networkDiscoveryEventCallback, true)
     { debugSerial = s; }
@@ -187,6 +187,13 @@ private:
     static void logWriteEventCallback() {
         // TODO: Implement log writing
         // TODO: Enable callback based on DataLoggerMessagesEnabled setting
+        // TODO: Deprecate dependency on statusChecks.isLogging flag
+        // diagLogger->debug("Data buffer empty: %s", dataASCIIBuffer.isEmpty() ? "true" : "false");
+        // diagLogger->debug("Data buffer full: %s", dataASCIIBuffer.isFull() ? "true" : "false");
+        // diagLogger->debug("Data buffer size: %d", dataASCIIBuffer.size());
+        while(!dataASCIIBuffer.isEmpty()) {
+            dataLogger.dataLogFile.write(dataASCIIBuffer.shift());
+        }
     }
 
     static void gpsPollCallback() {
