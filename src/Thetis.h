@@ -198,6 +198,16 @@ private:
 
     static void gpsPollCallback() {
         gps.poll();
+        api.sendDataMessage("P,%lu,%u,%u,%u,%ld,%ld,%ld,%ld", 
+                                micros(), 
+                                gps.isValid(), 
+                                gps.getNumSatellites(), 
+                                gps.getHDOP(), 
+                                gps.getLatitude(), 
+                                gps.getLongitude(), 
+                                gps.getSpeed(), 
+                                gps.getCourse()
+                            );
     }
 };
 
