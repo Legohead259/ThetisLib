@@ -34,8 +34,10 @@ public:
     standby_Event("Standby Event", BLINK_INTERVAL, standbyEventCallback, true),
     booting_Event("Booting Event", 500, bootingEventCallback, true),
     gpsPollEvent("GPS Poll Event", GPS_POLL_INTERVAL, gpsPollCallback, true),
-    fusionUpdateEvent("Fusion Update Event", 20, fusionUpdateEventCallback, true),
-    logWriteEvent("Log Write Event", 20, logWriteEventCallback, false),
+    inertialPollEvent("Inertial Poll Event", 15, inertialPollEventCallback, true),
+    magneticPollEvent("Magnetic Poll Event", 15, magneticPollEventCallback, true),
+    fusionUpdateEvent("Fusion Update Event", 15, fusionUpdateEventCallback, true),
+    logWriteEvent("Log Write Event", 15, logWriteEventCallback, false),
     strobeEvent("Strobe Event", BLINK_INTERVAL/2, strobeEventCallback, false, 5000, [this](){ systemStatusEvent->enable(); }),
     networkDiscoveryEvent("Network Discovery Event", 1000, networkDiscoveryEventCallback, true)
     { debugSerial = s; }
@@ -69,6 +71,8 @@ private:
     TimerEvent standby_Event;
     TimerEvent booting_Event;
     TimerEvent gpsPollEvent;
+    TimerEvent inertialPollEvent;
+    TimerEvent magneticPollEvent;
     TimerEvent fusionUpdateEvent;
     TimerEvent logWriteEvent;
     TimerEvent strobeEvent;
@@ -135,18 +139,9 @@ private:
         api.sendNetworkAnnouncement(message);
     }
 
-    static void fusionUpdateEventCallback() {
+    static void inertialPollEventCallback() {
         uint32_t timestamp = micros();
         imu.poll();
-        mag.poll();
-
-        // Calculate delta time (in seconds) to account for gyroscope sample clock error
-        static uint32_t previousTimestamp;
-        const float deltaTime = (float) (timestamp - previousTimestamp) / (float) CLOCKS_PER_SEC;
-        previousTimestamp = timestamp;
-
-        // Update AHRS algorithm
-        FusionAhrsUpdate(&ahrs, imu.gyroscopeData, imu.accelerometerData, mag.magnetometerData, deltaTime);
 
         // Send IMU data messages
         api.sendInertialMessage(InertialMessage{ 
@@ -158,13 +153,31 @@ private:
             imu.gyroscopeData.array[2], 
             timestamp 
         });
+    }
+
+    static void magneticPollEventCallback() {
+        uint32_t timestamp = micros();
+        mag.poll();
+
         api.sendMagnetometerMessage(MagnetometerMessage{
             mag.magnetometerData.array[0], 
             mag.magnetometerData.array[1], 
             mag.magnetometerData.array[2], 
             timestamp
         });
-        
+    }
+
+    static void fusionUpdateEventCallback() {
+        uint32_t timestamp = micros();
+
+        // Calculate delta time (in seconds) to account for gyroscope sample clock error
+        static uint32_t previousTimestamp;
+        const float deltaTime = (float) (timestamp - previousTimestamp) / (float) CLOCKS_PER_SEC;
+        previousTimestamp = timestamp;
+
+        // Update AHRS algorithm
+        FusionAhrsUpdate(&ahrs, imu.gyroscopeData, imu.accelerometerData, mag.magnetometerData, deltaTime);
+
         // Send orientation data messages
         FusionQuaternion quat = FusionAhrsGetQuaternion(&ahrs);
         FusionEuler euler = FusionQuaternionToEuler(quat);
@@ -185,7 +198,6 @@ private:
     }
 
     static void logWriteEventCallback() {
-        // TODO: Implement log writing
         // TODO: Enable callback based on DataLoggerMessagesEnabled setting
         // TODO: Deprecate dependency on statusChecks.isLogging flag
         // diagLogger->debug("Data buffer empty: %s", dataASCIIBuffer.isEmpty() ? "true" : "false");

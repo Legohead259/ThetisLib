@@ -152,6 +152,8 @@ void Thetis::initialize() {
     diagLogger->info("done!");
 
     timerEvents.add(&gpsPollEvent);
+    timerEvents.add(&inertialPollEvent);
+    timerEvents.add(&magneticPollEvent);
     timerEvents.add(&fusionUpdateEvent);
     timerEvents.add(&logWriteEvent);
     timerEvents.add(&strobeEvent);
