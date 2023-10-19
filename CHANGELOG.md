@@ -23,6 +23,7 @@ Release sections
 
 ### Added
 - Added a new `test()` function to the ThetisSubsystem base class
+- Added a position message using the xioAPI
 
 ### Changed
 - Added return value to`getTime_RTC()` and `getISO8601_RTC()` for how many bytes are written to the buffer
