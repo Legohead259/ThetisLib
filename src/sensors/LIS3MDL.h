@@ -3,15 +3,29 @@
 
 #include <Adafruit_LIS3MDL.h>
 #include <Adafruit_Sensor.h>
+#include "../settings.h"
+#include "../subsystem.h"
+#include "../filesystem/logger.h"
+#include "../fusion/Fusion/Fusion.h"
 
-extern Adafruit_LIS3MDL lis3mdl;
+class ThetisMag : Adafruit_LIS3MDL, ThetisSubsystem {
+public:
+    FusionMatrix softIronMatrix = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+    FusionVector hardIronOffset = {0.0f, 0.0f, 0.0f};
+    FusionVector magnetometerData;
 
-extern sensors_event_t mag;
+    bool begin() override;
+    void poll() override;
+    void updateSettings() override;
+    void test() override {}
 
-bool initLIS3MDL(   lis3mdl_performancemode_t perfMode=LIS3MDL_MEDIUMMODE,
-                    lis3mdl_operationmode_t opMode=LIS3MDL_CONTINUOUSMODE,
-                    lis3mdl_dataRate_t dataRate=LIS3MDL_DATARATE_155_HZ,
-                    lis3mdl_range_t range=LIS3MDL_RANGE_4_GAUSS);
-void pollLIS3MDL();
+private:
+    lis3mdl_performancemode_t performanceMode;
+    lis3mdl_operationmode_t operationMode;
+    lis3mdl_dataRate_t dataRate;
+    lis3mdl_range_t range;
+};
+
+extern ThetisMag mag;
 
 #endif // LIS3MDL_H

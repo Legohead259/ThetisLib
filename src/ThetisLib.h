@@ -1,20 +1,15 @@
 #ifndef THETISLIB_H
 #define THETISLIB_H
-#define __THETISLIB_VERSION__ "1.5.3"
+#define __THETISLIB_VERSION__ "1.6.0"
 
 #include <Arduino.h>
-
-// Shared data functions
-#include "data.h"
 
 // Miscellaneous functions
 #include "misc/neopixel.h"
 #include "misc/rtc.h"
-#include "misc/timer.h"
 
 // Filesystem functions
-#include "filesystem/files.h"
-#include "filesystem/config.h"
+#include "filesystem/filesystem.h"
 #include "filesystem/logger.h"
 
 // Status functions
@@ -23,7 +18,7 @@
 // Sensor functions
 #include "sensors/lsm6dso32.h"
 #ifdef MAG_ENABLE
-#include "sensors/LIS3MDL.h"
+#include "sensors/lis3mdl.h"
 #endif // MAG_ENABLE
 #include "fusion/Fusion/fusion.h"
 
@@ -31,20 +26,18 @@
 #include "radios/gps.h"
 
 // WiFi functions
-#ifdef WIFI_ENABLE
 #include "radios/wifi.h"
-#endif
 
 // Revision-specific functions
-#if defined(REV_F5) || defined(REV_G2)
-#include "sensors/max1704.h"
-#endif // defined(REV_F5) || defined(REV_G2)
+#ifdef BATT_MON_ENABLE
+#include "sensors/max17048.h"
+#endif // BATT_MON_ENABLE
 
-#include "timing/TimerEvents.h"
+#include "timing/src/TimerEvents.h"
 
 #include "xioAPI/src/xioAPI.h"
 
-#include "Thetis_Settings.h"
+#include "settings.h"
 
 
 

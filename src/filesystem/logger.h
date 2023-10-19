@@ -16,7 +16,6 @@
 #include "Arduino.h"
 #include <stdarg.h>
 #include <FS.h>
-#include "../data.h"
 #include "../misc/rtc.h"
 #include <TimeLib.h>
 #include <SD.h>
@@ -24,7 +23,10 @@
 #define SD_FLUSH_TIMEOUT 4096
 #define LOG_BTN_HOLD_TIME 500 // ms
 
+typedef std::function<void(char*)> LogTimeHandler;
+
 enum class LogLevel: uint8_t {
+	BYPASS,			// Indicates a message should just be passed along - only used for bypassing the typical log functions
     FATAL = 1,      // Indicates a fatal event
     ERROR,          // Indicates a major error, but not fatal
     WARN,           // Indicates a substantial event that is not an error or fatal
@@ -36,13 +38,18 @@ enum class LogLevel: uint8_t {
 
 class Logger {
 public:
+	File dataLogFile;
+    File diagLogFile;
+	
     bool begin(Print* logger, LogLevel logLevel);
     bool begin(Stream* logPort, LogLevel logLevel);
     bool begin(fs::SDFS &fs, uint8_t cs, LogLevel logLevel);
     bool begin(fs::SDFS &fs, uint8_t cs);
+	bool begin(Stream* logPort, LogLevel logLevel, LogTimeHandler cbPtr);
+	bool begin(fs::SDFS &fs, uint8_t cs, LogLevel logLevel, LogTimeHandler cbPtr);
 	void end();
+	
 
-    void writeTelemetryData();
     void start(fs::SDFS &fs);
     void stop();
 
@@ -50,6 +57,7 @@ public:
 	void setFileLogger(File* logger);
     void setLogLevel(LogLevel logLevel);
 	void setLogLevel(uint8_t loglevel);
+	void setLogTimeCallback(LogTimeHandler cbPtr) { timeCallbackPtr = cbPtr; }
 	LogLevel getLogLevel();
 	LogLevel getLogLevel(uint8_t loglevel);
 	void setIncludeTimestamp(bool value);
@@ -116,12 +124,12 @@ private:
 	unsigned _flushTimeout = SD_FLUSH_TIMEOUT;
     char diagnosticLogFilename[32];
     char dataLogFilename[32];
-    File dataLogFile;
-    File diagLogFile;
+	LogTimeHandler timeCallbackPtr = nullptr;
 
     bool initDataLogFile(fs::SDFS &fs, char* filename);
     void getLogLevelStr(char* outStr, LogLevel loglevel);
 	void printPrefix(LogLevel logLevel);
+	void getSystemTime(char* buf) { if (timeCallbackPtr != nullptr) timeCallbackPtr(buf); }
 };
 
 extern Logger dataLogger;
