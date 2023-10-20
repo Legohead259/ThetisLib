@@ -20,7 +20,7 @@
 #ifdef MAG_ENABLE
 #include "sensors/lis3mdl.h"
 #endif // MAG_ENABLE
-#include "fusion/Fusion/fusion.h"
+#include "fusion/Fusion/Fusion.h"
 
 // Radio functions
 #include "radios/gps.h"
